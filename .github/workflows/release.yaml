@@ -66,7 +66,7 @@ jobs:
       - name: Build and bump package version in examples
         run: |
           npm ci && cd examples
-          cd room-manager && npm i @fishjam-dev/js-server-sdk && cd ..
+          cd room-manager && npm i @fishjam-cloud/js-server-sdk && cd ..
 
       # Commit changes
       - name: Commit changed files and create a new tag

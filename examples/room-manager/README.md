@@ -29,5 +29,5 @@ curl http://localhost:8080/rooms/exampleRoom/users/exampleUser
 to obtain the websocket URL and authentication token of the `exampleUser` to connect to the `exampleRoom`.
 
 Feel free use the example from
-[react-client-sdk](https://github.com/fishjam-dev/react-client-sdk/tree/main/examples/minimal-react) to test the
+[react-client-sdk](https://github.com/fishjam-cloud/react-client-sdk/tree/main/examples/minimal-react) to test the
 connection to the Fishjam server with the provided token.
