@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { type Room as RemoteRoom, type Peer as RemoteUser, RoomApi } from '@fishjam-dev/js-server-sdk';
+import { type Room as RemoteRoom, type Peer as RemoteUser, RoomApi } from '@fishjam-cloud/js-server-sdk';
 
 import type {
   ServerMessage,
@@ -8,7 +8,7 @@ import type {
   ServerMessage_PeerDeleted,
   ServerMessage_RoomCrashed,
   ServerMessage_RoomDeleted,
-} from '@fishjam-dev/js-server-sdk/proto';
+} from '@fishjam-cloud/js-server-sdk/proto';
 
 import config from './config';
 

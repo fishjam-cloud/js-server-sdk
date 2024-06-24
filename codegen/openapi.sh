@@ -17,6 +17,6 @@ echo "Generating code for $1...\n"
 
 cd $ROOTDIR \
 && npx openapi-generator-cli generate \
-  -i https://raw.githubusercontent.com/fishjam-dev/fishjam/$1/openapi.yaml \
+  -i https://raw.githubusercontent.com/fishjam-cloud/fishjam/$1/openapi.yaml \
   -g typescript-axios \
   -o src/openapi

@@ -1,11 +1,11 @@
 {
-  "name": "@fishjam-dev/room-manager",
+  "name": "@fishjam-cloud/room-manager",
   "version": "0.1.0",
   "description": "A room manager for Fishjam",
-  "homepage": "https://github.com/fishjam-dev/js-server-sdk/examples/room-manager",
+  "homepage": "https://github.com/fishjam-cloud/js-server-sdk/examples/room-manager",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fishjam-dev/js-server-sdk.git"
+    "url": "https://github.com/fishjam-cloud/js-server-sdk.git"
   },
   "license": "Apache-2.0",
   "keywords": [
@@ -28,7 +28,7 @@
     "lint:check": "eslint src"
   },
   "dependencies": {
-    "@fishjam-dev/js-server-sdk": "file:../..",
+    "@fishjam-cloud/js-server-sdk": "file:../..",
     "axios": "^1.6.8",
     "body-parser": "^1.20.2",
     "dotenv": "^16.4.5",
