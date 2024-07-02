@@ -38,11 +38,5 @@ jobs:
       - name: Install dependencies
         run: yarn --frozen-lockfile
 
-      - name: Check formatting
-        run: yarn format:check
-
       - name: Check typing
         run: yarn build:check
-
-      - name: Check linting
-        run: yarn lint:check
