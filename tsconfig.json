@@ -14,7 +14,7 @@
     "moduleResolution": "node16",
     "importsNotUsedAsValues": "remove",
     "forceConsistentCasingInFileNames": true,
-
+    "rootDir": "./src",
     "outDir": "dist"
   },
   "exclude": ["node_modules"],

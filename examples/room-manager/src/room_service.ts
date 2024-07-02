@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { type Room as RemoteRoom, type Peer as RemoteUser, RoomApi } from '@fishjam-cloud/js-server-sdk';
+import { type Room as RemoteRoom, type Peer as RemoteUser, RoomApi, FishjamClient } from '@fishjam-cloud/js-server-sdk';
 
 import type {
   ServerMessage,
@@ -29,17 +29,13 @@ interface Room {
 
 export class RoomService {
   private readonly rooms = new Map<RoomId, Room>();
-  private readonly roomApi: RoomApi;
+  private readonly fishjamClient: FishjamClient = new FishjamClient({
+    fishjamUrl: config.fishjamUrl,
+    serverToken: config.serverToken,
+  });
   private readonly tls: boolean;
 
   constructor() {
-    const client = axios.create({
-      headers: {
-        Authorization: `Bearer ${config.serverToken}`,
-      },
-    });
-
-    this.roomApi = new RoomApi(undefined, config.fishjamUrl, client);
     this.tls = config.fishjamUrl.startsWith('https');
   }
 
@@ -53,7 +49,7 @@ export class RoomService {
     if (user && remoteUser) {
       console.log({ message: 'The user already exists', roomId, userId, peerId: user.peerId });
     } else {
-      user = await this.createUser(roomId, userId);
+      user = await this.createUser(roomId);
 
       console.log({ message: 'Added the user to the existing room', roomId, userId, peerId: user.peerId });
 
@@ -101,22 +97,20 @@ export class RoomService {
     return room;
   }
 
-  private async createUser(roomId: string, userId: string): Promise<User> {
-    const {
-      data: { data },
-    } = await this.roomApi.addPeer(roomId, { type: 'webrtc', options: { enableSimulcast: config.enableSimulcast } });
+  private async createUser(roomId: string): Promise<User> {
+    const [peer, { websocketToken, websocketUrl }] = await this.fishjamClient.createPeer(roomId, {
+      enableSimulcast: config.enableSimulcast,
+    });
 
-    const peerWebsocketUrl = data.peer_websocket_url ?? config.fishjamUrl + '/socket/peer/websocket';
-
-    const peerId = data.peer.id;
+    const peerWebsocketUrl = websocketUrl ?? config.fishjamUrl + '/socket/peer/websocket';
 
     const user = {
-      peerId,
-      token: data.token,
+      peerId: peer.id,
+      token: websocketToken,
       url: `${this.tls ? 'wss' : 'ws'}://${peerWebsocketUrl}`,
     };
 
-    console.log({ message: 'User created', roomId, userId, peerId });
+    console.log({ message: 'User created', roomId, peerId: peer.id });
 
     return user;
   }
@@ -126,7 +120,7 @@ export class RoomService {
       // Check if the room exists in the application.
       // This may happen when someone creates a room outside of this application
       // or when the room was created in the previous run of the application.
-      const room = (await this.roomApi.getAllRooms()).data.data.find((room) => room.id === roomId);
+      const room = await this.fishjamClient.getRoom(roomId);
 
       if (room) {
         console.warn({ message: 'Room already exists in Fishjam', roomId });
@@ -141,11 +135,7 @@ export class RoomService {
         peerlessPurgeTimeout: config.peerlessPurgeTimeout,
       };
 
-      await this.roomApi.createRoom({
-        roomId,
-        webhookUrl: config.webhookUrl,
-        ...optionalConfig,
-      });
+      await this.fishjamClient.createRoom({ roomId, webhookUrl: config.webhookUrl, ...optionalConfig });
 
       console.log({ message: 'Room created', roomId });
     } catch (error) {
@@ -157,12 +147,14 @@ export class RoomService {
     }
   }
 
-  private async findRemoteRoom(roomId: string): Promise<RemoteRoom | null> {
-    return (await this.roomApi.getAllRooms()).data.data.find((room) => room.id === roomId) ?? null;
+  private async findRemoteRoom(roomId: string) {
+    return await this.fishjamClient.getRoom(roomId);
   }
 
   private async findRemoteUser(roomId: string, peerId: string): Promise<RemoteUser | null> {
-    return (await this.roomApi.getRoom(roomId)).data.data.peers.find((peer) => peer.id === peerId) ?? null;
+    const room = await this.fishjamClient.getRoom(roomId);
+
+    return room?.peers.find((peer) => peer.id === peerId) ?? null;
   }
 
   private handlePeerDown(notification: ServerMessage_PeerDeleted | ServerMessage_PeerCrashed): void {
