@@ -3,3 +3,6 @@ dist/
 docs/
 protos/
 src/openapi/
+README.md
+tsconfig.json
+docker-compose-dev.yaml
