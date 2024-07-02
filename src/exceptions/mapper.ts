@@ -1,13 +1,28 @@
-import { BadRequestException, ServiceUnavailableException, UnauthorizedException } from '.';
+import {
+  BadRequestException,
+  PeerNotFoundException,
+  RoomNotFoundException,
+  ServiceUnavailableException,
+  UnauthorizedException,
+} from '.';
 
-export const mapExceptions = (code: number) => {
+export const mapExceptions = (code: number, entity?: 'peer' | 'room') => {
   switch (code) {
     case 400:
-      return new BadRequestException();
+      throw new BadRequestException();
     case 401:
-      return new UnauthorizedException();
+      throw new UnauthorizedException();
+    case 404:
+      switch (entity) {
+        case 'peer':
+          throw new PeerNotFoundException();
+        case 'room':
+          throw new RoomNotFoundException();
+        default:
+          return;
+      }
     case 503:
-      return new ServiceUnavailableException();
+      throw new ServiceUnavailableException();
     default:
       return;
   }

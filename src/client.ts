@@ -64,8 +64,7 @@ export class FishjamClient {
   async getRoom(roomId: string): Promise<Room> {
     const getRoomResponse = await this.roomApi.getRoom(roomId);
 
-    mapExceptions(getRoomResponse.status);
-    if (getRoomResponse.status === 404) throw new RoomNotFoundException();
+    mapExceptions(getRoomResponse.status, 'room');
 
     const { components: _, ...room } = getRoomResponse.data.data;
 
@@ -75,14 +74,12 @@ export class FishjamClient {
   async deletePeer(roomId: string, peerId: string) {
     const response = await this.roomApi.deletePeer(roomId, peerId);
 
-    mapExceptions(response.status);
-    if (response.status === 404) throw new PeerNotFoundException();
+    mapExceptions(response.status, 'peer');
   }
 
   async deleteRoom(roomId: string) {
     const response = await this.roomApi.deleteRoom(roomId);
 
-    if (response.status === 404) throw new RoomNotFoundException();
-    mapExceptions(response.status);
+    mapExceptions(response.status, 'room');
   }
 }
