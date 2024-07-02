@@ -1,0 +1,9 @@
+node_modules
+out
+.idea
+
+# scripts
+run-app.sh
+tmux-stop.sh
+tmux-start.sh
+scripts.sh

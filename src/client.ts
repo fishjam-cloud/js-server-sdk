@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { RoomApi, RoomConfig, PeerOptions } from './openapi';
 import { Room } from './types';
+import { PeerNotFoundException, RoomNotFoundException } from './exceptions';
+import { mapExceptions } from './exceptions/mapper';
 
 type FishjamConfig = {
   fishjamUrl: string;
@@ -21,24 +23,32 @@ export class FishjamClient {
   }
 
   async createPeer(roomId: string, options: PeerOptions = {}) {
-    const {
-      data: { data },
-    } = await this.roomApi.addPeer(roomId, {
+    const response = await this.roomApi.addPeer(roomId, {
       type: 'webrtc',
       options,
     });
+
+    mapExceptions(response.status);
+
+    const {
+      data: { data },
+    } = response;
 
     return [data.peer, { websocketUrl: data.peer_websocket_url, websocketToken: data.token }] as const;
   }
 
   async createRoom(config: RoomConfig = {}) {
+    const response = await this.roomApi.createRoom(config);
+
+    mapExceptions(response.status);
+
     const {
       data: {
         data: {
           room: { components: _, ...room },
         },
       },
-    } = await this.roomApi.createRoom(config);
+    } = response;
 
     return room;
   }
@@ -46,21 +56,33 @@ export class FishjamClient {
   async getAllRooms() {
     const getAllRoomsRepsonse = await this.roomApi.getAllRooms();
 
+    mapExceptions(getAllRoomsRepsonse.status);
+
     return getAllRoomsRepsonse.data.data.map(({ components: _, ...room }) => room) ?? [];
   }
 
-  async getRoom(roomId: string): Promise<Room | null> {
+  async getRoom(roomId: string): Promise<Room> {
     const getRoomResponse = await this.roomApi.getRoom(roomId);
+
+    mapExceptions(getRoomResponse.status);
+    if (getRoomResponse.status === 404) throw new RoomNotFoundException();
+
     const { components: _, ...room } = getRoomResponse.data.data;
 
     return room;
   }
 
   async deletePeer(roomId: string, peerId: string) {
-    await this.roomApi.deletePeer(roomId, peerId);
+    const response = await this.roomApi.deletePeer(roomId, peerId);
+
+    mapExceptions(response.status);
+    if (response.status === 404) throw new PeerNotFoundException();
   }
 
   async deleteRoom(roomId: string) {
-    await this.roomApi.deleteRoom(roomId);
+    const response = await this.roomApi.deleteRoom(roomId);
+
+    if (response.status === 404) throw new RoomNotFoundException();
+    mapExceptions(response.status);
   }
 }
