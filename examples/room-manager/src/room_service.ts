@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { type Room as RemoteRoom, type Peer as RemoteUser, RoomApi, FishjamClient } from '@fishjam-cloud/js-server-sdk';
+import { type Peer as RemoteUser, FishjamClient } from '@fishjam-cloud/js-server-sdk';
 
 import type {
   ServerMessage,
