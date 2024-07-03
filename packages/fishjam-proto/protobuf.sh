@@ -2,7 +2,7 @@
 
 set -e
 
-ROOTDIR=$(dirname $(dirname "$(readlink -f $0)"))
+ROOTDIR=$(dirname "$(readlink -f $0)")
 
 cd $ROOTDIR
 
@@ -11,8 +11,8 @@ git submodule sync --recursive >> /dev/null
 git submodule update --recursive --remote --init >> /dev/null
 printf "DONE\n"
 
-file="./protobufs/protos/fishjam/server_notifications.proto"
+file="./protos/fishjam/server_notifications.proto"
 
-printf "Compiling file $file... "
-protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./src/ $file
+printf "Compiling file $file... \n"
+protoc --plugin=./node_modules/.bin/ts_proto --ts_proto_out=./ $file
 printf "DONE\n"

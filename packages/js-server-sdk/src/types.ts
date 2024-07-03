@@ -1,4 +1,4 @@
-import { Peer, RoomConfig } from './openapi';
+import { Peer, RoomConfig } from 'fishjam-openapi';
 
 export type Room = {
   id: string;

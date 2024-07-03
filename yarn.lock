@@ -3051,7 +3051,6 @@ __metadata:
     axios: "npm:^1.6.8"
     fastify: "npm:^4.26.2"
     pino-pretty: "npm:^11.0.0"
-    ts-proto: "npm:^1.171.0"
     tsx: "npm:^4.7.2"
     typescript: "npm:~5.4.4"
   languageName: unknown
@@ -3061,7 +3060,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    typescript: "npm:^5.5.3"
+    typescript: "npm:^5.4.5"
   languageName: unknown
   linkType: soft
 
@@ -3500,7 +3499,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-proto@npm:^1.171.0, ts-proto@npm:^1.172.0":
+"ts-proto@npm:^1.172.0":
   version: 1.181.0
   resolution: "ts-proto@npm:1.181.0"
   dependencies:
@@ -3613,7 +3612,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.5.3":
+"typescript@npm:^5.4.5":
   version: 5.5.3
   resolution: "typescript@npm:5.5.3"
   bin:
@@ -3633,7 +3632,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.5.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.4.5#optional!builtin<compat/typescript>":
   version: 5.5.3
   resolution: "typescript@patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=b45daf"
   bin:

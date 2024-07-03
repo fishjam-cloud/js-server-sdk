@@ -38,8 +38,7 @@
   },
   "tsup": {
     "entry": [
-      "src/index.ts",
-      "src/protos/fishjam/index.ts"
+      "src/index.ts"
     ],
     "dts": true,
     "minify": true,

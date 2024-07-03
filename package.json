@@ -6,8 +6,8 @@
     "packages/js-server-sdk",
     "examples/*"
   ],
-  "packageManager": "yarn@4.3.0",
+  "packageManager": "yarn@4.3.1",
   "devDependencies": {
-    "typescript": "^5.5.3"
+    "typescript": "^5.4.5"
   }
 }

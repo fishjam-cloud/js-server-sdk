@@ -14,8 +14,7 @@
     "@fastify/env": "^4.3.0",
     "@fishjam-cloud/js-server-sdk": "*",
     "axios": "^1.6.8",
-    "fastify": "^4.26.2",
-    "ts-proto": "^1.171.0"
+    "fastify": "^4.26.2"
   },
   "devDependencies": {
     "@types/node": "^20.12.5",

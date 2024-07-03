@@ -1,3 +1,3 @@
-export * from './openapi';
+export * from 'fishjam-openapi';
 export * from './exceptions';
 export { FishjamClient } from './client';
