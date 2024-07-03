@@ -30,5 +30,8 @@ jobs:
       - name: Check formatting
         run: yarn format:check
 
+      - name: Build SDK
+        run: yarn build:sdk
+
       - name: Check typing
         run: yarn build:check
