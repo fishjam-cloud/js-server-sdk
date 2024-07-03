@@ -3,11 +3,11 @@ name: Examples CI
 on:
   push:
     branches: [main]
-    paths: ['examples/**']
+    paths: ["examples/**"]
 
   pull_request:
     branches: [main]
-    paths: ['examples/**']
+    paths: ["examples/**"]
 
 jobs:
   ci:
@@ -30,6 +30,9 @@ jobs:
         with:
           node-version: 20
           cache: npm
+
+      - name: Enable corepack
+        run: corepack enable
 
       - name: Install SDK
         working-directory: .

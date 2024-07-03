@@ -7,8 +7,17 @@ on:
       release-type:
         type: choice
         required: true
-        description: 'The release type that will be passed to npm version command'
-        options: ['patch', 'minor', 'major', 'prepatch', 'preminor', 'premajor', 'prerelease']
+        description: "The release type that will be passed to npm version command"
+        options:
+          [
+            "patch",
+            "minor",
+            "major",
+            "prepatch",
+            "preminor",
+            "premajor",
+            "prerelease",
+          ]
 
 jobs:
   release:
@@ -42,6 +51,9 @@ jobs:
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org/
+
+      - name: Enable corepack
+        run: corepack enable
 
       # Bump package version
       # Use tag 'latest'
