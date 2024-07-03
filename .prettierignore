@@ -2,4 +2,7 @@ node_modules/
 dist/
 docs/
 protos/
-src/
+src/openapi/
+README.md
+tsconfig.json
+docker-compose-dev.yaml

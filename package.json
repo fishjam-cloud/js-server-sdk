@@ -27,7 +27,7 @@
     "./proto": "./dist/protos/fishjam/index.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsup",
     "build:check": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -35,6 +35,19 @@
     "gen:proto": "sh codegen/protobuf.sh",
     "gen:api": "sh codegen/openapi.sh",
     "prepare": "tsc"
+  },
+  "tsup": {
+    "entry": [
+      "src/index.ts",
+      "src/protos/fishjam/index.ts"
+    ],
+    "dts": true,
+    "minify": true,
+    "format": [
+      "cjs",
+      "esm"
+    ],
+    "outDir": "dist"
   },
   "dependencies": {
     "axios": "^1.6.8",
@@ -45,6 +58,7 @@
     "@types/node": "^20.12.7",
     "prettier": "3.2.5",
     "ts-proto": "^1.172.0",
+    "tsup": "^8.1.0",
     "typedoc": "^0.25.13",
     "typescript": "^5.4.5"
   }

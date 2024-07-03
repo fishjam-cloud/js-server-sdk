@@ -65,8 +65,8 @@ jobs:
 
       - name: Build and bump package version in examples
         run: |
-          npm ci && cd examples
-          cd room-manager && npm i @fishjam-cloud/js-server-sdk && cd ..
+          yarn --frozen-lockfile && cd examples
+          cd room-manager && yarn add @fishjam-cloud/js-server-sdk && cd ..
 
       # Commit changes
       - name: Commit changed files and create a new tag

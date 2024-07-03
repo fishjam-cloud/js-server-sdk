@@ -1,201 +1,147 @@
-import axios from 'axios';
-
-import { type Room as RemoteRoom, type Peer as RemoteUser, RoomApi } from '@fishjam-cloud/js-server-sdk';
-
-import type {
-  ServerMessage,
-  ServerMessage_PeerCrashed,
-  ServerMessage_PeerDeleted,
-  ServerMessage_RoomCrashed,
-  ServerMessage_RoomDeleted,
-} from '@fishjam-cloud/js-server-sdk/proto';
-
-import config from './config';
+import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
+import { fastify } from './index';
+import { FishjamClient, RoomNotFoundException } from '@fishjam-cloud/js-server-sdk';
 
 type RoomId = string;
-type UserId = string;
 type PeerId = string;
 
-interface User {
-  peerId: PeerId;
-  token: string;
-  url: string;
-}
+type UserId = string;
+type RoomName = string;
 
-interface Room {
+export type User = {
+  token: string;
+  peerId: PeerId;
+  url: string;
+};
+
+type Room = {
+  users: Record<UserId, User>;
   roomId: RoomId;
-  users: Map<UserId, User>;
-}
+};
 
 export class RoomService {
-  private readonly rooms = new Map<RoomId, Room>();
-  private readonly roomApi: RoomApi;
+  private readonly cache = new Map<RoomName, Room>();
+  private readonly fishjamClient: FishjamClient;
   private readonly tls: boolean;
 
-  constructor() {
-    const client = axios.create({
-      headers: {
-        Authorization: `Bearer ${config.serverToken}`,
-      },
+  constructor(fishjamUrl: string, serverToken: string) {
+    this.fishjamClient = new FishjamClient({
+      fishjamUrl,
+      serverToken,
     });
-
-    this.roomApi = new RoomApi(undefined, config.fishjamUrl, client);
-    this.tls = config.fishjamUrl.startsWith('https');
+    this.tls = fishjamUrl.includes('https');
   }
 
-  async findOrCreateUser(roomId: string, userId: string): Promise<User> {
-    const room = await this.findOrCreateRoom(roomId);
-    let user = room.users.get(userId);
+  async findOrCreateUser(roomName: string, userId: string): Promise<User> {
+    const room = await this.findOrCreateRoom(roomName);
 
-    // make sure the user exists on the Fishjam server as well
-    const remoteUser = user ? await this.findRemoteUser(roomId, user.peerId) : null;
+    if (room.users[userId]) {
+      fastify.log.info({ name: 'Peer and room exist', userId, roomName });
 
-    if (user && remoteUser) {
-      console.log({ message: 'The user already exists', roomId, userId, peerId: user.peerId });
+      return room.users[userId];
     } else {
-      user = await this.createUser(roomId, userId);
+      fastify.log.info({ name: 'Creating peer' });
 
-      console.log({ message: 'Added the user to the existing room', roomId, userId, peerId: user.peerId });
+      const peerData = await this.createPeer(roomName, room.roomId);
 
-      room.users.set(userId, user);
+      fastify.log.info({ name: 'Adding peer to cache' });
+
+      room.users[userId] = peerData;
+
+      return peerData;
     }
-
-    return user;
   }
 
-  handleFishjamMessage(notification: ServerMessage): void {
+  async handleJellyfishMessage(notification: ServerMessage) {
     Object.entries(notification)
-      .filter(([_key, value]) => value)
-      .forEach(([key, value]) => {
-        const roomId = value.roomId;
-        const stringified = JSON.stringify({ [key]: value });
-
-        console.log({ message: `Got a server notification: ${stringified}`, roomId });
+      .filter(([name, value]) => value)
+      .forEach(([name, value]) => {
+        fastify.log.info({ [name]: value });
       });
 
-    const peerDownNotification = notification.peerDisconnected ?? notification.peerCrashed;
+    // todo add peer deleted
+    if (notification.peerCrashed) {
+      const { roomId, peerId } = notification.peerCrashed;
 
-    if (peerDownNotification) {
-      this.handlePeerDown(peerDownNotification);
+      const roomData = await this.getRoomFromCache(roomId);
+      if (!roomData) return;
+
+      const userId = Object.entries(roomData.users).find(([_, data]) => data.peerId === peerId)?.[0];
+      if (userId) {
+        delete roomData.users[userId];
+        fastify.log.info({ name: 'Peer deleted from cache', roomId, peerId });
+      }
     }
 
-    const roomDownNotification = notification.roomDeleted ?? notification.roomCrashed;
+    const roomDeletedOrCrashed = notification.roomDeleted || notification.roomCrashed;
 
-    if (roomDownNotification) {
-      this.handleRoomDown(roomDownNotification);
+    if (roomDeletedOrCrashed) {
+      this.cache.delete(roomDeletedOrCrashed.roomId);
+      fastify.log.info({
+        name: 'Room deleted from cache',
+        roomId: roomDeletedOrCrashed.roomId,
+      });
     }
   }
 
-  private async findOrCreateRoom(roomId: string): Promise<Room> {
-    let room = this.rooms.get(roomId);
-    const remoteRoom = await this.findRemoteRoom(roomId);
-
-    if (!(room && remoteRoom)) {
-      await this.findOrCreateRoomInFishjam(roomId);
-
-      room = { roomId, users: new Map() };
-
-      this.rooms.set(roomId, room);
+  private async findOrCreateRoom(roomName: string): Promise<Room> {
+    if (!this.cache.has(roomName)) {
+      const roomId = await this.findOrCreateRoomInFishJam(roomName);
+      this.cache.set(roomName, { users: {}, roomId });
     }
-
-    return room;
+    return this.cache.get(roomName)!;
   }
 
-  private async createUser(roomId: string, userId: string): Promise<User> {
-    const {
-      data: { data },
-    } = await this.roomApi.addPeer(roomId, { type: 'webrtc', options: { enableSimulcast: config.enableSimulcast } });
+  private async getRoomFromCache(roomName: string): Promise<Room | null> {
+    return this.cache.get(roomName) || null;
+  }
 
-    const peerWebsocketUrl = data.peer_websocket_url ?? config.fishjamUrl + '/socket/peer/websocket';
+  private async createPeer(roomName: string, url: string): Promise<User> {
+    const [peer, { websocketToken, websocketUrl }] = await this.fishjamClient.createPeer(roomName, {
+      enableSimulcast: fastify.config.ENABLE_SIMULCAST,
+    });
 
-    const peerId = data.peer.id;
+    const peerWebsocketUrl = websocketUrl ?? fastify.config.JELLYFISH_URL + '/socket/peer/websocket';
 
     const user = {
-      peerId,
-      token: data.token,
+      peerId: peer.id,
+      token: websocketToken,
       url: `${this.tls ? 'wss' : 'ws'}://${peerWebsocketUrl}`,
     };
 
-    console.log({ message: 'User created', roomId, userId, peerId });
+    fastify.log.info({ user, peerWebsocketUrl });
 
     return user;
   }
 
-  private async findOrCreateRoomInFishjam(roomId: string): Promise<void> {
+  private async findOrCreateRoomInFishJam(roomName: string): Promise<RoomId> {
+    // Check if the room exists in the application.
+    // This may happen when someone creates a room outside of this application
+    // or when the room was created in the previous run of the application.
     try {
-      // Check if the room exists in the application.
-      // This may happen when someone creates a room outside of this application
-      // or when the room was created in the previous run of the application.
-      const room = (await this.roomApi.getAllRooms()).data.data.find((room) => room.id === roomId);
+      const room = await this.fishjamClient.getRoom(roomName);
+      fastify.log.info({ name: 'Room already exist in the FishJam', room });
 
-      if (room) {
-        console.warn({ message: 'Room already exists in Fishjam', roomId });
-
-        return;
-      }
-
-      console.log({ message: 'Creating a room in Fishjam', roomId });
-
-      const optionalConfig = {
-        maxPeers: config.maxPeers,
-        peerlessPurgeTimeout: config.peerlessPurgeTimeout,
-      };
-
-      await this.roomApi.createRoom({
-        roomId,
-        webhookUrl: config.webhookUrl,
-        ...optionalConfig,
-      });
-
-      console.log({ message: 'Room created', roomId });
-    } catch (error) {
-      const stringified = JSON.stringify(error);
-
-      console.error({ message: `Failed to create room in Fishjam due to ${stringified}`, roomId });
-
-      throw error;
-    }
-  }
-
-  private async findRemoteRoom(roomId: string): Promise<RemoteRoom | null> {
-    return (await this.roomApi.getAllRooms()).data.data.find((room) => room.id === roomId) ?? null;
-  }
-
-  private async findRemoteUser(roomId: string, peerId: string): Promise<RemoteUser | null> {
-    return (await this.roomApi.getRoom(roomId)).data.data.peers.find((peer) => peer.id === peerId) ?? null;
-  }
-
-  private handlePeerDown(notification: ServerMessage_PeerDeleted | ServerMessage_PeerCrashed): void {
-    const { roomId, peerId } = notification;
-
-    const roomData = this.rooms.get(roomId);
-
-    if (!roomData) {
-      console.warn({ message: 'Got a peer down notification for a non-tracked room, ignoring', roomId, peerId });
-
-      return;
+      return room.id;
+    } catch (err) {
+      const roomNotFound = err instanceof RoomNotFoundException;
+      if (!roomNotFound) throw err;
     }
 
-    const userId = Array.from(roomData.users.entries()).find(([_userId, user]) => user.peerId === peerId)?.[0];
+    fastify.log.info({
+      name: 'Creating room in the FishJam',
+      roomId: roomName,
+    });
 
-    if (userId) {
-      roomData.users.delete(userId);
+    const newRoom = await this.fishjamClient.createRoom({
+      maxPeers: fastify.config.MAX_PEERS,
+      roomId: roomName,
+      webhookUrl: fastify.config.WEBHOOK_URL,
+      peerlessPurgeTimeout: fastify?.config?.PEERLESS_PURGE_TIMEOUT,
+    });
 
-      console.log({ message: 'Removed the peer from the room', roomId, userId, peerId });
-    } else {
-      console.warn({
-        message: 'Got a peer down notification for a non-tracked user, ignoring',
-        roomId,
-        peerId,
-      });
-    }
-  }
+    fastify.log.info({ name: 'Room created', newRoom });
 
-  private handleRoomDown(notification: ServerMessage_RoomDeleted | ServerMessage_RoomCrashed): void {
-    const { roomId } = notification;
-
-    this.rooms.delete(roomId);
-
-    console.log({ message: 'Room down', roomId });
+    return newRoom.id;
   }
 }

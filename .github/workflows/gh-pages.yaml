@@ -35,8 +35,8 @@ jobs:
 
       - name: Generate docs
         run: |
-          npm ci
-          npm run docs
+          yarn --frozen-lockfile
+          yarn docs
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4

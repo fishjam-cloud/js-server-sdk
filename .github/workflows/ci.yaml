@@ -22,16 +22,16 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: yarn --frozen-lockfile
 
       - name: Check formatting
-        run: npm run format:check
+        run: yarn format:check
 
       - name: Check typing
-        run: npm run build:check
+        run: yarn build:check
 
       - name: Check docs
-        run: npm run docs
+        run: yarn docs
 
   check-examples:
     runs-on: ubuntu-latest
@@ -56,10 +56,10 @@ jobs:
 
       - name: Install SDK
         working-directory: .
-        run: npm ci
+        run: yarn --frozen-lockfile
 
       - name: Check Room Manager example
         working-directory: examples/room-manager
         run: |
-          npm ci
-          npm run build:check
+          yarn --frozen-lockfile
+          yarn build:check

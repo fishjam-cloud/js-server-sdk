@@ -1,40 +1,48 @@
-import express, { type RequestHandler } from 'express';
-import bodyParser from 'body-parser';
-
+import Fastify, { FastifyRequest } from 'fastify';
+import cors from '@fastify/cors';
+import { configSchema } from './config';
+import fastifyEnv from '@fastify/env';
+import { roomsEndpoints } from './rooms';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 
-import config from './config';
-import { RoomService } from './room_service';
+const envToLogger = {
+  development: {
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        translateTime: 'HH:MM:ss Z',
+        ignore: 'pid,hostname',
+      },
+    },
+  },
+  production: true,
+  test: false,
+};
 
-const app = express();
+export const fastify = Fastify({ logger: envToLogger.development });
 
-const roomService = new RoomService();
+async function setupServer() {
+  await fastify.register(cors, { origin: '*' });
+  await fastify.register(fastifyEnv, { schema: configSchema });
 
-app.get('/rooms/:roomId/users/:userId', (async (req, res) => {
-  const { roomId, userId } = req.params;
-  const { token, url } = await roomService.findOrCreateUser(roomId, userId);
+  fastify.log.info({ config: fastify.config });
 
-  res.send({ token, url });
-}) as RequestHandler);
+  fastify.addContentTypeParser(
+    'application/x-protobuf',
+    { parseAs: 'buffer' },
+    async (_req: FastifyRequest, body: Buffer) => {
+      return ServerMessage.decode(body);
+    }
+  );
 
-app.post('/webhook', bodyParser.raw({ type: 'application/x-protobuf' }), (req, res) => {
-  const contentType = req.get('content-type');
+  fastify.register(roomsEndpoints);
 
-  if (contentType === 'application/x-protobuf' && Buffer.isBuffer(req.body)) {
-    const message = ServerMessage.decode(req.body);
+  fastify.listen({ port: fastify.config.PORT, host: '0.0.0.0' }, (err, address) => {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+  });
+}
 
-    roomService.handleFishjamMessage(message);
-
-    res.status(200).send();
-  } else {
-    console.warn({
-      message: `Unexpected message of type ${contentType} received on the webhook endpoint: ${JSON.stringify(req.body)}`,
-    });
-
-    res.status(400).send();
-  }
-});
-
-app.listen(config.port, () => {
-  console.log({ message: `Server listening at ${config.port}` });
-});
+setupServer();

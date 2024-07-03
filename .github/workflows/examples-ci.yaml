@@ -33,16 +33,10 @@ jobs:
 
       - name: Install SDK
         working-directory: .
-        run: npm ci
+        run: yarn --frozen-lockfile
 
       - name: Install dependencies
-        run: npm ci
-
-      - name: Check formatting
-        run: npm run format:check
+        run: yarn --frozen-lockfile
 
       - name: Check typing
-        run: npm run build:check
-
-      - name: Check linting
-        run: npm run lint:check
+        run: yarn build:check
