@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { RoomApi, RoomConfig, PeerOptions } from './openapi';
+import { RoomApi, RoomConfig, PeerOptions } from 'fishjam-openapi';
 import { Room } from './types';
-import { PeerNotFoundException, RoomNotFoundException } from './exceptions';
-import { mapExceptions } from './exceptions/mapper';
+import { raisePossibleExceptions } from './exceptions/mapper';
 
 type FishjamConfig = {
   fishjamUrl: string;
@@ -28,7 +27,7 @@ export class FishjamClient {
       options,
     });
 
-    mapExceptions(response.status);
+    raisePossibleExceptions(response.status);
 
     const {
       data: { data },
@@ -40,7 +39,7 @@ export class FishjamClient {
   async createRoom(config: RoomConfig = {}) {
     const response = await this.roomApi.createRoom(config);
 
-    mapExceptions(response.status);
+    raisePossibleExceptions(response.status);
 
     const {
       data: {
@@ -56,7 +55,7 @@ export class FishjamClient {
   async getAllRooms() {
     const getAllRoomsRepsonse = await this.roomApi.getAllRooms();
 
-    mapExceptions(getAllRoomsRepsonse.status);
+    raisePossibleExceptions(getAllRoomsRepsonse.status);
 
     return getAllRoomsRepsonse.data.data.map(({ components: _, ...room }) => room) ?? [];
   }
@@ -64,7 +63,7 @@ export class FishjamClient {
   async getRoom(roomId: string): Promise<Room> {
     const getRoomResponse = await this.roomApi.getRoom(roomId);
 
-    mapExceptions(getRoomResponse.status, 'room');
+    raisePossibleExceptions(getRoomResponse.status, 'room');
 
     const { components: _, ...room } = getRoomResponse.data.data;
 
@@ -74,12 +73,12 @@ export class FishjamClient {
   async deletePeer(roomId: string, peerId: string) {
     const response = await this.roomApi.deletePeer(roomId, peerId);
 
-    mapExceptions(response.status, 'peer');
+    raisePossibleExceptions(response.status, 'peer');
   }
 
   async deleteRoom(roomId: string) {
     const response = await this.roomApi.deleteRoom(roomId);
 
-    mapExceptions(response.status, 'room');
+    raisePossibleExceptions(response.status, 'room');
   }
 }

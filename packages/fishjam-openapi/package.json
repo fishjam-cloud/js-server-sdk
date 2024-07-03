@@ -1,0 +1,13 @@
+{
+  "name": "fishjam-openapi",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "yarn@4.3.0",
+  "scripts": {
+    "codegen": "sh openapi.sh"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.13.4"
+  },
+  "main": "src/index.ts"
+}

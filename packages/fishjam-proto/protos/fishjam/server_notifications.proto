@@ -1,0 +1,179 @@
+syntax = "proto3";
+
+package fishjam;
+
+// Defines any type of message passed between FJ and server client
+message ServerMessage {
+  // Notification sent when a room crashes
+  message RoomCrashed {
+    string room_id = 1;
+  }
+
+  // Notification sent when a peer is added
+  message PeerAdded {
+    string room_id = 1;
+    string peer_id = 2;
+  }
+
+  // Notification sent when a peer is removed
+  message PeerDeleted {
+    string room_id = 1;
+    string peer_id = 2;
+  }
+
+  // Notification sent when a peer connects
+  message PeerConnected {
+    string room_id = 1;
+    string peer_id = 2;
+  }
+
+  // Notification sent when a peer disconnects from FJ
+  message PeerDisconnected {
+    string room_id = 1;
+    string peer_id = 2;
+  }
+
+  // Notification sent when a peer crashes
+  message PeerCrashed {
+    string room_id = 1;
+    string peer_id = 2;
+    string reason = 3;
+  }
+
+  // Notification sent when a component crashes
+  message ComponentCrashed {
+    string room_id = 1;
+    string component_id = 2;
+  }
+
+  // Response sent by FJ, confirming successfull authentication
+  message Authenticated {}
+
+  // Request sent by client, to authenticate to FJ server
+  message AuthRequest {
+    string token = 1;
+  }
+
+  // Defines message groups for which client can subscribe
+  enum EventType {
+    EVENT_TYPE_UNSPECIFIED = 0;
+    EVENT_TYPE_SERVER_NOTIFICATION = 1;
+    EVENT_TYPE_METRICS = 2;
+  }
+
+  // Request sent by client to subsribe for certain message type
+  message SubscribeRequest {
+    EventType event_type = 1;
+  }
+
+  // Response sent by FJ, confirming subscription for message type
+  message SubscribeResponse {
+    EventType event_type = 1;
+  }
+
+  // Notification sent when a room is created
+  message RoomCreated {
+    string room_id = 1;
+  }
+
+  // Notification sent when a room is deleted
+  message RoomDeleted {
+    string room_id = 1;
+  }
+
+  // Message containing WebRTC metrics from FJ
+  message MetricsReport {
+    string metrics = 1;
+  }
+
+  // Notification sent when the HLS stream becomes available in a room
+  message HlsPlayable {
+    string room_id = 1;
+    string component_id = 2;
+  }
+
+  // Notification sent when the HLS recording is successfully uploded to AWS S3
+  message HlsUploaded {
+    string room_id = 1;
+  }
+
+  // Notification sent when the upload of HLS recording to AWS S3 fails
+  message HlsUploadCrashed {
+    string room_id = 1;
+  }
+
+  // Notification sent when peer updates its metadata
+  message PeerMetadataUpdated {
+    string room_id = 1;
+    string peer_id = 2;
+    string metadata = 3;
+  }
+
+  // Defines types of tracks being published by peers and component
+  enum TrackType {
+    TRACK_TYPE_UNSPECIFIED = 0;
+    TRACK_TYPE_VIDEO = 1;
+    TRACK_TYPE_AUDIO = 2;
+  }
+
+  // Describes a media track
+  message Track {
+    string id = 1;
+    TrackType type = 2;
+    string metadata = 3;
+  }
+
+  // Notification sent when peer or component adds new track
+  message TrackAdded {
+    string room_id = 1;
+    oneof endpoint_info {
+      string peer_id = 2;
+      string component_id = 3;
+    }
+    Track track = 4;
+  }
+
+  // Notification sent when a track is removed
+  message TrackRemoved {
+    string room_id = 1;
+    oneof endpoint_info {
+      string peer_id = 2;
+      string component_id = 3;
+    }
+    Track track = 4;
+  }
+
+  // Notification sent when metadata of a multimedia track is updated
+  message TrackMetadataUpdated {
+    string room_id = 1;
+    oneof endpoint_info {
+      string peer_id = 2;
+      string component_id = 3;
+    }
+    Track track = 4;
+  }
+
+  oneof content {
+    RoomCrashed room_crashed = 1;
+    PeerConnected peer_connected = 2;
+    PeerDisconnected peer_disconnected = 3;
+    PeerCrashed peer_crashed = 4;
+    ComponentCrashed component_crashed = 5;
+    Authenticated authenticated = 6;
+    AuthRequest auth_request = 7;
+    SubscribeRequest subscribe_request = 8;
+    SubscribeResponse subscribe_response = 9;
+    RoomCreated room_created = 10;
+    RoomDeleted room_deleted = 11;
+    MetricsReport metrics_report = 12;
+    HlsPlayable hls_playable = 13;
+    HlsUploaded hls_uploaded = 14;
+    HlsUploadCrashed hls_upload_crashed = 15;
+    PeerMetadataUpdated peer_metadata_updated = 16;
+    TrackAdded track_added = 17;
+    TrackRemoved track_removed = 18;
+    TrackMetadataUpdated track_metadata_updated = 19;
+    PeerAdded peer_added = 20;
+    PeerDeleted peer_deleted = 21;
+  }
+}

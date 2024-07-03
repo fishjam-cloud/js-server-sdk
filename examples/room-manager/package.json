@@ -12,15 +12,15 @@
   "dependencies": {
     "@fastify/cors": "^9.0.1",
     "@fastify/env": "^4.3.0",
-    "@fishjam-cloud/js-server-sdk": "file:../../",
+    "@fishjam-cloud/js-server-sdk": "workspace:*",
     "axios": "^1.6.8",
-    "fastify": "^4.26.2",
-    "ts-proto": "^1.171.0"
+    "fastify": "^4.26.2"
   },
   "devDependencies": {
     "@types/node": "^20.12.5",
     "pino-pretty": "^11.0.0",
+    "tsc": "^2.0.4",
     "tsx": "^4.7.2",
-    "typescript": "^5.4.4"
+    "typescript": "~5.4.4"
   }
 }

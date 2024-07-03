@@ -1,0 +1,62 @@
+{
+  "name": "@fishjam-cloud/js-server-sdk",
+  "version": "0.1.0",
+  "description": "Fishjam server SDK for JavaScript",
+  "homepage": "https://github.com/fishjam-cloud/js-server-sdk",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fishjam-cloud/js-server-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fishjam-cloud/js-server-sdk/issues"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "webrtc",
+    "fishjam",
+    "server",
+    "membrane"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./proto": "./dist/proto.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "build:check": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "tsc"
+  },
+  "tsup": {
+    "entry": [
+      "src/index.ts",
+      "src/proto.ts"
+    ],
+    "dts": true,
+    "minify": true,
+    "format": [
+      "cjs",
+      "esm"
+    ],
+    "outDir": "dist"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "fishjam-openapi": "workspace:*",
+    "fishjam-proto": "workspace:*"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.13.4",
+    "@types/node": "^20.12.7",
+    "prettier": "3.2.5",
+    "tsup": "^8.1.0",
+    "typedoc": "^0.25.13",
+    "typescript": "~5.4.5"
+  }
+}

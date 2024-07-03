@@ -1,65 +1,15 @@
 {
-  "name": "@fishjam-cloud/js-server-sdk",
-  "version": "0.1.0",
-  "description": "Fishjam server SDK for JavaScript",
-  "homepage": "https://github.com/fishjam-cloud/js-server-sdk",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/fishjam-cloud/js-server-sdk.git"
-  },
-  "bugs": {
-    "url": "https://github.com/fishjam-cloud/js-server-sdk/issues"
-  },
-  "license": "Apache-2.0",
-  "keywords": [
-    "webrtc",
-    "fishjam",
-    "server",
-    "membrane"
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "examples/*"
   ],
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "exports": {
-    ".": "./dist/index.js",
-    "./proto": "./dist/protos/fishjam/index.js"
+  "packageManager": "yarn@4.3.1",
+  "devDependencies": {
+    "typescript": "^5.4.5"
   },
   "scripts": {
-    "build": "tsup",
-    "build:check": "tsc --noEmit",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "docs": "typedoc src src/protos/fishjam",
-    "gen:proto": "sh codegen/protobuf.sh",
-    "gen:api": "sh codegen/openapi.sh",
-    "prepare": "tsc"
-  },
-  "tsup": {
-    "entry": [
-      "src/index.ts",
-      "src/protos/fishjam/index.ts"
-    ],
-    "dts": true,
-    "minify": true,
-    "format": [
-      "cjs",
-      "esm"
-    ],
-    "outDir": "dist"
-  },
-  "dependencies": {
-    "axios": "^1.6.8",
-    "protobufjs": "^7.2.6"
-  },
-  "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.13.4",
-    "@types/node": "^20.12.7",
-    "prettier": "3.2.5",
-    "ts-proto": "^1.172.0",
-    "tsup": "^8.1.0",
-    "typedoc": "^0.25.13",
-    "typescript": "^5.4.5"
+    "build:sdk": "yarn workspace @fishjam-cloud/js-server-sdk build",
+    "build:check": "yarn workspaces foreach -A -p run build:check"
   }
 }
