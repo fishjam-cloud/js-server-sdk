@@ -37,13 +37,6 @@ async function setupServer() {
 
   fastify.register(roomsEndpoints);
 
-  // example endpoint
-  fastify.get('/hello', async (request, reply) => {
-    return {
-      hello: 'World',
-    };
-  });
-
   fastify.listen({ port: fastify.config.PORT, host: '0.0.0.0' }, (err, address) => {
     if (err) {
       console.error(err);

@@ -8,14 +8,8 @@
 ## Running (in dev mode)
 
 ```sh
-EXTERNAL_IP=`ifconfig | grep 192.168 | cut -d ' ' -f 2`  JELLYFISH_VERSION=edge docker-compose -f docker-compose-dev.yaml up
-npm install
-npm start
+EXTERNAL_IP=`ifconfig | grep 192.168 | cut -d ' ' -f 2`  FISHJAM_VERSION=edge docker-compose -f docker-compose-dev.yaml up
+yarn
+yarn start
 ```
 
-
-## Generate OpenAPI
-
-```shell
-npx @openapitools/openapi-generator-cli generate -i /path/to/openapi.yaml -g typescript-axios -o ./output/path
-```
