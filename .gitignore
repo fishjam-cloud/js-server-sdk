@@ -131,3 +131,7 @@ dist
 
 # Documentation
 docs/
+
+# IntelliJ
+*.iml
+.idea
