@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '.';
 
-export const mapExceptions = (code: number, entity?: 'peer' | 'room') => {
+export const raisePossibleExceptions = (code: number, entity?: 'peer' | 'room') => {
   switch (code) {
     case 400:
       throw new BadRequestException();
