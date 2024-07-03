@@ -2,7 +2,7 @@
 // versions:
 //   protoc-gen-ts_proto  v1.181.0
 //   protoc               v5.27.1
-// source: protos/fishjam/server_notifications.proto
+// source: server_notifications.proto
 
 /* eslint-disable */
 import * as _m0 from "protobufjs/minimal";

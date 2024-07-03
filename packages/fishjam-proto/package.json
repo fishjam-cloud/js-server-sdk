@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "packageManager": "yarn@4.3.0",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "codegen": "sh protobuf.sh"
   },
