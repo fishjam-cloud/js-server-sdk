@@ -11,7 +11,7 @@ git submodule sync --recursive >> /dev/null
 git submodule update --recursive --remote --init >> /dev/null
 printf "DONE\n"
 
-file="./protos/fishjam/server_notifications.proto"
+file="./protobufs/protos/fishjam/server_notifications.proto"
 
 printf "Compiling file $file... "
 protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./src/ $file

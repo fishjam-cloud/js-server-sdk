@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { RoomApi, RoomConfig, PeerOptions } from './openapi';
+import axios from "axios";
+import { RoomApi, RoomConfig, PeerOptions } from 'fishjam-openapi';
 import { Room } from './types';
 import { PeerNotFoundException, RoomNotFoundException } from './exceptions';
 import { mapExceptions } from './exceptions/mapper';
