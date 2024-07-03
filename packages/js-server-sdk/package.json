@@ -24,7 +24,7 @@
   ],
   "exports": {
     ".": "./dist/index.js",
-    "./proto": "./dist/protos/fishjam/index.js"
+    "./proto": "./dist/proto.js"
   },
   "scripts": {
     "build": "tsup",
@@ -38,7 +38,8 @@
   },
   "tsup": {
     "entry": [
-      "src/index.ts"
+      "src/index.ts",
+      "src/proto.ts"
     ],
     "dts": true,
     "minify": true,
