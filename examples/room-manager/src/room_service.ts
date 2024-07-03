@@ -1,6 +1,9 @@
-import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
-import { fastify } from './index';
-import { FishjamClient, RoomNotFoundException } from '@fishjam-cloud/js-server-sdk';
+import { ServerMessage } from "@fishjam-cloud/js-server-sdk/proto";
+import { fastify } from "./index";
+import {
+  FishjamClient,
+  RoomNotFoundException,
+} from "@fishjam-cloud/js-server-sdk";
 
 type RoomId = string;
 type PeerId = string;
@@ -29,22 +32,22 @@ export class RoomService {
       fishjamUrl,
       serverToken,
     });
-    this.tls = fishjamUrl.includes('https');
+    this.tls = fishjamUrl.includes("https");
   }
 
   async findOrCreateUser(roomName: string, userId: string): Promise<User> {
     const room = await this.findOrCreateRoom(roomName);
 
     if (room.users[userId]) {
-      fastify.log.info({ name: 'Peer and room exist', userId, roomName });
+      fastify.log.info({ name: "Peer and room exist", userId, roomName });
 
       return room.users[userId];
     } else {
-      fastify.log.info({ name: 'Creating peer' });
+      fastify.log.info({ name: "Creating peer" });
 
       const peerData = await this.createPeer(roomName, room.roomId);
 
-      fastify.log.info({ name: 'Adding peer to cache' });
+      fastify.log.info({ name: "Adding peer to cache" });
 
       room.users[userId] = peerData;
 
@@ -66,19 +69,22 @@ export class RoomService {
       const roomData = await this.getRoomFromCache(roomId);
       if (!roomData) return;
 
-      const userId = Object.entries(roomData.users).find(([_, data]) => data.peerId === peerId)?.[0];
+      const userId = Object.entries(roomData.users).find(
+        ([_, data]) => data.peerId === peerId
+      )?.[0];
       if (userId) {
         delete roomData.users[userId];
-        fastify.log.info({ name: 'Peer deleted from cache', roomId, peerId });
+        fastify.log.info({ name: "Peer deleted from cache", roomId, peerId });
       }
     }
 
-    const roomDeletedOrCrashed = notification.roomDeleted || notification.roomCrashed;
+    const roomDeletedOrCrashed =
+      notification.roomDeleted || notification.roomCrashed;
 
     if (roomDeletedOrCrashed) {
       this.cache.delete(roomDeletedOrCrashed.roomId);
       fastify.log.info({
-        name: 'Room deleted from cache',
+        name: "Room deleted from cache",
         roomId: roomDeletedOrCrashed.roomId,
       });
     }
@@ -97,16 +103,18 @@ export class RoomService {
   }
 
   private async createPeer(roomName: string, url: string): Promise<User> {
-    const [peer, { websocketToken, websocketUrl }] = await this.fishjamClient.createPeer(roomName, {
-      enableSimulcast: fastify.config.ENABLE_SIMULCAST,
-    });
+    const [peer, { websocketToken, websocketUrl }] =
+      await this.fishjamClient.createPeer(roomName, {
+        enableSimulcast: fastify.config.ENABLE_SIMULCAST,
+      });
 
-    const peerWebsocketUrl = websocketUrl ?? fastify.config.JELLYFISH_URL + '/socket/peer/websocket';
+    const peerWebsocketUrl =
+      websocketUrl ?? fastify.config.JELLYFISH_URL + "/socket/peer/websocket";
 
     const user = {
       peerId: peer.id,
       token: websocketToken,
-      url: `${this.tls ? 'wss' : 'ws'}://${peerWebsocketUrl}`,
+      url: `${this.tls ? "wss" : "ws"}://${peerWebsocketUrl}`,
     };
 
     fastify.log.info({ user, peerWebsocketUrl });
@@ -120,7 +128,7 @@ export class RoomService {
     // or when the room was created in the previous run of the application.
     try {
       const room = await this.fishjamClient.getRoom(roomName);
-      fastify.log.info({ name: 'Room already exist in the FishJam', room });
+      fastify.log.info({ name: "Room already exist in the FishJam", room });
 
       return room.id;
     } catch (err) {
@@ -129,7 +137,7 @@ export class RoomService {
     }
 
     fastify.log.info({
-      name: 'Creating room in the FishJam',
+      name: "Creating room in the FishJam",
       roomId: roomName,
     });
 
@@ -140,7 +148,7 @@ export class RoomService {
       peerlessPurgeTimeout: fastify?.config?.PEERLESS_PURGE_TIMEOUT,
     });
 
-    fastify.log.info({ name: 'Room created', newRoom });
+    fastify.log.info({ name: "Room created", newRoom });
 
     return newRoom.id;
   }

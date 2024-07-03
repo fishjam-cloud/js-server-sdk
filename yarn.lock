@@ -3051,6 +3051,7 @@ __metadata:
     axios: "npm:^1.6.8"
     fastify: "npm:^4.26.2"
     pino-pretty: "npm:^11.0.0"
+    tsc: "npm:^2.0.4"
     tsx: "npm:^4.7.2"
     typescript: "npm:~5.4.4"
   languageName: unknown
@@ -3510,6 +3511,15 @@ __metadata:
   bin:
     protoc-gen-ts_proto: protoc-gen-ts_proto
   checksum: 10c0/2d8d4aa74db0a58ff8017fb1e600544a9646e7194bfcbcb1f0b0d306fc124718740d21c1c90207bdfa089293d047bcdee4f9ea821974eeb3cafdde91ccc18fef
+  languageName: node
+  linkType: hard
+
+"tsc@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "tsc@npm:2.0.4"
+  bin:
+    tsc: bin/tsc
+  checksum: 10c0/4651d344891d995e62ab7ca64ce0a8597bbdc2d392886c9956d15caab4dc9bfe86e759d3385b3f97c49fb5294194a161d6812673e3f51e46357c82482f32c3ab
   languageName: node
   linkType: hard
 
