@@ -1,108 +1,85 @@
-import { ServerMessage } from "@fishjam-cloud/js-server-sdk/proto";
-import { fastify } from "./index";
 import {
   FishjamClient,
+  Peer,
   RoomNotFoundException,
 } from "@fishjam-cloud/js-server-sdk";
+import { ServerMessage } from "@fishjam-cloud/js-server-sdk/proto";
+import { fastify } from "./index";
 
 type RoomId = string;
 type PeerId = string;
 
-type UserId = string;
-type RoomName = string;
-
 export type User = {
   token: string;
-  peerId: PeerId;
-  url: string;
-};
-
-type Room = {
-  users: Record<UserId, User>;
-  roomId: RoomId;
+  peer: Peer;
 };
 
 export class RoomService {
-  private readonly cache = new Map<RoomName, Room>();
+  private readonly roomTokenMap = new Map<RoomId, [PeerId, string][]>();
   private readonly fishjamClient: FishjamClient;
-  private readonly tls: boolean;
 
   constructor(fishjamUrl: string, serverToken: string) {
     this.fishjamClient = new FishjamClient({
       fishjamUrl,
       serverToken,
     });
-    this.tls = fishjamUrl.includes("https");
   }
 
   async findOrCreateUser(roomName: string, userId: string): Promise<User> {
-    const room = await this.findOrCreateRoom(roomName);
+    const room = await this.findOrCreateRoomInFishJam(roomName);
+    const peer = room.peers.find((peer) => peer.id === userId);
 
-    if (room.users[userId]) {
-      fastify.log.info({ name: "Peer and room exist", userId, roomName });
-
-      return room.users[userId];
-    } else {
+    if (!peer) {
       fastify.log.info({ name: "Creating peer" });
-
-      const peerData = await this.createPeer(roomName, room.roomId);
-
-      fastify.log.info({ name: "Adding peer to cache" });
-
-      room.users[userId] = peerData;
-
-      return peerData;
+      return await this.createPeer(roomName);
     }
+
+    const token = this.roomTokenMap
+      .get(room.id)
+      ?.find(([id]) => id === userId)?.[1];
+
+    if (!token) throw Error("Missing token for user in room");
+    fastify.log.info({ name: "Peer and room exist", userId, roomName });
+
+    return { peer, token };
   }
 
   async handleJellyfishMessage(notification: ServerMessage) {
     Object.entries(notification)
-      .filter(([name, value]) => value)
+      .filter(([_, value]) => value)
       .forEach(([name, value]) => {
         fastify.log.info({ [name]: value });
       });
 
-    // todo add peer deleted
-    if (notification.peerCrashed) {
-      const { roomId, peerId } = notification.peerCrashed;
+    const peerToBeRemoved =
+      notification.peerCrashed ?? notification.peerDeleted;
 
-      const roomData = await this.getRoomFromCache(roomId);
-      if (!roomData) return;
+    if (peerToBeRemoved) {
+      const { roomId, peerId } = peerToBeRemoved;
 
-      const userId = Object.entries(roomData.users).find(
-        ([_, data]) => data.peerId === peerId
-      )?.[0];
-      if (userId) {
-        delete roomData.users[userId];
-        fastify.log.info({ name: "Peer deleted from cache", roomId, peerId });
-      }
+      const userTokenPairs = this.roomTokenMap.get(roomId);
+      if (!userTokenPairs) return;
+
+      const newUserList = userTokenPairs.filter(([id]) => id !== peerId);
+
+      this.roomTokenMap.set(roomId, newUserList);
+      fastify.log.info({ name: "Peer deleted from cache", roomId, peerId });
     }
 
-    const roomDeletedOrCrashed =
-      notification.roomDeleted || notification.roomCrashed;
+    const roomToBeRemovedId = (
+      notification.roomDeleted ?? notification.roomCrashed
+    )?.roomId;
 
-    if (roomDeletedOrCrashed) {
-      this.cache.delete(roomDeletedOrCrashed.roomId);
+    if (roomToBeRemovedId) {
+      this.roomTokenMap.delete(roomToBeRemovedId);
       fastify.log.info({
         name: "Room deleted from cache",
-        roomId: roomDeletedOrCrashed.roomId,
+        roomId: roomToBeRemovedId,
       });
     }
   }
 
-  private async findOrCreateRoom(roomName: string): Promise<Room> {
-    if (!this.cache.has(roomName)) {
-      const roomId = await this.findOrCreateRoomInFishJam(roomName);
-      this.cache.set(roomName, { users: {}, roomId });
-    }
-    return this.cache.get(roomName)!;
-  }
-
-  private async getRoomFromCache(roomName: string): Promise<Room | null> {
-    return this.cache.get(roomName) || null;
-  }
-
-  private async createPeer(roomName: string, url: string): Promise<User> {
+  private async createPeer(roomName: string): Promise<User> {
     const [peer, { websocketToken, websocketUrl }] =
       await this.fishjamClient.createPeer(roomName, {
         enableSimulcast: fastify.config.ENABLE_SIMULCAST,
@@ -112,32 +89,34 @@ export class RoomService {
       websocketUrl ?? fastify.config.JELLYFISH_URL + "/socket/peer/websocket";
 
     const user = {
-      peerId: peer.id,
+      peer,
       token: websocketToken,
-      url: `${this.tls ? "wss" : "ws"}://${peerWebsocketUrl}`,
     };
+
+    const userTokenPairs = this.roomTokenMap.get(roomName) ?? [];
+    this.roomTokenMap.set(roomName, [
+      ...userTokenPairs,
+      [peer.id, websocketToken],
+    ]);
 
     fastify.log.info({ user, peerWebsocketUrl });
 
     return user;
   }
 
-  private async findOrCreateRoomInFishJam(roomName: string): Promise<RoomId> {
-    // Check if the room exists in the application.
-    // This may happen when someone creates a room outside of this application
-    // or when the room was created in the previous run of the application.
+  private async findOrCreateRoomInFishJam(roomName: string) {
     try {
       const room = await this.fishjamClient.getRoom(roomName);
-      fastify.log.info({ name: "Room already exist in the FishJam", room });
+      fastify.log.info({ name: "Room already exist in the Fishjam", room });
 
-      return room.id;
+      return room;
     } catch (err) {
       const roomNotFound = err instanceof RoomNotFoundException;
       if (!roomNotFound) throw err;
     }
 
     fastify.log.info({
-      name: "Creating room in the FishJam",
+      name: "Creating room in the Fishjam",
       roomId: roomName,
     });
 
@@ -150,6 +129,6 @@ export class RoomService {
 
     fastify.log.info({ name: "Room created", newRoom });
 
-    return newRoom.id;
+    return newRoom;
   }
 }
