@@ -13,6 +13,7 @@ export class FishjamClient {
 
   constructor(config: FishjamConfig) {
     const client = axios.create({
+      validateStatus: (status) => [200, 201, 400, 401, 404, 503].includes(status),
       headers: {
         Authorization: `Bearer ${config.serverToken}`,
       },
