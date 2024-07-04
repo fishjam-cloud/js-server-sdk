@@ -1,5 +1,5 @@
-import { Peer } from "@fishjam-cloud/js-server-sdk";
-import S from "fluent-json-schema";
+import { Peer } from '@fishjam-cloud/js-server-sdk';
+import S from 'fluent-json-schema';
 
 export interface QueryParams {
   roomName: string;
@@ -13,22 +13,20 @@ export interface User {
   peer: Peer;
 }
 
-const params = S.object()
-  .prop("roomName", S.string().required())
-  .prop("username", S.string().required());
+const params = S.object().prop('roomName', S.string().required()).prop('username', S.string().required());
 
 const response200 = S.object()
-  .prop("token", S.string().required())
-  .prop("room", S.object().prop("id", S.string()).prop("name", S.string()))
-  .prop("username", S.string())
-  .prop("peer", S.object().prop("id", S.string()));
+  .prop('token', S.string().required())
+  .prop('room', S.object().prop('id', S.string()).prop('name', S.string()))
+  .prop('username', S.string())
+  .prop('peer', S.object().prop('id', S.string()));
 
 const errorResponse410 = S.object()
-  .prop("error", S.string().required())
-  .prop("path", S.string())
-  .prop("method", S.string());
+  .prop('error', S.string().required())
+  .prop('path', S.string())
+  .prop('method', S.string());
 
-const errorResponse500 = errorResponse410.prop("cause", S.string());
+const errorResponse500 = errorResponse410.prop('cause', S.string());
 
 export const peerEndpointSchema = {
   params,
