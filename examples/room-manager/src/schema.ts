@@ -1,12 +1,15 @@
 import S from "fluent-json-schema";
 
-const params = S.object()
-  .prop("roomId", S.string().required())
-  .prop("userId", S.string().required());
+export type QueryParams = {
+  roomName: string;
+  username: string;
+};
 
-const response200 = S.object()
-  .prop("token", S.string().required())
-  .prop("url", S.string().required());
+const params = S.object()
+  .prop("roomName", S.string().required())
+  .prop("username", S.string().required());
+
+const response200 = S.object().prop("token", S.string().required());
 
 const errorResponse410 = S.object()
   .prop("error", S.string().required())
@@ -22,9 +25,4 @@ export const peerEndpointSchema = {
     410: errorResponse410,
     500: errorResponse500,
   },
-};
-
-export type QueryParams = {
-  roomId: string;
-  userId: string;
 };

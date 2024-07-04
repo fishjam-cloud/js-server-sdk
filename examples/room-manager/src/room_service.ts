@@ -6,16 +6,16 @@ import {
 import { ServerMessage } from "@fishjam-cloud/js-server-sdk/proto";
 import { fastify } from "./index";
 
-type RoomId = string;
-type PeerId = string;
-
-export type User = {
+interface User {
+  username: string;
+  room: { id: string; name: string };
   token: string;
   peer: Peer;
-};
+}
 
 export class RoomService {
-  private readonly roomTokenMap = new Map<RoomId, [PeerId, string][]>();
+  private readonly usernameToUserMap = new Map<string, User>();
+  private readonly roomNameToRoomIdMap = new Map<string, string>();
   private readonly fishjamClient: FishjamClient;
 
   constructor(fishjamUrl: string, serverToken: string) {
@@ -25,23 +25,33 @@ export class RoomService {
     });
   }
 
-  async findOrCreateUser(roomName: string, userId: string): Promise<User> {
+  async findOrCreateUser(roomName: string, username: string): Promise<User> {
     const room = await this.findOrCreateRoomInFishJam(roomName);
-    const peer = room.peers.find((peer) => peer.id === userId);
+    const user = this.usernameToUserMap.get(username);
+
+    const peer = room.peers.find((peer) => peer.id === user?.peer.id);
+
+    fastify.log.info({
+      name: "Got room",
+      roomName,
+      roomId: room.id,
+      peers: room.peers,
+    });
 
     if (!peer) {
       fastify.log.info({ name: "Creating peer" });
-      return await this.createPeer(roomName);
+      return await this.createPeer(roomName, username);
     }
 
-    const token = this.roomTokenMap
-      .get(room.id)
-      ?.find(([id]) => id === userId)?.[1];
+    if (!user?.token) throw Error("Missing token for user in room");
 
-    if (!token) throw Error("Missing token for user in room");
-    fastify.log.info({ name: "Peer and room exist", userId, roomName });
+    user.peer = peer;
 
-    return { peer, token };
+    this.usernameToUserMap.set(username, user);
+
+    fastify.log.info({ name: "Peer and room exist", username, roomName });
+
+    return user;
   }
 
   async handleJellyfishMessage(notification: ServerMessage) {
@@ -57,12 +67,17 @@ export class RoomService {
     if (peerToBeRemoved) {
       const { roomId, peerId } = peerToBeRemoved;
 
-      const userTokenPairs = this.roomTokenMap.get(roomId);
-      if (!userTokenPairs) return;
+      const user = [...this.usernameToUserMap.values()].find(
+        (user) => user.room.id === roomId && user.peer.id === peerId
+      );
 
-      const newUserList = userTokenPairs.filter(([id]) => id !== peerId);
+      if (!user) {
+        fastify.log.info({ name: "User not found in cache", user });
+        return;
+      }
 
-      this.roomTokenMap.set(roomId, newUserList);
+      this.usernameToUserMap.delete(user.username);
+
       fastify.log.info({ name: "Peer deleted from cache", roomId, peerId });
     }
 
@@ -71,61 +86,77 @@ export class RoomService {
     )?.roomId;
 
     if (roomToBeRemovedId) {
-      this.roomTokenMap.delete(roomToBeRemovedId);
+      this.roomNameToRoomIdMap.delete(roomToBeRemovedId);
+
+      const usersToRemove = [...this.usernameToUserMap.values()].filter(
+        (user) => user.room.id === roomToBeRemovedId
+      );
+
+      usersToRemove.forEach((user) => {
+        this.usernameToUserMap.delete(user.username);
+      });
+
       fastify.log.info({
-        name: "Room deleted from cache",
+        name: "Room and users deleted from cache",
         roomId: roomToBeRemovedId,
       });
     }
   }
 
-  private async createPeer(roomName: string): Promise<User> {
-    const [peer, { websocketToken, websocketUrl }] =
-      await this.fishjamClient.createPeer(roomName, {
-        enableSimulcast: fastify.config.ENABLE_SIMULCAST,
-      });
+  private async createPeer(roomName: string, username: string): Promise<User> {
+    const roomId = this.roomNameToRoomIdMap.get(roomName);
 
-    const peerWebsocketUrl =
-      websocketUrl ?? fastify.config.JELLYFISH_URL + "/socket/peer/websocket";
+    if (!roomId) throw Error("Room not found");
+
+    const [peer, { websocketToken }] = await this.fishjamClient.createPeer(
+      roomId,
+      {
+        enableSimulcast: fastify.config.ENABLE_SIMULCAST,
+      }
+    );
 
     const user = {
+      username,
+      room: { id: roomId, name: roomName },
       peer,
       token: websocketToken,
     };
 
-    const userTokenPairs = this.roomTokenMap.get(roomName) ?? [];
-    this.roomTokenMap.set(roomName, [
-      ...userTokenPairs,
-      [peer.id, websocketToken],
-    ]);
+    this.usernameToUserMap.set(username, user);
 
-    fastify.log.info({ user, peerWebsocketUrl });
+    fastify.log.info("Created user", { username, user });
 
     return user;
   }
 
   private async findOrCreateRoomInFishJam(roomName: string) {
-    try {
-      const room = await this.fishjamClient.getRoom(roomName);
-      fastify.log.info({ name: "Room already exist in the Fishjam", room });
+    const roomId = this.roomNameToRoomIdMap.get(roomName);
 
-      return room;
-    } catch (err) {
-      const roomNotFound = err instanceof RoomNotFoundException;
-      if (!roomNotFound) throw err;
+    if (roomId) {
+      try {
+        const room = await this.fishjamClient.getRoom(roomName);
+        fastify.log.info({ name: "Room already exist in the Fishjam", room });
+
+        return room;
+      } catch (err) {
+        const roomNotFound = err instanceof RoomNotFoundException;
+        if (!roomNotFound) throw err;
+      }
     }
 
     fastify.log.info({
       name: "Creating room in the Fishjam",
-      roomId: roomName,
+      roomId,
+      roomName,
     });
 
     const newRoom = await this.fishjamClient.createRoom({
       maxPeers: fastify.config.MAX_PEERS,
-      roomId: roomName,
       webhookUrl: fastify.config.WEBHOOK_URL,
       peerlessPurgeTimeout: fastify?.config?.PEERLESS_PURGE_TIMEOUT,
     });
+
+    this.roomNameToRoomIdMap.set(roomName, newRoom.id);
 
     fastify.log.info({ name: "Room created", newRoom });
 

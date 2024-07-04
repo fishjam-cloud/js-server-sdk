@@ -11,24 +11,26 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
   );
 
   fastify.get<{ Params: QueryParams }>(
-    "/api/rooms/:roomId/users/:userId",
+    "/api/rooms/:roomName/users/:username",
     { schema: peerEndpointSchema },
-    async (request, reply) => {
-      const { roomId, userId } = request.params;
+    async (req, res) => {
+      const {
+        params: { roomName, username },
+      } = req;
       try {
-        const user = await roomService.findOrCreateUser(roomId, userId);
+        const user = await roomService.findOrCreateUser(roomName, username);
         return {
           token: user.token,
         };
       } catch (error: unknown) {
         const [errorMessage, code] = parseError(error);
-        return reply.status(code).send(errorMessage);
+        return res.status(code).send(errorMessage);
       }
     }
   );
 
-  fastify.post<{ Body: ServerMessage }>("/webhook", async (request, reply) => {
-    await roomService.handleJellyfishMessage(request.body);
-    return reply.status(200).send();
+  fastify.post<{ Body: ServerMessage }>("/webhook", async (req, res) => {
+    await roomService.handleJellyfishMessage(req.body);
+    return res.status(200).send();
   });
 }
