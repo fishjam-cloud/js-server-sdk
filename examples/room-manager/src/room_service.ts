@@ -5,13 +5,7 @@ import {
 } from "@fishjam-cloud/js-server-sdk";
 import { ServerMessage } from "@fishjam-cloud/js-server-sdk/proto";
 import { fastify } from "./index";
-
-interface User {
-  username: string;
-  room: { id: string; name: string };
-  token: string;
-  peer: Peer;
-}
+import { User } from "./schema";
 
 export class RoomService {
   private readonly usernameToUserMap = new Map<string, User>();

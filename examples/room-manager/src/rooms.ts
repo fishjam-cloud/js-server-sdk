@@ -19,9 +19,7 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
       } = req;
       try {
         const user = await roomService.findOrCreateUser(roomName, username);
-        return {
-          token: user.token,
-        };
+        return user;
       } catch (error: unknown) {
         const [errorMessage, code] = parseError(error);
         return res.status(code).send(errorMessage);
