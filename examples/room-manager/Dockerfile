@@ -1,20 +1,19 @@
 # NOTE: This Dockerfile needs to be built from the context of root of the repository
-FROM node:21
+FROM node:22-alpine
 
-# Step 1: Install SDK
+# Step 1: Install deps
 WORKDIR /app
 
-COPY package.json yarn.lock ./
-
-RUN yarn --immutable 
+RUN corepack enable
 
 COPY . .
 
+RUN yarn --immutable
+
+# Step 2: Build the SDK
 RUN yarn workspace @fishjam-cloud/js-server-sdk build
 
-# Step 2: Install and run the example
+# Step 3: Run the example
 WORKDIR /app/examples/room-manager
-
-RUN yarn --immutable
 
 CMD ["yarn", "start"]
