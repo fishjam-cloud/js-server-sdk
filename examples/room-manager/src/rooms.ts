@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { RoomService } from "./room_service";
 import { ServerMessage } from "@fishjam-cloud/js-server-sdk/proto";
 import { parseError } from "./utils";
+import { peerEndpointSchema, QueryParams } from "./schema";
 
 export async function roomsEndpoints(fastify: FastifyInstance) {
   const roomService = new RoomService(
@@ -9,53 +10,9 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
     fastify.config.JELLYFISH_SERVER_TOKEN
   );
 
-  type Params = {
-    roomId: string;
-    userId: string;
-  };
-
-  fastify.get<{ Params: Params }>(
+  fastify.get<{ Params: QueryParams }>(
     "/api/rooms/:roomId/users/:userId",
-    {
-      schema: {
-        params: {
-          type: "object",
-          properties: {
-            roomId: { type: "string" },
-            userId: { type: "string" },
-          },
-        },
-        response: {
-          200: {
-            type: "object",
-            properties: {
-              token: { type: "string" },
-              url: { type: "string" },
-            },
-            required: ["token", "url"],
-          },
-          410: {
-            type: "object",
-            properties: {
-              error: { type: "string" },
-              path: { type: "string" },
-              method: { type: "string" },
-            },
-            required: ["error"],
-          },
-          500: {
-            type: "object",
-            properties: {
-              error: { type: "string" },
-              cause: { type: "string" },
-              path: { type: "string" },
-              method: { type: "string" },
-            },
-            required: ["error"],
-          },
-        },
-      },
-    },
+    { schema: peerEndpointSchema },
     async (request, reply) => {
       const { roomId, userId } = request.params;
       try {
