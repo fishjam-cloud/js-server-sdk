@@ -93,7 +93,7 @@ export class RoomService {
 
     if (!roomId) throw Error('Room not found');
 
-    const [peer, { websocketToken }] = await this.fishjamClient.createPeer(roomId, {
+    const { peer, token } = await this.fishjamClient.createPeer(roomId, {
       enableSimulcast: fastify.config.ENABLE_SIMULCAST,
     });
 
@@ -101,7 +101,7 @@ export class RoomService {
       username,
       room: { id: roomId, name: roomName },
       peer,
-      token: websocketToken,
+      token,
     };
 
     this.usernameToUserMap.set(username, user);

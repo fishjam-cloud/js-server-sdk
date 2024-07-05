@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { RoomApi, RoomConfig, PeerOptions } from 'fishjam-openapi';
+import { RoomApi, RoomConfig, PeerOptions, Peer } from 'fishjam-openapi';
 import { Room } from './types';
 import { raisePossibleExceptions } from './exceptions/mapper';
 
@@ -22,7 +22,7 @@ export class FishjamClient {
     this.roomApi = new RoomApi(undefined, config.fishjamUrl, client);
   }
 
-  async createPeer(roomId: string, options: PeerOptions = {}) {
+  async createPeer(roomId: string, options: PeerOptions = {}): Promise<{ peer: Peer; token: string }> {
     const response = await this.roomApi.addPeer(roomId, {
       type: 'webrtc',
       options,
@@ -34,10 +34,10 @@ export class FishjamClient {
       data: { data },
     } = response;
 
-    return [data.peer, { websocketUrl: data.peer_websocket_url, websocketToken: data.token }] as const;
+    return { peer: data.peer, token: data.token };
   }
 
-  async createRoom(config: RoomConfig = {}) {
+  async createRoom(config: RoomConfig = {}): Promise<Room> {
     const response = await this.roomApi.createRoom(config);
 
     raisePossibleExceptions(response.status);
@@ -53,7 +53,7 @@ export class FishjamClient {
     return room;
   }
 
-  async getAllRooms() {
+  async getAllRooms(): Promise<Room[]> {
     const getAllRoomsRepsonse = await this.roomApi.getAllRooms();
 
     raisePossibleExceptions(getAllRoomsRepsonse.status);
@@ -71,13 +71,13 @@ export class FishjamClient {
     return room;
   }
 
-  async deletePeer(roomId: string, peerId: string) {
+  async deletePeer(roomId: string, peerId: string): Promise<void> {
     const response = await this.roomApi.deletePeer(roomId, peerId);
 
     raisePossibleExceptions(response.status, 'peer');
   }
 
-  async deleteRoom(roomId: string) {
+  async deleteRoom(roomId: string): Promise<void> {
     const response = await this.roomApi.deleteRoom(roomId);
 
     raisePossibleExceptions(response.status, 'room');
