@@ -1,4 +1,4 @@
-import { FishjamClient, Peer, RoomNotFoundException } from '@fishjam-cloud/js-server-sdk';
+import { FishjamClient, Room, RoomNotFoundException } from '@fishjam-cloud/js-server-sdk';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import { fastify } from './index';
 import { User } from './schema';
@@ -16,7 +16,7 @@ export class RoomService {
   }
 
   async findOrCreateUser(roomName: string, username: string): Promise<User> {
-    const room = await this.findOrCreateRoomInFishJam(roomName);
+    const room = await this.findOrCreateRoomInFishjam(roomName);
     const user = this.usernameToUserMap.get(username);
 
     const peer = room.peers.find((peer) => peer.id === user?.peer.id);
@@ -44,7 +44,7 @@ export class RoomService {
     return user;
   }
 
-  async handleJellyfishMessage(notification: ServerMessage) {
+  async handleJellyfishMessage(notification: ServerMessage): Promise<void> {
     Object.entries(notification)
       .filter(([_, value]) => value)
       .forEach(([name, value]) => {
@@ -111,12 +111,12 @@ export class RoomService {
     return user;
   }
 
-  private async findOrCreateRoomInFishJam(roomName: string) {
+  private async findOrCreateRoomInFishjam(roomName: string): Promise<Room> {
     const roomId = this.roomNameToRoomIdMap.get(roomName);
 
     if (roomId) {
       try {
-        const room = await this.fishjamClient.getRoom(roomName);
+        const room = await this.fishjamClient.getRoom(roomId);
         fastify.log.info({ name: 'Room already exist in the Fishjam', room });
 
         return room;
@@ -135,7 +135,7 @@ export class RoomService {
     const newRoom = await this.fishjamClient.createRoom({
       maxPeers: fastify.config.MAX_PEERS,
       webhookUrl: fastify.config.WEBHOOK_URL,
-      peerlessPurgeTimeout: fastify?.config?.PEERLESS_PURGE_TIMEOUT,
+      peerlessPurgeTimeout: fastify.config.PEERLESS_PURGE_TIMEOUT,
     });
 
     this.roomNameToRoomIdMap.set(roomName, newRoom.id);

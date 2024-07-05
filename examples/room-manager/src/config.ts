@@ -32,11 +32,11 @@ export const configSchema = {
     },
     JELLYFISH_URL: {
       type: 'string',
-      default: 'https://cloud.fishjam.work/api/v1/connect/36801aa6f57644b787cea408381ebfdd',
+      default: 'http://localhost:5002',
     },
     JELLYFISH_SERVER_TOKEN: {
       type: 'string',
-      default: 'dcb5ea3bb24d438f89ac40ce248be095',
+      default: 'development',
     },
     // todo delete after jellyfish upgrade
     JELLYFISH_HOST: {
