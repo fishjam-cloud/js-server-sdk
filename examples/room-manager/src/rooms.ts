@@ -5,7 +5,7 @@ import { parseError } from './utils';
 import { peerEndpointSchema, QueryParams } from './schema';
 
 export async function roomsEndpoints(fastify: FastifyInstance) {
-  const roomService = new RoomService(fastify.config.JELLYFISH_URL, fastify.config.JELLYFISH_SERVER_TOKEN);
+  const roomService = new RoomService(fastify.config.FISHJAM_URL, fastify.config.FISHJAM_SERVER_TOKEN);
 
   fastify.get<{ Params: QueryParams }>(
     '/api/rooms/:roomName/users/:username',
