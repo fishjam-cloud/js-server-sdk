@@ -5,3 +5,8 @@ export type Room = {
   peers: Peer[];
   config: RoomConfig;
 };
+
+export type FishjamConfig = {
+  fishjamUrl: string;
+  serverToken: string;
+};

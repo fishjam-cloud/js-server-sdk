@@ -1,12 +1,7 @@
 import axios from 'axios';
 import { RoomApi, RoomConfig, PeerOptions, Peer } from 'fishjam-openapi';
-import { Room } from './types';
+import { FishjamConfig, Room } from './types';
 import { raisePossibleExceptions } from './exceptions/mapper';
-
-type FishjamConfig = {
-  fishjamUrl: string;
-  serverToken: string;
-};
 
 export class FishjamClient {
   private readonly roomApi: RoomApi;

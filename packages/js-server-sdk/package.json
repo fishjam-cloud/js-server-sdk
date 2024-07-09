@@ -35,8 +35,8 @@
   },
   "tsup": {
     "entry": [
-      "src/index.ts",
-      "src/proto.ts"
+      "src/proto.ts",
+      "src/index.ts"
     ],
     "dts": true,
     "minify": true,
@@ -49,11 +49,13 @@
   "dependencies": {
     "axios": "^1.6.8",
     "fishjam-openapi": "workspace:*",
-    "fishjam-proto": "workspace:*"
+    "fishjam-proto": "workspace:*",
+    "websocket": "^1.0.35"
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.13.4",
     "@types/node": "^20.12.7",
+    "@types/websocket": "^1.0.10",
     "prettier": "3.2.5",
     "tsup": "^8.1.0",
     "typedoc": "^0.25.13",
