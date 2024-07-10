@@ -1,12 +1,12 @@
 import * as WebSocket from 'websocket';
-import { FishjamConfig } from './types';
+import { FishjamConfig, allowedNotification } from './types';
 import { ServerMessage } from './proto';
 
 type Listener = (msg: string) => void;
 type onError = (msg: Error) => void;
 type onClose = (msg: number) => void;
 
-const allowedNotification = [
+const allowedNotifications: Array<allowedNotification> = [
   'roomCreated',
   'roomDeleted',
   'roomCrashed',
@@ -37,14 +37,14 @@ export class FishjamWSNotifier {
     this.client.connect(fishjamUrl);
   }
 
-  addNotificationListener(notification: string, listener: Listener) {
+  addNotificationListener(notification: allowedNotification, listener: Listener) {
     if (!this.notifications[notification]) {
       this.notifications[notification] = [];
     }
     this.notifications[notification].push(listener);
   }
 
-  removeNotificationListener(notification: string, listener: Listener) {
+  removeNotificationListener(notification: allowedNotification, listener: Listener) {
     if (!this.notifications[notification]) return;
 
     this.notifications[notification] = this.notifications[notification].filter((l) => l !== listener);
@@ -82,6 +82,6 @@ export class FishjamWSNotifier {
   }
 
   private isAllowedNotification(notification: string): boolean {
-    return allowedNotification.includes(notification);
+    return (allowedNotifications as string[]).includes(notification);
   }
 }
