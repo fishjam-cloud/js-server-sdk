@@ -1,4 +1,5 @@
 import { Peer, RoomConfig } from 'fishjam-openapi';
+import { ServerMessage } from './proto';
 
 export type Room = {
   id: string;
@@ -11,16 +12,17 @@ export type FishjamConfig = {
   serverToken: string;
 };
 
-export type allowedNotification =
-  | 'roomCreated'
-  | 'roomDeleted'
-  | 'roomCrashed'
-  | 'peerAdded'
-  | 'peerDeleted'
-  | 'peerConnected'
-  | 'peerDisconnected'
-  | 'peerMetadataUpdated'
-  | 'peerCrashed'
-  | 'trackAdded'
-  | 'trackRemoved'
-  | 'trackMetadataUpdated';
+export type NotificationEvents = {
+  roomCreated: (message: ServerMessage) => void;
+  roomDeleted: (message: ServerMessage) => void;
+  roomCrashed: (message: ServerMessage) => void;
+  peerAdded: (message: ServerMessage) => void;
+  peerDeleted: (message: ServerMessage) => void;
+  peerConnected: (message: ServerMessage) => void;
+  peerDisconnected: (message: ServerMessage) => void;
+  peerMetadataUpdated: (message: ServerMessage) => void;
+  peerCrashed: (message: ServerMessage) => void;
+  trackAdded: (message: ServerMessage) => void;
+  trackRemoved: (message: ServerMessage) => void;
+  trackMetadataUpdated: (message: ServerMessage) => void;
+};

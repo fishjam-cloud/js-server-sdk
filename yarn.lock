@@ -250,6 +250,7 @@ __metadata:
     fishjam-proto: "workspace:*"
     prettier: "npm:3.2.5"
     tsup: "npm:^8.1.0"
+    typed-emitter: "npm:^2.1.0"
     typedoc: "npm:^0.25.13"
     typescript: "npm:~5.4.5"
     websocket: "npm:^1.0.35"
@@ -3243,7 +3244,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:7.8.1, rxjs@npm:^7.5.5":
+"rxjs@npm:*, rxjs@npm:7.8.1, rxjs@npm:^7.5.5":
   version: 7.8.1
   resolution: "rxjs@npm:7.8.1"
   dependencies:
@@ -3772,6 +3773,18 @@ __metadata:
   version: 2.7.3
   resolution: "type@npm:2.7.3"
   checksum: 10c0/dec6902c2c42fcb86e3adf8cdabdf80e5ef9de280872b5fd547351e9cca2fe58dd2aa6d2547626ddff174145db272f62d95c7aa7038e27c11315657d781a688d
+  languageName: node
+  linkType: hard
+
+"typed-emitter@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "typed-emitter@npm:2.1.0"
+  dependencies:
+    rxjs: "npm:*"
+  dependenciesMeta:
+    rxjs:
+      optional: true
+  checksum: 10c0/01fc354ba8e87bd39b1bf4fe1c96fe7ecff7fde83161003b0f8c7f4b285a368052e185ba655dd8c102c4445301b7a1e032c8972f181b440fc95bd810450f1314
   languageName: node
   linkType: hard
 

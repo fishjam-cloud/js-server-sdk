@@ -1,12 +1,13 @@
 import * as WebSocket from 'websocket';
-import { FishjamConfig, allowedNotification } from './types';
+import TypedEmitter from 'typed-emitter';
+import { EventEmitter } from 'events';
 import { ServerMessage } from './proto';
+import { FishjamConfig, NotificationEvents } from './types';
 
-type Listener = (msg: string) => void;
 type onError = (msg: Error) => void;
 type onClose = (msg: number) => void;
 
-const allowedNotifications: Array<allowedNotification> = [
+const allowedNotifications = [
   'roomCreated',
   'roomDeleted',
   'roomCrashed',
@@ -21,13 +22,13 @@ const allowedNotifications: Array<allowedNotification> = [
   'trackMetadataUpdated',
 ];
 
-export class FishjamWSNotifier {
+export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<NotificationEvents>) {
   private readonly client: WebSocket.client;
-  private notifications: Record<string, Array<Function>>;
 
   constructor(config: FishjamConfig, onError: onError, onClose: onClose, onConnectionFailed: onError) {
+    super();
+
     this.client = new WebSocket.client();
-    this.notifications = {};
 
     const fishjamUrl = config.fishjamUrl.replace('http', 'ws') + '/socket/server/websocket';
 
@@ -37,19 +38,6 @@ export class FishjamWSNotifier {
     this.client.connect(fishjamUrl);
   }
 
-  addNotificationListener(notification: allowedNotification, listener: Listener) {
-    if (!this.notifications[notification]) {
-      this.notifications[notification] = [];
-    }
-    this.notifications[notification].push(listener);
-  }
-
-  removeNotificationListener(notification: allowedNotification, listener: Listener) {
-    if (!this.notifications[notification]) return;
-
-    this.notifications[notification] = this.notifications[notification].filter((l) => l !== listener);
-  }
-
   private dispatchNotification(message: WebSocket.Message) {
     if (message.type == 'utf8') return;
 
@@ -57,11 +45,9 @@ export class FishjamWSNotifier {
       const decodedMessage = ServerMessage.toJSON(ServerMessage.decode(message.binaryData)) as Record<string, any>;
       const [notification] = Object.keys(decodedMessage);
 
-      if (!this.isAllowedNotification(notification) || !this.notifications[notification]) return;
+      if (!this.isAllowedNotification(notification)) return;
 
-      this.notifications[notification].forEach((listener) => {
-        listener(decodedMessage);
-      });
+      this.emit(notification as keyof NotificationEvents, decodedMessage);
     } catch (e) {
       console.error("Couldn't decode websocket server message.");
       console.error(e);
