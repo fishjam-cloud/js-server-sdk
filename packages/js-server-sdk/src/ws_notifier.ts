@@ -19,14 +19,19 @@ const allowedNotifications = [
   'trackMetadataUpdated',
 ] as const;
 
-type onError = (msg: Error) => void;
-type onClose = (code: number, reason: string) => void;
+type ErrorEventHandler = (msg: Error) => void;
+type CloseEventHandler = (code: number, reason: string) => void;
 type NotificationEvents = Record<(typeof allowedNotifications)[number], (message: ServerMessage) => void>;
 
 export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<NotificationEvents>) {
   private readonly client: WebSocket.client;
 
-  constructor(config: FishjamConfig, onError: onError, onClose: onClose, onConnectionFailed: onError) {
+  constructor(
+    config: FishjamConfig,
+    onError: ErrorEventHandler,
+    onClose: CloseEventHandler,
+    onConnectionFailed: ErrorEventHandler
+  ) {
     super();
 
     this.client = new WebSocket.client();
@@ -40,7 +45,10 @@ export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<N
   }
 
   private dispatchNotification(message: WebSocket.Message) {
-    if (message.type == 'utf8') return;
+    if (message.type == 'utf8') {
+      console.warn('UTF-8 is an invalid notification type');
+      return;
+    }
 
     try {
       const decodedMessage = ServerMessage.toJSON(ServerMessage.decode(message.binaryData)) as Record<string, any>;
@@ -56,14 +64,19 @@ export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<N
     }
   }
 
-  private setupConnection(connection: WebSocket.connection, serverToken: string, onError: onError, onClose: onClose) {
+  private setupConnection(
+    connection: WebSocket.connection,
+    serverToken: string,
+    onError: ErrorEventHandler,
+    onClose: CloseEventHandler
+  ) {
     const auth = ServerMessage.encode({ authRequest: { token: serverToken } }).finish();
-    const subscr = ServerMessage.encode({
+    const subscription = ServerMessage.encode({
       subscribeRequest: { eventType: ServerMessage_EventType.EVENT_TYPE_SERVER_NOTIFICATION },
     }).finish();
 
     connection.send(auth);
-    connection.send(subscr);
+    connection.send(subscription);
 
     connection.on('message', (message) => this.dispatchNotification(message));
     connection.on('error', (error) => onError(error));
