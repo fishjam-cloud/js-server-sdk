@@ -1,1 +1,1 @@
-export * from 'fishjam-proto';
+export { ServerMessage, ServerMessage_AuthRequest, ServerMessage_EventType } from 'fishjam-proto';
