@@ -5,6 +5,7 @@ import { parseError } from './utils';
 import { peerEndpointSchema, QueryParams } from './schema';
 
 export async function roomsEndpoints(fastify: FastifyInstance) {
+  const url = fastify.config.FISHJAM_URL + "/socket/peer/websocket"
   const roomService = new RoomService(fastify.config.FISHJAM_URL, fastify.config.FISHJAM_SERVER_TOKEN);
 
   fastify.get<{ Params: QueryParams }>(
@@ -16,7 +17,7 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
       } = req;
       try {
         const user = await roomService.findOrCreateUser(roomName, username);
-        return user;
+        return { ...user, url };
       } catch (error: unknown) {
         const [errorMessage, code] = parseError(error);
         return res.status(code).send(errorMessage);

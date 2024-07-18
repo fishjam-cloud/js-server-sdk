@@ -13,10 +13,13 @@ export interface User {
   peer: Peer;
 }
 
-const params = S.object().prop('roomName', S.string().required()).prop('username', S.string().required());
+const params = S.object()
+  .prop('roomName', S.string().required())
+  .prop('username', S.string().required());
 
 const response200 = S.object()
   .prop('token', S.string().required())
+  .prop('url', S.string().required())
   .prop('room', S.object().prop('id', S.string()).prop('name', S.string()))
   .prop('username', S.string())
   .prop('peer', S.object().prop('id', S.string()));

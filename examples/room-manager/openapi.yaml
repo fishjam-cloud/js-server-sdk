@@ -1,0 +1,98 @@
+---
+components:
+  responses: {}
+  schemas:
+    Error:
+      type: string
+    ConnectionData:
+      title: ConnectionData
+      type: object
+      required:
+        - url
+        - token
+      properties:
+        url:
+          type: string
+          example: ws://localhost:8080/socket/peer/websocket
+        token:
+          type: string
+          example: SFMyNTY.g2gDdAAhiOL4CdsaboT9-jtMzhoI
+info:
+  title: Room manager
+  version: 0.1.0
+openapi: 3.0.0
+paths:
+  /api/rooms/{roomName}/users/{userName}:
+    get:
+      callbacks: {}
+      description: Create a new peer in a room and get its token
+      operationId: "getToken"
+      parameters:
+        - description: Room ID
+          in: path
+          name: roomName
+          required: true
+          schema:
+            type: string
+        - description: User ID
+          in: path
+          name: userName
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema: {}
+        description: Room params
+        required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionData'
+          description: Room response
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Error
+      summary: Join a room
+      tags:
+        - room
+  # TODO Implement recordings
+  /api/room/{roomName}/startRecording:
+    post:
+      callbacks: {}
+      description: Starts recording in the specified room
+      operationId: "startRecording"
+      parameters:
+        - description: Room name
+          in: path
+          name: roomName
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    example: "OK"
+          description: Recording started response
+      summary: Start recording in a room
+      tags:
+        - room
+security: []
+servers:
+  - url: http://localhost:5004
+    variables: {}
+tags: []
