@@ -85,6 +85,18 @@ paths:
                     type: string
                 required:
                   - error
+  /api/rooms/{roomName}/startRecording:
+    get:
+      operationId: startRecording
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: roomName
+          required: true
+      responses:
+        "200":
+          description: Default Response
   /webhook:
     post:
       responses:

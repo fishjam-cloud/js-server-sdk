@@ -3,6 +3,7 @@ import { RoomService } from './room_service';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import { parseError } from './utils';
 import { peerEndpointSchema, QueryParams } from './schema';
+import { startRecording } from "./startRecording";
 
 export async function roomsEndpoints(fastify: FastifyInstance) {
   const url = fastify.config.FISHJAM_URL + "/socket/peer/websocket"
@@ -24,6 +25,8 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
       }
     }
   );
+
+  await fastify.register(startRecording);
 
   fastify.post<{ Body: ServerMessage }>('/webhook', async (req, res) => {
     await roomService.handleJellyfishMessage(req.body);

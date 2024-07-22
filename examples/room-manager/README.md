@@ -13,3 +13,8 @@ yarn
 yarn start
 ```
 
+## Generate `openapi.yaml`
+
+```sh
+yarn gen:openapi
+```
