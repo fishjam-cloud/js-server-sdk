@@ -33,6 +33,7 @@ const errorResponse500 = errorResponse410.prop('cause', S.string());
 
 export const peerEndpointSchema = {
   params,
+  operationId: 'getToken',
   response: {
     200: response200,
     410: errorResponse410,

@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "build:check": "tsc -p tsconfig.json --noEmit",
-    "start": "tsx watch ./src/index.ts"
+    "start": "tsx watch ./src/index.ts",
+    "gen:openapi": "tsx scripts/generate-openapi-schema.ts"
   },
   "author": "Fishjam Cloud Team",
   "dependencies": {
@@ -15,9 +16,11 @@
     "@fishjam-cloud/js-server-sdk": "workspace:*",
     "axios": "^1.6.8",
     "fastify": "^4.26.2",
+    "fastify-healthcheck": "^4.4.0",
     "fluent-json-schema": "^4.2.1"
   },
   "devDependencies": {
+    "@fastify/swagger": "^8.14.0",
     "@types/node": "^20.12.5",
     "pino-pretty": "^11.0.0",
     "tsc": "^2.0.4",
