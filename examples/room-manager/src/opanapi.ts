@@ -9,9 +9,5 @@ export const openapi = {
       url: 'http://localhost:5004',
       description: 'Development server'
     }
-  ],
-  tags: [
-    { name: 'user', description: 'User related end-points' },
-    { name: 'code', description: 'Code related end-points' }
   ]
 }
