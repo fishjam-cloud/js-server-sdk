@@ -4,6 +4,9 @@ import { configSchema } from './config';
 import fastifyEnv from '@fastify/env';
 import { roomsEndpoints } from './rooms';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
+import healthcheck from "fastify-healthcheck";
+import fastifySwagger from "@fastify/swagger";
+import { openapi } from "./opanapi";
 
 const envToLogger = {
   development: {
@@ -35,7 +38,10 @@ async function setupServer() {
     }
   );
 
-  fastify.register(roomsEndpoints);
+  await fastify.register(fastifySwagger, { openapi });
+
+  await fastify.register(healthcheck);
+  await fastify.register(roomsEndpoints);
 
   fastify.listen({ port: fastify.config.PORT, host: '0.0.0.0' }, (err, address) => {
     if (err) {

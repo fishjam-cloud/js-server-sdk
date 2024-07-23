@@ -1,0 +1,112 @@
+openapi: 3.0.0
+info:
+  title: Room manager
+  version: 0.1.0
+components:
+  schemas: {}
+paths:
+  /health:
+    get:
+      responses:
+        "200":
+          description: Default Response
+  /api/rooms/{roomName}/users/{username}:
+    get:
+      operationId: getToken
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: roomName
+          required: true
+        - schema:
+            type: string
+          in: path
+          name: username
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  url:
+                    type: string
+                  room:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                  username:
+                    type: string
+                  peer:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                required:
+                  - token
+                  - url
+        "410":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  path:
+                    type: string
+                  method:
+                    type: string
+                required:
+                  - error
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  path:
+                    type: string
+                  method:
+                    type: string
+                  cause:
+                    type: string
+                required:
+                  - error
+  /api/rooms/{roomName}/startRecording:
+    get:
+      operationId: startRecording
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: roomName
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /webhook:
+    post:
+      responses:
+        "200":
+          description: Default Response
+servers:
+  - url: http://localhost:5004
+    description: Development server
+tags:
+  - name: user
+    description: User related end-points
+  - name: code
+    description: Code related end-points
