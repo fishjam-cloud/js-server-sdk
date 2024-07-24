@@ -4,6 +4,9 @@ FROM node:22-alpine
 # Step 1: Install deps
 WORKDIR /app
 
+# Required for "websocket" dependency
+RUN apk add g++ make python3
+
 RUN corepack enable
 
 COPY . .
