@@ -39,4 +39,6 @@ export const peerEndpointSchema = {
     410: errorResponse410,
     500: errorResponse500,
   },
+  // todo required for generator to generate RoomApi instead of DefaultApi
+  tags: ["room"]
 };

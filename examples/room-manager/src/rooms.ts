@@ -6,8 +6,8 @@ import { peerEndpointSchema, QueryParams } from './schema';
 import { startRecording } from "./startRecording";
 
 export async function roomsEndpoints(fastify: FastifyInstance) {
-  const url = fastify.config.FISHJAM_URL + "/socket/peer/websocket"
-  const roomService = new RoomService(fastify.config.FISHJAM_URL, fastify.config.FISHJAM_SERVER_TOKEN);
+  const url = fastify.config.FISHJAM_EXTERNAL_URL + "/socket/peer/websocket"
+  const roomService = new RoomService(fastify.config.FISHJAM_INTERNAL_URL, fastify.config.FISHJAM_SERVER_TOKEN);
 
   fastify.get<{ Params: QueryParams }>(
     '/api/rooms/:roomName/users/:username',

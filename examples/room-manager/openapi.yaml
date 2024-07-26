@@ -13,6 +13,8 @@ paths:
   /api/rooms/{roomName}/users/{username}:
     get:
       operationId: getToken
+      tags:
+        - room
       parameters:
         - schema:
             type: string
@@ -88,6 +90,8 @@ paths:
   /api/rooms/{roomName}/startRecording:
     get:
       operationId: startRecording
+      tags:
+        - room
       parameters:
         - schema:
             type: string
@@ -105,8 +109,3 @@ paths:
 servers:
   - url: http://localhost:5004
     description: Development server
-tags:
-  - name: user
-    description: User related end-points
-  - name: code
-    description: Code related end-points

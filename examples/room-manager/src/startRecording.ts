@@ -8,6 +8,8 @@ export interface QueryParams {
 const startRecordingSchema = {
   params: S.object().prop('roomName', S.string().required()),
   operationId: 'startRecording',
+  // todo required for generator to generate RoomApi instead of DefaultApi
+  tags: ["room"]
 };
 
 export async function startRecording(fastify: FastifyInstance) {
