@@ -2,8 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { RoomService } from './room_service';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import { parseError } from './utils';
-import { peerEndpointSchema, QueryParams } from './schema';
-import { startRecording } from './startRecording';
+import { peerEndpointSchema, QueryParams, startRecordingSchema } from './schema';
 
 export async function roomsEndpoints(fastify: FastifyInstance) {
   const websocketUrl = `${fastify.config.FISHJAM_URL}/socket/peer/websocket`;
@@ -26,7 +25,13 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
     }
   );
 
-  await fastify.register(startRecording);
+  fastify.post<{ Params: { roomName: string } }>(
+    '/api/rooms/:roomName/start-recording',
+    { schema: startRecordingSchema },
+    async (req, res) => {
+      throw new Error('Not yet implemented');
+    }
+  );
 
   fastify.post<{ Body: ServerMessage }>('/webhook', async (req, res) => {
     await roomService.handleJellyfishMessage(req.body);

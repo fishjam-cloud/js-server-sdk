@@ -87,8 +87,8 @@ paths:
                     type: string
                 required:
                   - error
-  /api/rooms/{roomName}/startRecording:
-    get:
+  /api/rooms/{roomName}/start-recording:
+    post:
       operationId: startRecording
       tags:
         - room
