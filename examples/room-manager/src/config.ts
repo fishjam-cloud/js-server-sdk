@@ -1,6 +1,6 @@
 export const configSchema = {
   type: 'object',
-  required: ['PORT', 'WEBHOOK_URL', 'ENABLE_SIMULCAST', 'FISHJAM_INTERNAL_URL', 'FISHJAM_EXTERNAL_URL', 'FISHJAM_SERVER_TOKEN'],
+  required: ['PORT', 'WEBHOOK_URL', 'ENABLE_SIMULCAST', 'FISHJAM_URL', 'FISHJAM_SERVER_TOKEN'],
   properties: {
     PORT: {
       type: 'string',
@@ -21,11 +21,7 @@ export const configSchema = {
       type: 'number',
       default: undefined,
     },
-    FISHJAM_INTERNAL_URL: {
-      type: 'string',
-      default: 'http://localhost:5002',
-    },
-    FISHJAM_EXTERNAL_URL: {
+    FISHJAM_URL: {
       type: 'string',
       default: 'http://localhost:5002',
     },
@@ -41,11 +37,10 @@ declare module 'fastify' {
     config: {
       PORT: number;
       WEBHOOK_URL: string;
-      PEERLESS_PURGE_TIMEOUT: number | undefined;
+      PEERLESS_PURGE_TIMEOUT?: number;
       ENABLE_SIMULCAST: boolean;
-      MAX_PEERS: number | undefined;
-      FISHJAM_INTERNAL_URL: string;
-      FISHJAM_EXTERNAL_URL: string;
+      MAX_PEERS?: number;
+      FISHJAM_URL: string;
       FISHJAM_SERVER_TOKEN: string;
     };
   }
