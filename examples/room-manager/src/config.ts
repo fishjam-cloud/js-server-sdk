@@ -37,9 +37,9 @@ declare module 'fastify' {
     config: {
       PORT: number;
       WEBHOOK_URL: string;
-      PEERLESS_PURGE_TIMEOUT: number | undefined;
+      PEERLESS_PURGE_TIMEOUT?: number;
       ENABLE_SIMULCAST: boolean;
-      MAX_PEERS: number | undefined;
+      MAX_PEERS?: number;
       FISHJAM_URL: string;
       FISHJAM_SERVER_TOKEN: string;
     };

@@ -13,9 +13,7 @@ export interface User {
   peer: Peer;
 }
 
-const params = S.object()
-  .prop('roomName', S.string().required())
-  .prop('username', S.string().required());
+const params = S.object().prop('roomName', S.string().required()).prop('username', S.string().required());
 
 const response200 = S.object()
   .prop('token', S.string().required())
@@ -39,4 +37,11 @@ export const peerEndpointSchema = {
     410: errorResponse410,
     500: errorResponse500,
   },
+  tags: ['room'],
+};
+
+export const startRecordingSchema = {
+  params: S.object().prop('roomName', S.string().required()),
+  operationId: 'startRecording',
+  tags: ['room'],
 };

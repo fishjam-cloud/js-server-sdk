@@ -4,9 +4,9 @@ import { configSchema } from './config';
 import fastifyEnv from '@fastify/env';
 import { roomsEndpoints } from './rooms';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
-import healthcheck from "fastify-healthcheck";
-import fastifySwagger from "@fastify/swagger";
-import { openapi } from "./opanapi";
+import healthcheck from 'fastify-healthcheck';
+import fastifySwagger from '@fastify/swagger';
+import { openapi } from './opanapi';
 
 const envToLogger = {
   development: {
