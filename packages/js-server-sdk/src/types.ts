@@ -1,5 +1,4 @@
 import { Peer, RoomConfig } from 'fishjam-openapi';
-import { ServerMessage } from './proto';
 
 export type Room = {
   id: string;
