@@ -41,7 +41,7 @@ async function setupServer() {
   await fastify.register(fastifySwagger, { openapi });
 
   await fastify.register(healthcheck);
-  await fastify.register(roomsEndpoints);
+  await fastify.register(roomsEndpoints, { prefix: '/api/rooms' });
 
   fastify.listen({ port: fastify.config.PORT, host: '0.0.0.0' }, (err, address) => {
     if (err) {
