@@ -101,7 +101,7 @@ paths:
       responses:
         "200":
           description: Default Response
-  /webhook:
+  /api/rooms/webhook:
     post:
       responses:
         "200":

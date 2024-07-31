@@ -11,7 +11,7 @@ export const configSchema = {
     },
     WEBHOOK_URL: {
       type: 'string',
-      default: 'http://0.0.0.0:8080/webhook',
+      default: undefined,
     },
     ENABLE_SIMULCAST: {
       type: 'boolean',
@@ -36,7 +36,7 @@ declare module 'fastify' {
   interface FastifyInstance {
     config: {
       PORT: number;
-      WEBHOOK_URL: string;
+      WEBHOOK_URL?: string;
       PEERLESS_PURGE_TIMEOUT?: number;
       ENABLE_SIMULCAST: boolean;
       MAX_PEERS?: number;

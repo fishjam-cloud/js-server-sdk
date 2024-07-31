@@ -9,7 +9,7 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
   const roomService = new RoomService(fastify.config.FISHJAM_URL, fastify.config.FISHJAM_SERVER_TOKEN);
 
   fastify.get<{ Params: QueryParams }>(
-    '/api/rooms/:roomName/users/:username',
+    '/:roomName/users/:username',
     { schema: peerEndpointSchema },
     async (req, res) => {
       const {
@@ -26,7 +26,7 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
   );
 
   fastify.post<{ Params: { roomName: string } }>(
-    '/api/rooms/:roomName/start-recording',
+    '/:roomName/start-recording',
     { schema: startRecordingSchema },
     async (req, res) => {
       throw new Error('Not yet implemented');
