@@ -1,6 +1,6 @@
 export const configSchema = {
   type: 'object',
-  required: ['PORT', 'WEBHOOK_URL', 'ENABLE_SIMULCAST', 'FISHJAM_URL', 'FISHJAM_SERVER_TOKEN'],
+  required: ['PORT', 'ENABLE_SIMULCAST', 'FISHJAM_URL', 'FISHJAM_SERVER_TOKEN'],
   properties: {
     PORT: {
       type: 'string',
