@@ -6,10 +6,13 @@
   ],
   "packageManager": "yarn@4.3.1",
   "devDependencies": {
+    "typedoc": "^0.26.5",
+    "typedoc-material-theme": "^1.1.0",
     "typescript": "^5.4.5"
   },
   "scripts": {
     "build": "yarn workspace @fishjam-cloud/js-server-sdk build",
-    "typecheck": "yarn workspaces foreach -A -p run typecheck"
+    "typecheck": "yarn workspaces foreach -A -p run typecheck",
+    "docs": "typedoc"
   }
 }
