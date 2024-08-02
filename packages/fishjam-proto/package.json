@@ -1,8 +1,17 @@
 {
   "name": "@fishjam-cloud/fishjam-proto",
-  "version": "1.0.0",
-  "private": true,
-  "packageManager": "yarn@4.3.0",
+  "version": "0.1.0",
+  "description": "Fishjam Proto",
+  "homepage": "https://github.com/fishjam-cloud/js-server-sdk",
+  "author": "Fishjam Cloud Team",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fishjam-cloud/js-server-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fishjam-cloud/js-server-sdk/issues"
+  },
+  "license": "Apache-2.0",
   "main": "src/index.ts",
   "scripts": {
     "codegen": "sh protobuf.sh",
