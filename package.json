@@ -6,6 +6,8 @@
   ],
   "packageManager": "yarn@4.3.1",
   "devDependencies": {
+    "typedoc": "^0.26.5",
+    "typedoc-material-theme": "^1.1.0",
     "typescript": "^5.4.5"
   },
   "scripts": {
