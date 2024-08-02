@@ -1,11 +1,13 @@
 {
-  "name": "fishjam-proto",
+  "name": "@fishjam-cloud/fishjam-proto",
   "version": "1.0.0",
   "private": true,
   "packageManager": "yarn@4.3.0",
   "main": "src/index.ts",
   "scripts": {
-    "codegen": "sh protobuf.sh"
+    "codegen": "sh protobuf.sh",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "protobufjs": "^7.3.2"

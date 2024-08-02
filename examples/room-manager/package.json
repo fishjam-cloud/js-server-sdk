@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "build:check": "tsc -p tsconfig.json --noEmit",
     "start": "tsx watch ./src/index.ts",
-    "gen:openapi": "tsx scripts/generate-openapi-schema.ts"
+    "gen:openapi": "tsx scripts/generate-openapi-schema.ts",
+    "typecheck": "tsc"
   },
   "author": "Fishjam Cloud Team",
   "dependencies": {

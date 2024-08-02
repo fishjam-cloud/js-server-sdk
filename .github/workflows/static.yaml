@@ -8,7 +8,7 @@ on:
     branches: [main]
 
 jobs:
-  ci:
+  static-checks:
     runs-on: ubuntu-latest
 
     steps:
@@ -31,7 +31,7 @@ jobs:
         run: yarn format:check
 
       - name: Build SDK
-        run: yarn build:sdk
+        run: yarn build
 
       - name: Check typing
-        run: yarn build:check
+        run: yarn typecheck

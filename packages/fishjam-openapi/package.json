@@ -1,10 +1,11 @@
 {
-  "name": "fishjam-openapi",
+  "name": "@fishjam-cloud/fishjam-openapi",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "yarn@4.3.0",
   "scripts": {
-    "codegen": "sh openapi.sh"
+    "codegen": "sh openapi.sh",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.13.4"

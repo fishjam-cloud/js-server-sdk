@@ -28,10 +28,9 @@
   },
   "scripts": {
     "build": "tsup",
-    "build:check": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "tsc"
+    "typecheck": "tsc --noEmit"
   },
   "tsup": {
     "entry": [
@@ -47,9 +46,9 @@
     "outDir": "dist"
   },
   "dependencies": {
+    "@fishjam-cloud/fishjam-openapi": "workspace:*",
+    "@fishjam-cloud/fishjam-proto": "workspace:*",
     "axios": "^1.6.8",
-    "fishjam-openapi": "workspace:*",
-    "fishjam-proto": "workspace:*",
     "websocket": "^1.0.35"
   },
   "devDependencies": {

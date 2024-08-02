@@ -9,7 +9,7 @@
     "typescript": "^5.4.5"
   },
   "scripts": {
-    "build:sdk": "yarn workspace @fishjam-cloud/js-server-sdk build",
-    "build:check": "yarn workspaces foreach -A -p run build:check"
+    "build": "yarn workspace @fishjam-cloud/js-server-sdk build",
+    "typecheck": "yarn workspaces foreach -A -p run typecheck"
   }
 }
