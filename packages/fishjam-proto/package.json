@@ -1,5 +1,5 @@
 {
-  "name": "fishjam-proto",
+  "name": "@fishjam-cloud/fishjam-proto",
   "version": "1.0.0",
   "private": true,
   "packageManager": "yarn@4.3.0",

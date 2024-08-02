@@ -1,5 +1,5 @@
 {
-  "name": "fishjam-openapi",
+  "name": "@fishjam-cloud/fishjam-openapi",
   "version": "1.0.0",
   "private": true,
   "packageManager": "yarn@4.3.0",
