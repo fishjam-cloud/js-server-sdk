@@ -9,6 +9,7 @@ You can install the library using `npm`:
 ```bash
 npm install @fishjam-cloud/js-server-sdk
 ```
+
 or `yarn`:
 
 ```bash
@@ -23,7 +24,6 @@ To generate it locally, run:
 ```bash
 yarn docs
 ```
-
 
 ## Examples
 
