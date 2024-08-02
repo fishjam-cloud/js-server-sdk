@@ -5,7 +5,8 @@
   "packageManager": "yarn@4.3.0",
   "main": "src/index.ts",
   "scripts": {
-    "codegen": "sh protobuf.sh"
+    "codegen": "sh protobuf.sh",
+    "typecheck": "tsc"
   },
   "dependencies": {
     "protobufjs": "^7.3.2"

@@ -31,7 +31,7 @@
     "build:check": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "tsc"
+    "typecheck": "tsc"
   },
   "tsup": {
     "entry": [
