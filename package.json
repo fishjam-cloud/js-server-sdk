@@ -12,6 +12,7 @@
   },
   "scripts": {
     "build": "yarn workspace @fishjam-cloud/js-server-sdk build",
-    "typecheck": "yarn workspaces foreach -A -p run typecheck"
+    "typecheck": "yarn workspaces foreach -A -p run typecheck",
+    "docs": "typedoc"
   }
 }

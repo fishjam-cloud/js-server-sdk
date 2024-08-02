@@ -1,0 +1,9 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["packages/*"],
+  "name": "Fishjam Cloud Server SDK",
+  "entryPointStrategy": "packages",
+  "includeVersion": true,
+  "plugin": ["typedoc-material-theme"],
+  "themeColor": "#FCF6E7"
+}
