@@ -6,7 +6,8 @@
   "main": "src/index.ts",
   "scripts": {
     "codegen": "sh protobuf.sh",
-    "typecheck": "tsc"
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "protobufjs": "^7.3.2"

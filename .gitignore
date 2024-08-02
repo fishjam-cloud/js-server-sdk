@@ -9,6 +9,8 @@ node_modules
 
 .env
 
+**/dist/**
+
 # IntelliJ
 *.iml
 .idea

@@ -28,10 +28,9 @@
   },
   "scripts": {
     "build": "tsup",
-    "build:check": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc"
+    "typecheck": "tsc --noEmit"
   },
   "tsup": {
     "entry": [
