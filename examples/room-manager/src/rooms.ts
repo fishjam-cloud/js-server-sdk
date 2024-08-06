@@ -9,7 +9,7 @@ const httpToWebsocket = (httpUrl: string) => {
 
   // note that this will handle http as well as https
   url.protocol = url.protocol.replace('http', 'ws');
-  return url.origin;
+  return url.href;
 };
 
 export async function roomsEndpoints(fastify: FastifyInstance) {
