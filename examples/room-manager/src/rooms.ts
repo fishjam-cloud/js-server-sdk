@@ -5,7 +5,7 @@ import { parseError } from './utils';
 import { peerEndpointSchema, QueryParams, startRecordingSchema } from './schema';
 
 export async function roomsEndpoints(fastify: FastifyInstance) {
-  const websocketUrl = `${fastify.config.FISHJAM_URL}/socket/peer/websocket`;
+  const websocketUrl = `${fastify.config.FISHJAM_URL.replace('http', 'ws')}/socket/peer/websocket`;
   const roomService = new RoomService(fastify.config.FISHJAM_URL, fastify.config.FISHJAM_SERVER_TOKEN);
 
   fastify.get<{ Params: QueryParams }>(
