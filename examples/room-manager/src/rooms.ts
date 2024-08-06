@@ -4,11 +4,12 @@ import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import { parseError } from './utils';
 import { peerEndpointSchema, QueryParams, startRecordingSchema } from './schema';
 
-const httpToWebsocket = (url: string) => {
-  const [protocol, rest] = url.split('://');
+const httpToWebsocket = (httpUrl: string) => {
+  const url = new URL(httpUrl);
 
   // note that this will handle http as well as https
-  return `${protocol.replace('http', 'ws')}://${rest}`;
+  url.protocol = url.protocol.replace('http', 'ws');
+  return url.origin;
 };
 
 export async function roomsEndpoints(fastify: FastifyInstance) {

@@ -1,6 +1,7 @@
-export const httpToWebsocket = (url: string) => {
-  const [protocol, rest] = url.split('://');
+export const httpToWebsocket = (httpUrl: string) => {
+  const url = new URL(httpUrl);
 
   // note that this will handle http as well as https
-  return `${protocol.replace('http', 'ws')}://${rest}`;
+  url.protocol = url.protocol.replace('http', 'ws');
+  return url.origin;
 };
