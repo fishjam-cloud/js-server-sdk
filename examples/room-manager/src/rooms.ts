@@ -4,8 +4,16 @@ import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import { parseError } from './utils';
 import { peerEndpointSchema, QueryParams, startRecordingSchema } from './schema';
 
+const httpToWebsocket = (httpUrl: string) => {
+  const url = new URL(httpUrl);
+
+  // note that this will handle http as well as https
+  url.protocol = url.protocol.replace('http', 'ws');
+  return url.origin;
+};
+
 export async function roomsEndpoints(fastify: FastifyInstance) {
-  const websocketUrl = `${fastify.config.FISHJAM_URL}/socket/peer/websocket`;
+  const websocketUrl = `${httpToWebsocket(fastify.config.FISHJAM_URL)}/socket/peer/websocket`;
   const roomService = new RoomService(fastify.config.FISHJAM_URL, fastify.config.FISHJAM_SERVER_TOKEN);
 
   fastify.get<{ Params: QueryParams }>(
