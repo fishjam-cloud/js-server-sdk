@@ -3,6 +3,7 @@ import TypedEmitter from 'typed-emitter';
 import { EventEmitter } from 'events';
 import { ServerMessage, ServerMessage_EventType } from './proto';
 import { FishjamConfig } from './types';
+import { httpToWebsocket } from './utlis';
 
 const allowedNotifications = [
   'roomCreated',
@@ -36,7 +37,7 @@ export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<N
 
     this.client = new WebSocket.client();
 
-    const fishjamUrl = `${config.fishjamUrl.replace('http', 'ws')}/socket/server/websocket`;
+    const fishjamUrl = `${httpToWebsocket(config.fishjamUrl)}/socket/server/websocket`;
 
     this.client.on('connectFailed', (message) => onConnectionFailed(message));
     this.client.on('connect', (connection) => this.setupConnection(connection, config.serverToken, onError, onClose));
