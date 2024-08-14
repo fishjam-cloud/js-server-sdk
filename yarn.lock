@@ -434,6 +434,7 @@ __metadata:
   resolution: "@fishjam-cloud/fishjam-openapi@workspace:packages/fishjam-openapi"
   dependencies:
     "@openapitools/openapi-generator-cli": "npm:^2.13.4"
+    tsup: "npm:^8.1.0"
   languageName: unknown
   linkType: soft
 
@@ -458,6 +459,7 @@ __metadata:
     "@types/websocket": "npm:^1.0.10"
     axios: "npm:^1.6.8"
     prettier: "npm:3.2.5"
+    tsup: "npm:^8.1.0"
     typed-emitter: "npm:^2.1.0"
     websocket: "npm:^1.0.35"
   languageName: unknown

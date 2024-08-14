@@ -12,7 +12,7 @@
     "typescript": "^5.4.5"
   },
   "scripts": {
-    "build": "yarn workspace @fishjam-cloud/js-server-sdk build",
+    "build": "yarn workspace @fishjam-cloud/fishjam-proto build && yarn workspace @fishjam-cloud/fishjam-openapi build && yarn workspace @fishjam-cloud/js-server-sdk build",
     "typecheck": "yarn workspaces foreach -A -p run typecheck",
     "docs": "typedoc"
   }
