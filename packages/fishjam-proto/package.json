@@ -41,7 +41,7 @@
     "protobufjs": "^7.3.2"
   },
   "devDependencies": {
-    "ts-proto": "^1.172.0",
+    "ts-proto": "^2.0.2",
     "tsup": "^8.1.0"
   }
 }
