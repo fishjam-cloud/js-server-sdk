@@ -49,7 +49,7 @@
   "dependencies": {
     "@fishjam-cloud/fishjam-openapi": "workspace:*",
     "@fishjam-cloud/fishjam-proto": "workspace:*",
-    "axios": "^1.6.8",
+    "axios": "^1.7.4",
     "websocket": "^1.0.35"
   },
   "devDependencies": {
