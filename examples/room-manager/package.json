@@ -17,7 +17,7 @@
     "axios": "^1.7.4",
     "fastify": "^4.26.2",
     "fastify-healthcheck": "^4.4.0",
-    "fluent-json-schema": "^4.2.1"
+    "fluent-json-schema": "^5.0.0"
   },
   "devDependencies": {
     "@fastify/swagger": "^8.14.0",
