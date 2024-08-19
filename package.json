@@ -7,9 +7,9 @@
   ],
   "packageManager": "yarn@4.3.1",
   "devDependencies": {
-    "typedoc": "^0.26.5",
+    "typedoc": "^0.26.6",
     "typedoc-material-theme": "^1.1.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.4"
   },
   "scripts": {
     "build": "yarn workspace @fishjam-cloud/js-server-sdk build",
