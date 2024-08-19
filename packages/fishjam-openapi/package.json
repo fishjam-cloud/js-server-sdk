@@ -39,6 +39,6 @@
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.13.4",
-    "tsup": "^8.1.0"
+    "tsup": "^8.2.4"
   }
 }
