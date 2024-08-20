@@ -12,16 +12,36 @@
     "url": "https://github.com/fishjam-cloud/js-server-sdk/issues"
   },
   "license": "Apache-2.0",
-  "main": "src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "scripts": {
     "codegen": "sh protobuf.sh",
-    "build": "tsc",
+    "build": "tsup",
     "typecheck": "tsc --noEmit"
+  },
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "dts": true,
+    "minify": true,
+    "format": [
+      "cjs",
+      "esm"
+    ],
+    "outDir": "dist"
   },
   "dependencies": {
     "protobufjs": "^7.3.2"
   },
   "devDependencies": {
-    "ts-proto": "^2.0.2"
+    "ts-proto": "^2.0.2",
+    "tsup": "^8.2.4"
   }
 }

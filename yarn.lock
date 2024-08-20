@@ -448,6 +448,7 @@ __metadata:
   resolution: "@fishjam-cloud/fishjam-openapi@workspace:packages/fishjam-openapi"
   dependencies:
     "@openapitools/openapi-generator-cli": "npm:^2.13.4"
+    tsup: "npm:^8.2.4"
   languageName: unknown
   linkType: soft
 
@@ -457,6 +458,7 @@ __metadata:
   dependencies:
     protobufjs: "npm:^7.3.2"
     ts-proto: "npm:^2.0.2"
+    tsup: "npm:^8.2.4"
   languageName: unknown
   linkType: soft
 
@@ -473,8 +475,6 @@ __metadata:
     prettier: "npm:3.3.3"
     tsup: "npm:^8.2.4"
     typed-emitter: "npm:^2.1.0"
-    typedoc: "npm:^0.26.6"
-    typescript: "npm:~5.5.4"
     websocket: "npm:^1.0.35"
   languageName: unknown
   linkType: soft

@@ -12,13 +12,33 @@
     "url": "https://github.com/fishjam-cloud/js-server-sdk/issues"
   },
   "license": "Apache-2.0",
-  "main": "src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "scripts": {
     "codegen": "sh openapi.sh",
-    "build": "tsc",
+    "build": "tsup",
     "typecheck": "tsc --noEmit"
   },
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "dts": true,
+    "minify": true,
+    "format": [
+      "cjs",
+      "esm"
+    ],
+    "outDir": "dist"
+  },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.13.4"
+    "@openapitools/openapi-generator-cli": "^2.13.4",
+    "tsup": "^8.2.4"
   }
 }
