@@ -5,7 +5,7 @@
     "packages/*",
     "examples/*"
   ],
-  "packageManager": "yarn@4.3.1",
+  "packageManager": "yarn@4.4.0",
   "devDependencies": {
     "typedoc": "^0.26.6",
     "typedoc-material-theme": "^1.1.0",
