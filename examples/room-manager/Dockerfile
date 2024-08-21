@@ -14,7 +14,7 @@ COPY . .
 RUN yarn --immutable
 
 # Step 2: Build the SDK
-RUN yarn workspace @fishjam-cloud/js-server-sdk build
+RUN yarn build
 
 # Step 3: Run the example
 WORKDIR /app/examples/room-manager
