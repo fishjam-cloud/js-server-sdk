@@ -22,7 +22,7 @@ yarn gen:openapi
 ## How does it work?
 
 Fishjam Room Manager serves the purpose of a simple backend that allows users to create and/or join Fishjam rooms.
-Users must provide a room name and his username to obtain an authentication token that allows them to connect to a Fishjam instance.
+Users must provide a room name and their username to obtain an authentication token that allows them to connect to a Fishjam instance.
 Room Manager manages the room names and user names by itself by keeping the mappings in memory.
 
 As of now, it exposes 3 endpoints.
