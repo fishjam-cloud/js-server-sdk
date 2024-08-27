@@ -447,7 +447,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fishjam-cloud/fishjam-openapi@workspace:packages/fishjam-openapi"
   dependencies:
-    "@openapitools/openapi-generator-cli": "npm:^2.13.4"
+    "@openapitools/openapi-generator-cli": "npm:^2.13.5"
     tsup: "npm:^8.2.4"
   languageName: unknown
   linkType: soft
@@ -457,7 +457,7 @@ __metadata:
   resolution: "@fishjam-cloud/fishjam-proto@workspace:packages/fishjam-proto"
   dependencies:
     protobufjs: "npm:^7.3.2"
-    ts-proto: "npm:^2.0.2"
+    ts-proto: "npm:^2.0.3"
     tsup: "npm:^8.2.4"
   languageName: unknown
   linkType: soft
@@ -468,8 +468,8 @@ __metadata:
   dependencies:
     "@fishjam-cloud/fishjam-openapi": "workspace:*"
     "@fishjam-cloud/fishjam-proto": "workspace:*"
-    "@openapitools/openapi-generator-cli": "npm:^2.13.4"
-    "@types/node": "npm:^22.4.1"
+    "@openapitools/openapi-generator-cli": "npm:^2.13.5"
+    "@types/node": "npm:^22.5.0"
     "@types/websocket": "npm:^1.0.10"
     axios: "npm:^1.7.4"
     prettier: "npm:3.3.3"
@@ -671,15 +671,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openapitools/openapi-generator-cli@npm:^2.13.4":
-  version: 2.13.4
-  resolution: "@openapitools/openapi-generator-cli@npm:2.13.4"
+"@openapitools/openapi-generator-cli@npm:^2.13.5":
+  version: 2.13.5
+  resolution: "@openapitools/openapi-generator-cli@npm:2.13.5"
   dependencies:
     "@nestjs/axios": "npm:3.0.2"
     "@nestjs/common": "npm:10.3.0"
     "@nestjs/core": "npm:10.3.0"
     "@nuxtjs/opencollective": "npm:0.3.2"
-    axios: "npm:1.6.8"
+    axios: "npm:1.7.4"
     chalk: "npm:4.1.2"
     commander: "npm:8.3.0"
     compare-versions: "npm:4.1.4"
@@ -695,7 +695,7 @@ __metadata:
     tslib: "npm:2.6.2"
   bin:
     openapi-generator-cli: main.js
-  checksum: 10c0/b26e6851a35bf5c178805430b0c3f893e31180fbbbe3dfffb63b09fd7d2a1ea2e073555e430dcfa0b11c963e6d589d86273057eb9631d4e96c73df87923d70d0
+  checksum: 10c0/ca367f104dbac1af1c67de0fed8e4518e411de70444a41c9ee5c7290750a6b0e2248c399e25abcae8a3e57fe0c8f5af906ee50b63e062fa8e09589c7d417fb3a
   languageName: node
   linkType: hard
 
@@ -925,12 +925,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.4.1":
-  version: 22.4.1
-  resolution: "@types/node@npm:22.4.1"
+"@types/node@npm:^22.5.0":
+  version: 22.5.0
+  resolution: "@types/node@npm:22.5.0"
   dependencies:
     undici-types: "npm:~6.19.2"
-  checksum: 10c0/e42607438fcbd3a6aebd09084868fa0b22a4b0daf9eda79ed615df7ff8ae95e35ea56e090e1f3140ebae76b640abe42d4a6d5b60c0819eadf499adca737305b6
+  checksum: 10c0/45aa75c5e71645fac42dced4eff7f197c3fdfff6e8a9fdacd0eb2e748ff21ee70ffb73982f068a58e8d73b2c088a63613142c125236cdcf3c072ea97eada1559
   languageName: node
   linkType: hard
 
@@ -1126,18 +1126,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:1.6.8":
-  version: 1.6.8
-  resolution: "axios@npm:1.6.8"
-  dependencies:
-    follow-redirects: "npm:^1.15.6"
-    form-data: "npm:^4.0.0"
-    proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/0f22da6f490335479a89878bc7d5a1419484fbb437b564a80c34888fc36759ae4f56ea28d55a191695e5ed327f0bad56e7ff60fb6770c14d1be6501505d47ab9
-  languageName: node
-  linkType: hard
-
-"axios@npm:^1.7.4":
+"axios@npm:1.7.4, axios@npm:^1.7.4":
   version: 1.7.4
   resolution: "axios@npm:1.7.4"
   dependencies:
@@ -3609,14 +3598,14 @@ __metadata:
     "@fastify/env": "npm:^4.3.0"
     "@fastify/swagger": "npm:^8.14.0"
     "@fishjam-cloud/js-server-sdk": "workspace:*"
-    "@types/node": "npm:^22.4.1"
+    "@types/node": "npm:^22.5.0"
     axios: "npm:^1.7.4"
     fastify: "npm:^4.26.2"
     fastify-healthcheck: "npm:^4.4.0"
     fluent-json-schema: "npm:^5.0.0"
     pino-pretty: "npm:^11.2.2"
     tsc: "npm:^2.0.4"
-    tsx: "npm:^4.17.0"
+    tsx: "npm:^4.19.0"
     typescript: "npm:~5.5.4"
   languageName: unknown
   linkType: soft
@@ -4064,9 +4053,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-proto@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "ts-proto@npm:2.0.2"
+"ts-proto@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "ts-proto@npm:2.0.3"
   dependencies:
     "@bufbuild/protobuf": "npm:^2.0.0"
     case-anything: "npm:^2.1.13"
@@ -4074,7 +4063,7 @@ __metadata:
     ts-proto-descriptors: "npm:1.16.0"
   bin:
     protoc-gen-ts_proto: protoc-gen-ts_proto
-  checksum: 10c0/33b44c53152022ed491f9c97f7843fddb0afa78f664d34bc5ce8c76627c77e25eda68a603c36387a5adb86cf52e0fe41b7c196ceafc163f1175377f45e6aea6f
+  checksum: 10c0/1717295f7155d660b749ce89ba00856f9cde964a7fd96b3d48b079b0df79825faa7f0157ff0e98a07d09c831d64b406451e7558d09e5142df1ba84fb6c8107ac
   languageName: node
   linkType: hard
 
@@ -4149,9 +4138,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:^4.17.0":
-  version: 4.17.0
-  resolution: "tsx@npm:4.17.0"
+"tsx@npm:^4.19.0":
+  version: 4.19.0
+  resolution: "tsx@npm:4.19.0"
   dependencies:
     esbuild: "npm:~0.23.0"
     fsevents: "npm:~2.3.3"
@@ -4161,7 +4150,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/ad720b81d6447c7695d24c27947fa1a2b6db9d2ef03216389edd6fa0006aa479bc0d8348a1ac9975a08edef4ce791ff5629a24d8dccbb0987f42e5407785cfa4
+  checksum: 10c0/d14463a78067c6db84c677b79b14861de6d7f6fb0ffa5727cc500c4552459e936395a3854ad0112af0fd7b263bcedd62ce3929b036188eb10cd9902a607ffe34
   languageName: node
   linkType: hard
 
