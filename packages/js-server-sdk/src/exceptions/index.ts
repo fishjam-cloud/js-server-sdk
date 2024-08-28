@@ -1,36 +1,25 @@
-class BaseException extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = this.constructor.name;
+import axios from 'axios';
+
+export class FishjamBaseException extends Error {
+  statusCode: number;
+  constructor(error: axios.AxiosError<any, any>) {
+    super(error.response?.data.detail ?? error.response?.data.errors ?? 'Unknown error');
+    this.statusCode = error.response?.status ?? 0;
   }
 }
 
-export class BadRequestException extends BaseException {
-  constructor() {
-    super('Invalid request body structure');
-  }
-}
+export class BadRequestException extends FishjamBaseException {}
 
-export class UnauthorizedException extends BaseException {
-  constructor() {
-    super('Unauthorized');
-  }
-}
+export class UnauthorizedException extends FishjamBaseException {}
 
-export class RoomNotFoundException extends BaseException {
-  constructor() {
-    super('Room not found');
-  }
-}
+export class ForbiddenException extends FishjamBaseException {}
 
-export class PeerNotFoundException extends BaseException {
-  constructor() {
-    super('Peer not found');
-  }
-}
+export class RoomNotFoundException extends FishjamBaseException {}
 
-export class ServiceUnavailableException extends BaseException {
-  constructor() {
-    super('Service unavailable');
-  }
-}
+export class FishjamNotFoundException extends FishjamBaseException {}
+
+export class PeerNotFoundException extends FishjamBaseException {}
+
+export class ServiceUnavailableException extends FishjamBaseException {}
+
+export class UnknownException extends FishjamBaseException {}

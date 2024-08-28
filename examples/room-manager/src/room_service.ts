@@ -2,6 +2,7 @@ import { FishjamClient, Room, RoomNotFoundException } from '@fishjam-cloud/js-se
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import { fastify } from './index';
 import { User } from './schema';
+import { RoomManagerError } from './errors';
 
 export class RoomService {
   private readonly usernameToUserMap = new Map<string, User>();
@@ -33,7 +34,7 @@ export class RoomService {
       return await this.createPeer(roomName, username);
     }
 
-    if (!user?.token) throw Error('Missing token for user in room');
+    if (!user?.token) throw new RoomManagerError('Missing token for user in room');
 
     user.peer = peer;
 
@@ -91,7 +92,7 @@ export class RoomService {
   private async createPeer(roomName: string, username: string): Promise<User> {
     const roomId = this.roomNameToRoomIdMap.get(roomName);
 
-    if (!roomId) throw Error('Room not found');
+    if (!roomId) throw new RoomManagerError('Room not found');
 
     const { peer, token } = await this.fishjamClient.createPeer(roomId, {
       enableSimulcast: fastify.config.ENABLE_SIMULCAST,

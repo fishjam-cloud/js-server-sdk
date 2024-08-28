@@ -1,29 +1,34 @@
+import axios from 'axios';
 import {
   BadRequestException,
+  FishjamNotFoundException,
   PeerNotFoundException,
   RoomNotFoundException,
   ServiceUnavailableException,
   UnauthorizedException,
+  UnknownException,
 } from '.';
 
-export const raisePossibleExceptions = (code: number, entity?: 'peer' | 'room') => {
-  switch (code) {
+export const raiseExceptions = (error: axios.AxiosError<any, any>, entity?: 'peer' | 'room') => {
+  switch (error.response?.status) {
     case 400:
-      throw new BadRequestException();
+      throw new BadRequestException(error);
     case 401:
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(error);
     case 404:
       switch (entity) {
         case 'peer':
-          throw new PeerNotFoundException();
+          throw new PeerNotFoundException(error);
         case 'room':
-          throw new RoomNotFoundException();
+          throw new RoomNotFoundException(error);
         default:
-          return;
+          throw new FishjamNotFoundException(error);
       }
+    case 502:
+      throw new UnknownException(error);
     case 503:
-      throw new ServiceUnavailableException();
+      throw new ServiceUnavailableException(error);
     default:
-      return;
+      throw new UnknownException(error);
   }
 };

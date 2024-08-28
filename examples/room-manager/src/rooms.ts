@@ -1,8 +1,8 @@
 import { FastifyInstance } from 'fastify';
 import { RoomService } from './room_service';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
-import { parseError } from './utils';
 import { peerEndpointSchema, QueryParams, startRecordingSchema } from './schema';
+import { parseError } from './errors';
 
 const removeTrailingSlash = (href: string) => href.endsWith("/") ? href.slice(0, -1) : href
 
@@ -34,8 +34,8 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
         const user = await roomService.findOrCreateUser(roomName, username);
         return { ...user, url: websocketUrl };
       } catch (error: unknown) {
-        const [errorMessage, code] = parseError(error);
-        return res.status(code).send(errorMessage);
+        const [parsedError, errorCode] = parseError(error);
+        return res.status(errorCode).send(parsedError.detail);
       }
     }
   );
