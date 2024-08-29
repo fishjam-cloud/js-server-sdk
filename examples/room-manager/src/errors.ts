@@ -4,12 +4,14 @@ import { FishjamBaseException } from '@fishjam-cloud/js-server-sdk';
 export class RoomManagerError extends Error {
   detail: Record<string, string>;
 
-  constructor(detail: string) {
-    super(detail);
+  constructor(errorMessage: string) {
+    super(errorMessage);
     this.name = this.constructor.name;
-    this.detail = { "detail": detail };
+    this.detail = { "error": errorMessage };
   }
 }
+
+const isRoomManagerError = (err: unknown): err is RoomManagerError => err instanceof RoomManagerError;
 
 export function parseError(error: unknown): [RoomManagerError, number] {
   let statusCode = 500;
@@ -22,9 +24,9 @@ export function parseError(error: unknown): [RoomManagerError, number] {
     return [parsedError, statusCode];
   }
 
-  if (error instanceof RoomManagerError) {
-    parsedError = new RoomManagerError(String(error));
-    return [parsedError, statusCode];
+
+  if (isRoomManagerError(error)) {
+    return [error, statusCode];
   }
 
   return [new RoomManagerError('Internal server error'), statusCode];
