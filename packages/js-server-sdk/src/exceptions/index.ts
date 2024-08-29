@@ -4,7 +4,7 @@ export class FishjamBaseException extends Error {
   statusCode: number;
   constructor(error: axios.AxiosError<any, any>) {
     super(error.response?.data.detail ?? error.response?.data.errors ?? 'Unknown error');
-    this.statusCode = error.response?.status ?? 0;
+    this.statusCode = error.response?.status ?? 500;
   }
 }
 
