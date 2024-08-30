@@ -1,14 +1,13 @@
 import axios from 'axios';
 import { RoomApi, RoomConfig, PeerOptions, Peer } from '@fishjam-cloud/fishjam-openapi';
 import { FishjamConfig, Room } from './types';
-import { raisePossibleExceptions } from './exceptions/mapper';
+import { raiseExceptions } from './exceptions/mapper';
 
 export class FishjamClient {
   private readonly roomApi: RoomApi;
 
   constructor(config: FishjamConfig) {
     const client = axios.create({
-      validateStatus: (status) => [200, 201, 400, 401, 404, 503].includes(status),
       headers: {
         Authorization: `Bearer ${config.serverToken}`,
       },
@@ -18,12 +17,12 @@ export class FishjamClient {
   }
 
   async createPeer(roomId: string, options: PeerOptions = {}): Promise<{ peer: Peer; token: string }> {
-    const response = await this.roomApi.addPeer(roomId, {
-      type: 'webrtc',
-      options,
-    });
-
-    raisePossibleExceptions(response.status);
+    const response = await this.roomApi
+      .addPeer(roomId, {
+        type: 'webrtc',
+        options,
+      })
+      .catch(raiseExceptions);
 
     const {
       data: { data },
@@ -33,9 +32,7 @@ export class FishjamClient {
   }
 
   async createRoom(config: RoomConfig = {}): Promise<Room> {
-    const response = await this.roomApi.createRoom(config);
-
-    raisePossibleExceptions(response.status);
+    const response = await this.roomApi.createRoom(config).catch(raiseExceptions);
 
     const {
       data: {
@@ -49,32 +46,21 @@ export class FishjamClient {
   }
 
   async getAllRooms(): Promise<Room[]> {
-    const getAllRoomsRepsonse = await this.roomApi.getAllRooms();
-
-    raisePossibleExceptions(getAllRoomsRepsonse.status);
-
+    const getAllRoomsRepsonse = await this.roomApi.getAllRooms().catch(raiseExceptions);
     return getAllRoomsRepsonse.data.data.map(({ components: _, ...room }) => room) ?? [];
   }
 
   async getRoom(roomId: string): Promise<Room> {
-    const getRoomResponse = await this.roomApi.getRoom(roomId);
-
-    raisePossibleExceptions(getRoomResponse.status, 'room');
-
+    const getRoomResponse = await this.roomApi.getRoom(roomId).catch((error) => raiseExceptions(error, 'room'));
     const { components: _, ...room } = getRoomResponse.data.data;
-
     return room;
   }
 
   async deletePeer(roomId: string, peerId: string): Promise<void> {
-    const response = await this.roomApi.deletePeer(roomId, peerId);
-
-    raisePossibleExceptions(response.status, 'peer');
+    await this.roomApi.deletePeer(roomId, peerId).catch((error) => raiseExceptions(error, 'peer'));
   }
 
   async deleteRoom(roomId: string): Promise<void> {
-    const response = await this.roomApi.deleteRoom(roomId);
-
-    raisePossibleExceptions(response.status, 'room');
+    await this.roomApi.deleteRoom(roomId).catch((error) => raiseExceptions(error, 'room'));
   }
 }
