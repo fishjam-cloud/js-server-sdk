@@ -39,7 +39,7 @@
       "src/proto.ts"
     ],
     "dts": true,
-    "minify": true,
+    "minify": false,
     "format": [
       "cjs",
       "esm"

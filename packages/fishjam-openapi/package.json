@@ -30,7 +30,7 @@
       "src/index.ts"
     ],
     "dts": true,
-    "minify": true,
+    "minify": false,
     "format": [
       "cjs",
       "esm"
