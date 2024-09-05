@@ -1,4 +1,4 @@
-import { FastifyInstance } from 'fastify';
+import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { RoomService } from './room_service';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import { peerEndpointSchema, QueryParams, startRecordingSchema } from './schema';
@@ -23,33 +23,34 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
   const websocketUrl = removeTrailingSlash(url);
   const roomService = new RoomService(fastify.config.FISHJAM_URL, fastify.config.FISHJAM_SERVER_TOKEN);
 
-  fastify.get<{ Params: QueryParams }>(
-    '/:roomName/users/:username',
-    { schema: peerEndpointSchema },
-    async (req, res) => {
-      const {
-        params: { roomName, username },
-      } = req;
-      try {
-        const user = await roomService.findOrCreateUser(roomName, username);
-        return { ...user, url: websocketUrl };
-      } catch (error: unknown) {
-        const [parsedError, errorCode] = parseError(error);
-        return res.status(errorCode).send(parsedError.detail);
-      }
+  const getUserHandler = async (req : FastifyRequest<{ Params: QueryParams }>, res : FastifyReply) => {
+    const {
+      params: { roomName, username },
+    } = req;
+    try {
+      const user = await roomService.findOrCreateUser(roomName, username);
+      return { ...user, url: websocketUrl };
+    } catch (error: unknown) {
+      const [parsedError, errorCode] = parseError(error);
+      return res.status(errorCode).send(parsedError.detail);
     }
-  );
+  }
 
-  fastify.post<{ Params: { roomName: string } }>(
-    '/:roomName/start-recording',
-    { schema: startRecordingSchema },
-    async (req, res) => {
-      throw new Error('Not yet implemented');
-    }
-  );
+  const startRecordingHandler =   async (req: FastifyRequest<{ Params: { roomName: string} }>, res : FastifyReply) => {
+    throw new Error('Not yet implemented');
+  };
 
-  fastify.post<{ Body: ServerMessage }>('/webhook', async (req, res) => {
+  const webhookHandler = async (req : FastifyRequest<{ Body: ServerMessage }>, res : FastifyReply) => {
     await roomService.handleJellyfishMessage(req.body);
     return res.status(200).send();
-  });
+  };
+
+  fastify.get<{ Params: QueryParams }>('/:roomName/users/:username', { schema: peerEndpointSchema }, getUserHandler);
+  fastify.get<{ Params: QueryParams }>('/:roomName/users/:username/', { schema: peerEndpointSchema }, getUserHandler);
+
+  fastify.post<{ Params: { roomName: string } }>('/:roomName/start-recording',{ schema: startRecordingSchema }, startRecordingHandler);
+  fastify.post<{ Params: { roomName: string } }>('/:roomName/start-recording/',{ schema: startRecordingSchema }, startRecordingHandler);
+
+  fastify.post<{ Body: ServerMessage }>('/webhook', webhookHandler);
+  fastify.post<{ Body: ServerMessage }>('/webhook/', webhookHandler);
 }
