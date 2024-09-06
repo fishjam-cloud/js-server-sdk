@@ -95,7 +95,7 @@ export class RoomService {
     if (!roomId) throw new RoomManagerError('Room not found');
 
     const { peer, token } = await this.fishjamClient.createPeer(roomId, {
-      enableSimulcast: fastify.config.ENABLE_SIMULCAST,
+      enableSimulcast: fastify.config.ENABLE_SIMULCAST, metadata: { username }
     });
 
     const user = {
