@@ -457,7 +457,7 @@ __metadata:
   resolution: "@fishjam-cloud/fishjam-proto@workspace:packages/fishjam-proto"
   dependencies:
     protobufjs: "npm:^7.4.0"
-    ts-proto: "npm:^2.0.3"
+    ts-proto: "npm:^2.2.0"
     tsup: "npm:^8.2.4"
   languageName: unknown
   linkType: soft
@@ -469,7 +469,7 @@ __metadata:
     "@fishjam-cloud/fishjam-openapi": "workspace:*"
     "@fishjam-cloud/fishjam-proto": "workspace:*"
     "@openapitools/openapi-generator-cli": "npm:^2.13.5"
-    "@types/node": "npm:^22.5.2"
+    "@types/node": "npm:^22.5.4"
     "@types/websocket": "npm:^1.0.10"
     axios: "npm:^1.7.7"
     prettier: "npm:3.3.3"
@@ -891,12 +891,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shikijs/core@npm:1.12.1":
-  version: 1.12.1
-  resolution: "@shikijs/core@npm:1.12.1"
+"@shikijs/core@npm:1.16.3":
+  version: 1.16.3
+  resolution: "@shikijs/core@npm:1.16.3"
   dependencies:
+    "@shikijs/vscode-textmate": "npm:^9.2.0"
     "@types/hast": "npm:^3.0.4"
-  checksum: 10c0/196df410a63a7cee3539f7ea46ee2241f7d6876af622041330b9c2725e9efa2993a2f0e24938d1dd1c214222fa03e18e61b4c849d323b06505387d93acadb918
+    oniguruma-to-js: "npm:0.3.3"
+    regex: "npm:4.3.2"
+  checksum: 10c0/69be7d81ac3d3e73a9e3d5d6298d2bdff805cf10b7af29117e6182a381644d01b471633e19d0a0055a5a009c3283832ff769ded6083298f76bed0e9a9bc3a026
+  languageName: node
+  linkType: hard
+
+"@shikijs/vscode-textmate@npm:^9.2.0":
+  version: 9.2.2
+  resolution: "@shikijs/vscode-textmate@npm:9.2.2"
+  checksum: 10c0/db4471da582c16c4b49361fcb3a4acfa47af9c3566f308faca7373ed7c1d13232e723749dd5c62b78aa76e365f2b8af3426f63e51cccfc5755981636c851eebf
   languageName: node
   linkType: hard
 
@@ -925,12 +935,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.5.2":
-  version: 22.5.2
-  resolution: "@types/node@npm:22.5.2"
+"@types/node@npm:^22.5.4":
+  version: 22.5.4
+  resolution: "@types/node@npm:22.5.4"
   dependencies:
     undici-types: "npm:~6.19.2"
-  checksum: 10c0/624a7fd76229eacc6c158eb3b9afd55b811d7f01976c5f92c630d5b9d47047cc218928c343988484a165ac400e5eb6fe70ea300fc7242deeb0e920c7724290f6
+  checksum: 10c0/b445daa7eecd761ad4d778b882d6ff7bcc3b4baad2086ea9804db7c5d4a4ab0298b00d7f5315fc640a73b5a1d52bbf9628e09c9fec0cf44dbf9b4df674a8717d
   languageName: node
   linkType: hard
 
@@ -2717,7 +2727,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"long@npm:^5.0.0, long@npm:^5.2.3":
+"long@npm:^5.0.0":
   version: 5.2.3
   resolution: "long@npm:5.2.3"
   checksum: 10c0/6a0da658f5ef683b90330b1af76f06790c623e148222da9d75b60e266bbf88f803232dd21464575681638894a84091616e7f89557aa087fd14116c0f4e0e43d9
@@ -3112,6 +3122,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"oniguruma-to-js@npm:0.3.3":
+  version: 0.3.3
+  resolution: "oniguruma-to-js@npm:0.3.3"
+  checksum: 10c0/98936af22e83369690fbc47f0b5e74775d7f9b305b481706f3e54c38e61920fab23be73c6c832586adcf2d0f81cfead0312e5dad506b38a4390003d4c8e7e269
+  languageName: node
+  linkType: hard
+
 "openapi-types@npm:^12.0.0":
   version: 12.1.3
   resolution: "openapi-types@npm:12.1.3"
@@ -3343,26 +3360,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"protobufjs@npm:^7.2.4":
-  version: 7.3.2
-  resolution: "protobufjs@npm:7.3.2"
-  dependencies:
-    "@protobufjs/aspromise": "npm:^1.1.2"
-    "@protobufjs/base64": "npm:^1.1.2"
-    "@protobufjs/codegen": "npm:^2.0.4"
-    "@protobufjs/eventemitter": "npm:^1.1.0"
-    "@protobufjs/fetch": "npm:^1.1.0"
-    "@protobufjs/float": "npm:^1.0.2"
-    "@protobufjs/inquire": "npm:^1.1.0"
-    "@protobufjs/path": "npm:^1.1.2"
-    "@protobufjs/pool": "npm:^1.1.0"
-    "@protobufjs/utf8": "npm:^1.1.0"
-    "@types/node": "npm:>=13.7.0"
-    long: "npm:^5.0.0"
-  checksum: 10c0/b87e38fffc989793099010439a7ff45a0a57ef5b8f44b5209f06bfa5085ac96a365aa37eb3c79bd6954d6ef1b50fc69da37dae8ea2a31d90b7bc8fb2fa0e3955
-  languageName: node
-  linkType: hard
-
 "protobufjs@npm:^7.4.0":
   version: 7.4.0
   resolution: "protobufjs@npm:7.4.0"
@@ -3489,6 +3486,13 @@ __metadata:
   version: 0.14.1
   resolution: "regenerator-runtime@npm:0.14.1"
   checksum: 10c0/1b16eb2c4bceb1665c89de70dcb64126a22bc8eb958feef3cd68fe11ac6d2a4899b5cd1b80b0774c7c03591dc57d16631a7f69d2daa2ec98100e2f29f7ec4cc4
+  languageName: node
+  linkType: hard
+
+"regex@npm:4.3.2":
+  version: 4.3.2
+  resolution: "regex@npm:4.3.2"
+  checksum: 10c0/bbc1dd348f85ce05407a072324b37cf79fe6506c90a66f520091feff6f3be8b2e04696f7cfa464a9de1ca4291c01390c8c090bbebfcea25affc03a38c94dd5dc
   languageName: node
   linkType: hard
 
@@ -3629,7 +3633,7 @@ __metadata:
     "@fastify/env": "npm:^4.3.0"
     "@fastify/swagger": "npm:^8.14.0"
     "@fishjam-cloud/js-server-sdk": "workspace:*"
-    "@types/node": "npm:^22.5.2"
+    "@types/node": "npm:^22.5.4"
     axios: "npm:^1.7.7"
     fastify: "npm:^4.26.2"
     fastify-healthcheck: "npm:^4.4.0"
@@ -3637,7 +3641,7 @@ __metadata:
     pino-pretty: "npm:^11.2.2"
     tsc: "npm:^2.0.4"
     tsx: "npm:^4.19.0"
-    typescript: "npm:~5.5.4"
+    typescript: "npm:~5.6.2"
   languageName: unknown
   linkType: soft
 
@@ -3645,9 +3649,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    typedoc: "npm:^0.26.6"
+    typedoc: "npm:^0.26.7"
     typedoc-material-theme: "npm:^1.1.0"
-    typescript: "npm:^5.5.4"
+    typescript: "npm:^5.6.2"
   languageName: unknown
   linkType: soft
 
@@ -3754,13 +3758,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shiki@npm:^1.9.1":
-  version: 1.12.1
-  resolution: "shiki@npm:1.12.1"
+"shiki@npm:^1.16.2":
+  version: 1.16.3
+  resolution: "shiki@npm:1.16.3"
   dependencies:
-    "@shikijs/core": "npm:1.12.1"
+    "@shikijs/core": "npm:1.16.3"
+    "@shikijs/vscode-textmate": "npm:^9.2.0"
     "@types/hast": "npm:^3.0.4"
-  checksum: 10c0/1afe9a0002a215fec6960e48284b207d4714de192f4a2223f748a640c0de17a45f2c76ebc4c4020c308bd441c6f7b913eecbd97d346ddd681db0a643c46190fc
+  checksum: 10c0/fef43b0bbd3bf95d14265a12b27653b8d43753a597d7973e1aefc0f1ced7f701686eee77cee3fdf7d0bf11d8520165edb9fc0c6d87c92955607aafe526c590c4
   languageName: node
   linkType: hard
 
@@ -4074,27 +4079,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-proto-descriptors@npm:1.16.0":
-  version: 1.16.0
-  resolution: "ts-proto-descriptors@npm:1.16.0"
+"ts-proto-descriptors@npm:2.0.0":
+  version: 2.0.0
+  resolution: "ts-proto-descriptors@npm:2.0.0"
   dependencies:
-    long: "npm:^5.2.3"
-    protobufjs: "npm:^7.2.4"
-  checksum: 10c0/6e943b05ecd1f240ff443719479fe112e198d5bbf2d9ec7c3412511d555f85da485021286b424cedba52392dc23de49d3ea773f865f556c9c173446a948d5484
+    "@bufbuild/protobuf": "npm:^2.0.0"
+  checksum: 10c0/a4f47a6db7de6b328a5b22bb0bed2a0dac929c28002567613db7980e0a8392b9148530e432a602a8c6b2cfda9909be9568a2e5c545f5624bb5d5eba52031c059
   languageName: node
   linkType: hard
 
-"ts-proto@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "ts-proto@npm:2.0.3"
+"ts-proto@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "ts-proto@npm:2.2.0"
   dependencies:
     "@bufbuild/protobuf": "npm:^2.0.0"
     case-anything: "npm:^2.1.13"
     ts-poet: "npm:^6.7.0"
-    ts-proto-descriptors: "npm:1.16.0"
+    ts-proto-descriptors: "npm:2.0.0"
   bin:
     protoc-gen-ts_proto: protoc-gen-ts_proto
-  checksum: 10c0/1717295f7155d660b749ce89ba00856f9cde964a7fd96b3d48b079b0df79825faa7f0157ff0e98a07d09c831d64b406451e7558d09e5142df1ba84fb6c8107ac
+  checksum: 10c0/a785672fb72c224086d06f46056d2c1a15b8e34cab1299e9abfd407fbd7820c6593e7789c960a51afc2073e776816c314943b88c01e5ed275a71d2d825099ba5
   languageName: node
   linkType: hard
 
@@ -4231,40 +4235,40 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:^0.26.6":
-  version: 0.26.6
-  resolution: "typedoc@npm:0.26.6"
+"typedoc@npm:^0.26.7":
+  version: 0.26.7
+  resolution: "typedoc@npm:0.26.7"
   dependencies:
     lunr: "npm:^2.3.9"
     markdown-it: "npm:^14.1.0"
     minimatch: "npm:^9.0.5"
-    shiki: "npm:^1.9.1"
-    yaml: "npm:^2.4.5"
+    shiki: "npm:^1.16.2"
+    yaml: "npm:^2.5.1"
   peerDependencies:
-    typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x || 5.4.x || 5.5.x
+    typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x || 5.4.x || 5.5.x || 5.6.x
   bin:
     typedoc: bin/typedoc
-  checksum: 10c0/95e7aefd500d057e0b73afbe4e76d9ddb2617516f890fbe5ce690bddfccc2f73a6279eb7d6e510347ca8347078d7cbbbdf416b9432b156708eaf1a1f34f7a4f0
+  checksum: 10c0/36a73dc08670478d34e9232f4f95b928ca51010e5926dbe22bd5582e9ead914ec7628e73f02488811f79b685abca8f1211c6cf879313cf1122a5ea7eb1bbaf5a
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.5.4, typescript@npm:~5.5.4":
-  version: 5.5.4
-  resolution: "typescript@npm:5.5.4"
+"typescript@npm:^5.6.2, typescript@npm:~5.6.2":
+  version: 5.6.2
+  resolution: "typescript@npm:5.6.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/422be60f89e661eab29ac488c974b6cc0a660fb2228003b297c3d10c32c90f3bcffc1009b43876a082515a3c376b1eefcce823d6e78982e6878408b9a923199c
+  checksum: 10c0/3ed8297a8c7c56b7fec282532503d1ac795239d06e7c4966b42d4330c6cf433a170b53bcf93a130a7f14ccc5235de5560df4f1045eb7f3550b46ebed16d3c5e5
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.5.4#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A~5.5.4#optional!builtin<compat/typescript>":
-  version: 5.5.4
-  resolution: "typescript@patch:typescript@npm%3A5.5.4#optional!builtin<compat/typescript>::version=5.5.4&hash=379a07"
+"typescript@patch:typescript@npm%3A^5.6.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A~5.6.2#optional!builtin<compat/typescript>":
+  version: 5.6.2
+  resolution: "typescript@patch:typescript@npm%3A5.6.2#optional!builtin<compat/typescript>::version=5.6.2&hash=74658d"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/73409d7b9196a5a1217b3aaad929bf76294d3ce7d6e9766dd880ece296ee91cf7d7db6b16c6c6c630ee5096eccde726c0ef17c7dfa52b01a243e57ae1f09ef07
+  checksum: 10c0/e6c1662e4852e22fe4bbdca471dca3e3edc74f6f1df043135c44a18a7902037023ccb0abdfb754595ca9028df8920f2f8492c00fc3cbb4309079aae8b7de71cd
   languageName: node
   linkType: hard
 
@@ -4499,12 +4503,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:^2.4.5":
-  version: 2.5.0
-  resolution: "yaml@npm:2.5.0"
+"yaml@npm:^2.5.1":
+  version: 2.5.1
+  resolution: "yaml@npm:2.5.1"
   bin:
     yaml: bin.mjs
-  checksum: 10c0/771a1df083c8217cf04ef49f87244ae2dd7d7457094425e793b8f056159f167602ce172aa32d6bca21f787d24ec724aee3cecde938f6643564117bd151452631
+  checksum: 10c0/40fba5682898dbeeb3319e358a968fe886509fab6f58725732a15f8dda3abac509f91e76817c708c9959a15f786f38ff863c1b88062d7c1162c5334a7d09cb4a
   languageName: node
   linkType: hard
 

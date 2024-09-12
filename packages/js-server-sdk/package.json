@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.13.5",
-    "@types/node": "^22.5.2",
+    "@types/node": "^22.5.4",
     "@types/websocket": "^1.0.10",
     "prettier": "3.3.3",
     "tsup": "^8.2.4",
