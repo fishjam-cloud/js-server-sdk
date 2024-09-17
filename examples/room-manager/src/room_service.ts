@@ -5,7 +5,7 @@ import { User } from './schema';
 import { RoomManagerError } from './errors';
 
 export class RoomService {
-  private readonly usernameToUserMap = new Map<string, User>();
+  private readonly participantNameToParticipantMap = new Map<string, User>();
   private readonly roomNameToRoomIdMap = new Map<string, string>();
   private readonly fishjamClient: FishjamClient;
 
@@ -16,31 +16,31 @@ export class RoomService {
     });
   }
 
-  async findOrCreateUser(roomName: string, username: string): Promise<User> {
+  async getParticipantToken(roomName: string, username: string): Promise<User> {
     const room = await this.findOrCreateRoomInFishjam(roomName);
-    const user = this.usernameToUserMap.get(username);
+    const user = this.participantNameToParticipantMap.get(username);
 
-    const peer = room.peers.find((peer) => peer.id === user?.peer.id);
+    const participant = room.peers.find((participant) => participant.id === user?.peer.id);
 
     fastify.log.info({
       name: 'Got room',
       roomName,
       roomId: room.id,
-      peers: room.peers,
+      participants: room.peers,
     });
 
-    if (!peer) {
-      fastify.log.info({ name: 'Creating peer' });
-      return await this.createPeer(roomName, username);
+    if (!participant) {
+      fastify.log.info({ name: 'Creating participant' });
+      return await this.createParticipant(roomName, username);
     }
 
-    if (!user?.token) throw new RoomManagerError('Missing token for user in room');
+    if (!user?.token) throw new RoomManagerError('Missing token for participant in room');
 
-    user.peer = peer;
+    user.peer = participant;
 
-    this.usernameToUserMap.set(username, user);
+    this.participantNameToParticipantMap.set(username, user);
 
-    fastify.log.info({ name: 'Peer and room exist', username, roomName });
+    fastify.log.info({ name: 'Participant and room exist', username, roomName });
 
     return user;
   }
@@ -52,13 +52,13 @@ export class RoomService {
         fastify.log.info({ [name]: value });
       });
 
-    const peerToBeRemoved = notification.peerCrashed ?? notification.peerDeleted;
+    const participantToBeRemoved = notification.peerCrashed ?? notification.peerDeleted;
 
-    if (peerToBeRemoved) {
-      const { roomId, peerId } = peerToBeRemoved;
+    if (participantToBeRemoved) {
+      const { roomId, peerId: participantId } = participantToBeRemoved;
 
-      const user = [...this.usernameToUserMap.values()].find(
-        (user) => user.room.id === roomId && user.peer.id === peerId
+      const user = [...this.participantNameToParticipantMap.values()].find(
+        (user) => user.room.id === roomId && user.peer.id === participantId
       );
 
       if (!user) {
@@ -66,9 +66,9 @@ export class RoomService {
         return;
       }
 
-      this.usernameToUserMap.delete(user.username);
+      this.participantNameToParticipantMap.delete(user.username);
 
-      fastify.log.info({ name: 'Peer deleted from cache', roomId, peerId });
+      fastify.log.info({ name: 'Peer deleted from cache', roomId, participantId });
     }
 
     const roomToBeRemovedId = (notification.roomDeleted ?? notification.roomCrashed)?.roomId;
@@ -76,10 +76,12 @@ export class RoomService {
     if (roomToBeRemovedId) {
       this.roomNameToRoomIdMap.delete(roomToBeRemovedId);
 
-      const usersToRemove = [...this.usernameToUserMap.values()].filter((user) => user.room.id === roomToBeRemovedId);
+      const usersToRemove = [...this.participantNameToParticipantMap.values()].filter(
+        (user) => user.room.id === roomToBeRemovedId
+      );
 
       usersToRemove.forEach((user) => {
-        this.usernameToUserMap.delete(user.username);
+        this.participantNameToParticipantMap.delete(user.username);
       });
 
       fastify.log.info({
@@ -89,13 +91,14 @@ export class RoomService {
     }
   }
 
-  private async createPeer(roomName: string, username: string): Promise<User> {
+  private async createParticipant(roomName: string, username: string): Promise<User> {
     const roomId = this.roomNameToRoomIdMap.get(roomName);
 
     if (!roomId) throw new RoomManagerError('Room not found');
 
     const { peer, token } = await this.fishjamClient.createPeer(roomId, {
-      enableSimulcast: fastify.config.ENABLE_SIMULCAST, metadata: { username }
+      enableSimulcast: fastify.config.ENABLE_SIMULCAST,
+      metadata: { username },
     });
 
     const user = {
@@ -105,7 +108,7 @@ export class RoomService {
       token,
     };
 
-    this.usernameToUserMap.set(username, user);
+    this.participantNameToParticipantMap.set(username, user);
 
     fastify.log.info('Created user', { username, user });
 

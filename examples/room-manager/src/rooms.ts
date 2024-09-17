@@ -1,10 +1,10 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { RoomService } from './room_service';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
-import { peerEndpointSchema, QueryParams, startRecordingSchema } from './schema';
+import { participantEndpointSchema, QueryParams, startRecordingSchema } from './schema';
 import { parseError } from './errors';
 
-const removeTrailingSlash = (href: string) => href.endsWith("/") ? href.slice(0, -1) : href
+const removeTrailingSlash = (href: string) => (href.endsWith('/') ? href.slice(0, -1) : href);
 
 const httpToWebsocket = (httpUrl: string) => {
   const url = new URL(httpUrl);
@@ -23,18 +23,18 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
   const websocketUrl = removeTrailingSlash(url);
   const roomService = new RoomService(fastify.config.FISHJAM_URL, fastify.config.FISHJAM_SERVER_TOKEN);
 
-  const getUserHandler = async (req: FastifyRequest<{ Params: QueryParams }>, res: FastifyReply) => {
-    const {
-      params: { roomName, username },
-    } = req;
+  const getRoomAccessHandler = async (
+    { query: { roomName, participantName } }: FastifyRequest<{ Querystring: QueryParams }>,
+    res: FastifyReply
+  ) => {
     try {
-      const user = await roomService.findOrCreateUser(roomName, username);
+      const user = await roomService.getParticipantToken(roomName, participantName);
       return { ...user, url: websocketUrl };
     } catch (error: unknown) {
       const [parsedError, errorCode] = parseError(error);
       return res.status(errorCode).send(parsedError.detail);
     }
-  }
+  };
 
   const startRecordingHandler = async (req: FastifyRequest<{ Params: { roomName: string } }>, res: FastifyReply) => {
     throw new Error('Not yet implemented');
@@ -45,7 +45,11 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
     return res.status(200).send();
   };
 
-  fastify.get<{ Params: QueryParams }>('/:roomName/users/:username', { schema: peerEndpointSchema }, getUserHandler);
-  fastify.post<{ Params: { roomName: string } }>('/:roomName/start-recording', { schema: startRecordingSchema }, startRecordingHandler);
+  fastify.get<{ Querystring: QueryParams }, unknown>('/', { schema: participantEndpointSchema }, getRoomAccessHandler);
+  fastify.post<{ Params: { roomName: string } }>(
+    '/:roomName/start-recording',
+    { schema: startRecordingSchema },
+    startRecordingHandler
+  );
   fastify.post<{ Body: ServerMessage }>('/webhook', webhookHandler);
 }

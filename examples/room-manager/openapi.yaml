@@ -10,7 +10,7 @@ paths:
       responses:
         "200":
           description: Default Response
-  /api/rooms/{roomName}/users/{username}:
+  /api/rooms:
     get:
       operationId: getToken
       tags:
@@ -18,13 +18,13 @@ paths:
       parameters:
         - schema:
             type: string
-          in: path
+          in: query
           name: roomName
           required: true
         - schema:
             type: string
-          in: path
-          name: username
+          in: query
+          name: participantName
           required: true
       responses:
         "200":
