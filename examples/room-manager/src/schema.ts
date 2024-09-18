@@ -1,5 +1,18 @@
+import { Peer } from '@fishjam-cloud/js-server-sdk';
 import { FastifySchema } from 'fastify';
 import S from 'fluent-json-schema';
+
+export interface QueryParams {
+  roomName: string;
+  username: string;
+}
+
+export interface User {
+  username: string;
+  room: { id: string; name: string };
+  token: string;
+  peer: Peer;
+}
 
 export interface GetParticipantAccessQueryParams {
   roomName: string;
