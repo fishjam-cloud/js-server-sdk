@@ -1,11 +1,11 @@
 import { FishjamClient, Room, RoomNotFoundException } from '@fishjam-cloud/js-server-sdk';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import { fastify } from './index';
-import { User } from './schema';
+import type { ParticipantAccessData } from './schema';
 import { RoomManagerError } from './errors';
 
 export class RoomService {
-  private readonly participantNameToParticipantMap = new Map<string, User>();
+  private readonly participantNameToAccessMap = new Map<string, ParticipantAccessData>();
   private readonly roomNameToRoomIdMap = new Map<string, string>();
   private readonly fishjamClient: FishjamClient;
 
@@ -16,11 +16,11 @@ export class RoomService {
     });
   }
 
-  async getParticipantToken(roomName: string, username: string): Promise<User> {
+  async getParticipantAccess(roomName: string, username: string): Promise<ParticipantAccessData> {
     const room = await this.findOrCreateRoomInFishjam(roomName);
-    const user = this.participantNameToParticipantMap.get(username);
+    const participantAccess = this.participantNameToAccessMap.get(username);
 
-    const participant = room.peers.find((participant) => participant.id === user?.peer.id);
+    const participant = room.peers.find((participant) => participant.id === participantAccess?.participant.id);
 
     fastify.log.info({
       name: 'Got room',
@@ -34,15 +34,15 @@ export class RoomService {
       return await this.createParticipant(roomName, username);
     }
 
-    if (!user?.token) throw new RoomManagerError('Missing token for participant in room');
+    if (!participantAccess?.participantToken) throw new RoomManagerError('Missing participant token in room');
 
-    user.peer = participant;
+    participantAccess.participant = { id: participant.id, name: username };
 
-    this.participantNameToParticipantMap.set(username, user);
+    this.participantNameToAccessMap.set(username, participantAccess);
 
     fastify.log.info({ name: 'Participant and room exist', username, roomName });
 
-    return user;
+    return participantAccess;
   }
 
   async handleJellyfishMessage(notification: ServerMessage): Promise<void> {
@@ -57,16 +57,16 @@ export class RoomService {
     if (participantToBeRemoved) {
       const { roomId, peerId: participantId } = participantToBeRemoved;
 
-      const user = [...this.participantNameToParticipantMap.values()].find(
-        (user) => user.room.id === roomId && user.peer.id === participantId
+      const userAccess = [...this.participantNameToAccessMap.values()].find(
+        ({ room, participant }) => room.id === roomId && participant.id === participantId
       );
 
-      if (!user) {
-        fastify.log.info({ name: 'User not found in cache', user });
+      if (!userAccess) {
+        fastify.log.info({ name: 'User not found in cache', userAccess });
         return;
       }
 
-      this.participantNameToParticipantMap.delete(user.username);
+      this.participantNameToAccessMap.delete(userAccess.participant.name);
 
       fastify.log.info({ name: 'Peer deleted from cache', roomId, participantId });
     }
@@ -76,12 +76,12 @@ export class RoomService {
     if (roomToBeRemovedId) {
       this.roomNameToRoomIdMap.delete(roomToBeRemovedId);
 
-      const usersToRemove = [...this.participantNameToParticipantMap.values()].filter(
+      const usersToRemove = [...this.participantNameToAccessMap.values()].filter(
         (user) => user.room.id === roomToBeRemovedId
       );
 
-      usersToRemove.forEach((user) => {
-        this.participantNameToParticipantMap.delete(user.username);
+      usersToRemove.forEach(({ participant }) => {
+        this.participantNameToAccessMap.delete(participant.name);
       });
 
       fastify.log.info({
@@ -91,28 +91,27 @@ export class RoomService {
     }
   }
 
-  private async createParticipant(roomName: string, username: string): Promise<User> {
+  private async createParticipant(roomName: string, participantName: string): Promise<ParticipantAccessData> {
     const roomId = this.roomNameToRoomIdMap.get(roomName);
 
     if (!roomId) throw new RoomManagerError('Room not found');
 
-    const { peer, token } = await this.fishjamClient.createPeer(roomId, {
+    const { participant, participantToken } = await this.fishjamClient.createParticipant(roomId, {
       enableSimulcast: fastify.config.ENABLE_SIMULCAST,
-      metadata: { username },
+      metadata: { username: participantName },
     });
 
-    const user = {
-      username,
+    const participantAccess = {
+      participant: { id: participant.id, name: participantName },
       room: { id: roomId, name: roomName },
-      peer,
-      token,
+      participantToken,
     };
 
-    this.participantNameToParticipantMap.set(username, user);
+    this.participantNameToAccessMap.set(participantName, participantAccess);
 
-    fastify.log.info('Created user', { username, user });
+    fastify.log.info('Created participant', { participantName, ...participantAccess });
 
-    return user;
+    return participantAccess;
   }
 
   private async findOrCreateRoomInFishjam(roomName: string): Promise<Room> {

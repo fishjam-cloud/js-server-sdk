@@ -1,4 +1,3 @@
-import { Peer } from '@fishjam-cloud/js-server-sdk';
 import { FastifySchema } from 'fastify';
 import S from 'fluent-json-schema';
 
@@ -7,11 +6,10 @@ export interface QueryParams {
   participantName: string;
 }
 
-export interface User {
-  username: string;
+export interface ParticipantAccessData {
+  participant: { id: string; name: string };
   room: { id: string; name: string };
-  token: string;
-  peer: Peer;
+  participantToken: string;
 }
 
 const response200 = S.object()

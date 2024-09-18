@@ -28,8 +28,8 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
     res: FastifyReply
   ) => {
     try {
-      const user = await roomService.getParticipantToken(roomName, participantName);
-      return { ...user, url: websocketUrl };
+      const accessData = await roomService.getParticipantAccess(roomName, participantName);
+      return { ...accessData, url: websocketUrl };
     } catch (error: unknown) {
       const [parsedError, errorCode] = parseError(error);
       return res.status(errorCode).send(parsedError.detail);
