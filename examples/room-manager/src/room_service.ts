@@ -9,10 +9,10 @@ export class RoomService {
   private readonly roomNameToRoomIdMap = new Map<string, string>();
   private readonly fishjamClient: FishjamClient;
 
-  constructor(fishjamUrl: string, serverToken: string) {
+  constructor(fishjamUrl: string, managementToken: string) {
     this.fishjamClient = new FishjamClient({
       fishjamUrl,
-      serverToken,
+      managementToken,
     });
   }
 

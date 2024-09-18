@@ -9,7 +9,7 @@ export class FishjamClient {
   constructor(config: FishjamConfig) {
     const client = axios.create({
       headers: {
-        Authorization: `Bearer ${config.serverToken}`,
+        Authorization: `Bearer ${config.managementToken}`,
       },
     });
 

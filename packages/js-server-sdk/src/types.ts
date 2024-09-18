@@ -8,5 +8,5 @@ export type Room = {
 
 export type FishjamConfig = {
   fishjamUrl: string;
-  serverToken: string;
+  managementToken: string;
 };
