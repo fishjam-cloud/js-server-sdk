@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { RoomService } from './room_service';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
-import { participantEndpointSchema, QueryParams, startRecordingSchema } from './schema';
+import { participantEndpointSchema, GetParticipantAccessQueryParams, startRecordingSchema } from './schema';
 import { parseError } from './errors';
 
 const removeTrailingSlash = (href: string) => (href.endsWith('/') ? href.slice(0, -1) : href);
@@ -24,7 +24,7 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
   const roomService = new RoomService(fastify.config.FISHJAM_URL, fastify.config.FISHJAM_SERVER_TOKEN);
 
   const getRoomAccessHandler = async (
-    { query: { roomName, participantName } }: FastifyRequest<{ Querystring: QueryParams }>,
+    { query: { roomName, participantName } }: FastifyRequest<{ Querystring: GetParticipantAccessQueryParams }>,
     res: FastifyReply
   ) => {
     try {
@@ -45,7 +45,11 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
     return res.status(200).send();
   };
 
-  fastify.get<{ Querystring: QueryParams }, unknown>('/', { schema: participantEndpointSchema }, getRoomAccessHandler);
+  fastify.get<{ Querystring: GetParticipantAccessQueryParams }, unknown>(
+    '/',
+    { schema: participantEndpointSchema },
+    getRoomAccessHandler
+  );
   fastify.post<{ Params: { roomName: string } }>(
     '/:roomName/start-recording',
     { schema: startRecordingSchema },

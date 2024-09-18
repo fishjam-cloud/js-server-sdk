@@ -1,7 +1,7 @@
 import { FastifySchema } from 'fastify';
 import S from 'fluent-json-schema';
 
-export interface QueryParams {
+export interface GetParticipantAccessQueryParams {
   roomName: string;
   participantName: string;
 }
