@@ -18,7 +18,7 @@ export class RoomNotFoundException extends FishjamBaseException {}
 
 export class FishjamNotFoundException extends FishjamBaseException {}
 
-export class PeerNotFoundException extends FishjamBaseException {}
+export class ParticipantNotFoundException extends FishjamBaseException {}
 
 export class ServiceUnavailableException extends FishjamBaseException {}
 

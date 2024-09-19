@@ -40,7 +40,9 @@ export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<N
     const fishjamUrl = `${httpToWebsocket(config.fishjamUrl)}/socket/server/websocket`;
 
     this.client.on('connectFailed', (message) => onConnectionFailed(message));
-    this.client.on('connect', (connection) => this.setupConnection(connection, config.serverToken, onError, onClose));
+    this.client.on('connect', (connection) =>
+      this.setupConnection(connection, config.managementToken, onError, onClose)
+    );
 
     this.client.connect(fishjamUrl);
   }
