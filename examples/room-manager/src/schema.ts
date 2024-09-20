@@ -26,11 +26,10 @@ export interface ParticipantAccessData {
 }
 
 const response200 = S.object()
-  .prop('token', S.string().required())
+  .prop('participantToken', S.string().required())
   .prop('url', S.string().required())
   .prop('room', S.object().prop('id', S.string()).prop('name', S.string()))
-  .prop('username', S.string())
-  .prop('peer', S.object().prop('id', S.string()));
+  .prop('participant', S.object().prop('id', S.string()).prop('name', S.string()));
 
 const errorResponse410 = S.object()
   .prop('error', S.string().required())
