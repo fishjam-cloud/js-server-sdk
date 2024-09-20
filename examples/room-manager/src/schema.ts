@@ -4,7 +4,7 @@ import S from 'fluent-json-schema';
 
 export interface QueryParams {
   roomName: string;
-  username: string;
+  participantName: string;
 }
 
 export interface User {
@@ -39,10 +39,34 @@ const errorResponse410 = S.object()
 
 const errorResponse500 = errorResponse410.prop('cause', S.string());
 
-const querystring = S.object().prop('roomName', S.string().required()).prop('participantName', S.string().required());
+const parameterSchema = S.object()
+  .prop('roomName', S.string().required())
+  .prop('participantName', S.string().required());
 
-export const participantEndpointSchema: FastifySchema = {
-  querystring,
+export const baseParticipantEndpointSchema: FastifySchema = {
+  querystring: parameterSchema,
+  operationId: 'getToken',
+  response: {
+    200: response200,
+    410: errorResponse410,
+    500: errorResponse500,
+  },
+  tags: ['room'],
+};
+
+export const queryStringParticipantEndpointSchema: FastifySchema = {
+  querystring: parameterSchema,
+  operationId: 'getToken',
+  response: {
+    200: response200,
+    410: errorResponse410,
+    500: errorResponse500,
+  },
+  tags: ['room'],
+};
+
+export const pathParamParticipantEndpointSchema: FastifySchema = {
+  params: parameterSchema,
   operationId: 'getToken',
   response: {
     200: response200,

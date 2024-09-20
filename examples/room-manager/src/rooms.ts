@@ -2,10 +2,11 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { RoomService } from './room_service';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import {
-  participantEndpointSchema,
   GetParticipantAccessQueryParams,
   startRecordingSchema,
   QueryParams,
+  queryStringParticipantEndpointSchema,
+  pathParamParticipantEndpointSchema,
 } from './schema';
 import { parseError } from './errors';
 
@@ -48,14 +49,14 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
   };
 
   fastify.get<{ Params: QueryParams }, unknown>(
-    '/:roomName/users/:username',
-    { schema: participantEndpointSchema },
-    (req, res) => getRoomAccessHandler(req.params.roomName, req.params.username, res)
+    '/:roomName/users/:participantName',
+    { schema: pathParamParticipantEndpointSchema },
+    (req, res) => getRoomAccessHandler(req.params.roomName, req.params.participantName, res)
   );
 
   fastify.get<{ Querystring: GetParticipantAccessQueryParams }, unknown>(
     '/',
-    { schema: participantEndpointSchema },
+    { schema: queryStringParticipantEndpointSchema },
     (req, res) => getRoomAccessHandler(req.query.roomName, req.query.participantName, res)
   );
 
