@@ -1,6 +1,8 @@
+<img src="./.github/images/fishjam-card.png" width="100%">
+
 # Fishjam Cloud Server SDK
 
-TypeScript SDK that can be used to run server logic for Fishjam Cloud. 
+TypeScript SDK that can be used to run server logic for [Fishjam Cloud](https://fishjam.io). 
 This is required to have custom user authentication logic.
 
 ## Installation

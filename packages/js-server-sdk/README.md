@@ -1,6 +1,8 @@
+<img src="../../.github/images/fishjam-card.png" width="100%">
+
 # Fishjam Cloud Server SDK for JavaScript
 
-JavaScript server-side SDK for [Fishjam Cloud](https://cloud.fishjam.stream).
+JavaScript server-side SDK for [Fishjam Cloud](https://fishjam.io).
 
 ## Installation
 
