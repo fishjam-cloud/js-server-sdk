@@ -420,16 +420,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/swagger@npm:^8.14.0":
-  version: 8.15.0
-  resolution: "@fastify/swagger@npm:8.15.0"
+"@fastify/swagger@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "@fastify/swagger@npm:9.0.0"
   dependencies:
-    fastify-plugin: "npm:^4.0.0"
+    fastify-plugin: "npm:^5.0.0"
     json-schema-resolver: "npm:^2.0.0"
-    openapi-types: "npm:^12.0.0"
-    rfdc: "npm:^1.3.0"
-    yaml: "npm:^2.2.2"
-  checksum: 10c0/d77c650a56b647ba5abc828602d7a63d3c0779f00d17f5fe1882925f61cc1c7eae2f67f58f906df7a0cd46efbcb9564a74a0eb4892e063227d4ccf06b96dc5df
+    openapi-types: "npm:^12.1.3"
+    rfdc: "npm:^1.3.1"
+    yaml: "npm:^2.4.2"
+  checksum: 10c0/18fec701481eb4812d28c23115131e3365cd34f26461da8d05f9eb110e968e3bbe141d034959688b8fd026899ebbe8df2dd87f3a1f435ae6f84186da950512c7
   languageName: node
   linkType: hard
 
@@ -447,7 +447,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fishjam-cloud/fishjam-openapi@workspace:packages/fishjam-openapi"
   dependencies:
-    "@openapitools/openapi-generator-cli": "npm:^2.13.5"
+    "@openapitools/openapi-generator-cli": "npm:^2.13.9"
     tsup: "npm:^8.3.0"
   languageName: unknown
   linkType: soft
@@ -468,8 +468,8 @@ __metadata:
   dependencies:
     "@fishjam-cloud/fishjam-openapi": "workspace:*"
     "@fishjam-cloud/fishjam-proto": "workspace:*"
-    "@openapitools/openapi-generator-cli": "npm:^2.13.5"
-    "@types/node": "npm:^22.5.5"
+    "@openapitools/openapi-generator-cli": "npm:^2.13.9"
+    "@types/node": "npm:^22.6.1"
     "@types/websocket": "npm:^1.0.10"
     axios: "npm:^1.7.7"
     prettier: "npm:3.3.3"
@@ -549,54 +549,54 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/axios@npm:3.0.2":
-  version: 3.0.2
-  resolution: "@nestjs/axios@npm:3.0.2"
+"@nestjs/axios@npm:3.0.3":
+  version: 3.0.3
+  resolution: "@nestjs/axios@npm:3.0.3"
   peerDependencies:
     "@nestjs/common": ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0
     axios: ^1.3.1
     rxjs: ^6.0.0 || ^7.0.0
-  checksum: 10c0/7eaa7101fee31dca590ff58c8f5926ddcf6bf3670dabb45dc797b0f4052a6df7f1d31161124b79caa40cc035c009c2ea7bc28484830d846a7066a599c57cb451
+  checksum: 10c0/15320400f11375ab9a7b13b50159623e23f33bb0987ea555eaddc9d9b6ef6fcd815b57743179b957449c76e9ad6491398791f846be28a99a38ff108557ad03e3
   languageName: node
   linkType: hard
 
-"@nestjs/common@npm:10.3.0":
-  version: 10.3.0
-  resolution: "@nestjs/common@npm:10.3.0"
+"@nestjs/common@npm:10.4.3":
+  version: 10.4.3
+  resolution: "@nestjs/common@npm:10.4.3"
   dependencies:
     iterare: "npm:1.2.1"
-    tslib: "npm:2.6.2"
+    tslib: "npm:2.7.0"
     uid: "npm:2.0.2"
   peerDependencies:
     class-transformer: "*"
     class-validator: "*"
-    reflect-metadata: ^0.1.12
+    reflect-metadata: ^0.1.12 || ^0.2.0
     rxjs: ^7.1.0
   peerDependenciesMeta:
     class-transformer:
       optional: true
     class-validator:
       optional: true
-  checksum: 10c0/22f61ad69d5da11e03e6f75e9a7cbedad56c7806eb6389a8a79fd5632aa1db030a9fab1cfb256ea938a6cba4d1e5c373622b23dd78f5a9c88f37d8495815b9e3
+  checksum: 10c0/3f376333f0438ce3ba21f7887a2ca95acf267086308dd7ef2f9a893b5e286acf73fbee56cc01783c79377218b8d1ba601f694a9a2bd4765f1a14b7570606b7db
   languageName: node
   linkType: hard
 
-"@nestjs/core@npm:10.3.0":
-  version: 10.3.0
-  resolution: "@nestjs/core@npm:10.3.0"
+"@nestjs/core@npm:10.4.3":
+  version: 10.4.3
+  resolution: "@nestjs/core@npm:10.4.3"
   dependencies:
     "@nuxtjs/opencollective": "npm:0.3.2"
     fast-safe-stringify: "npm:2.1.1"
     iterare: "npm:1.2.1"
-    path-to-regexp: "npm:3.2.0"
-    tslib: "npm:2.6.2"
+    path-to-regexp: "npm:3.3.0"
+    tslib: "npm:2.7.0"
     uid: "npm:2.0.2"
   peerDependencies:
     "@nestjs/common": ^10.0.0
     "@nestjs/microservices": ^10.0.0
     "@nestjs/platform-express": ^10.0.0
     "@nestjs/websockets": ^10.0.0
-    reflect-metadata: ^0.1.12
+    reflect-metadata: ^0.1.12 || ^0.2.0
     rxjs: ^7.1.0
   peerDependenciesMeta:
     "@nestjs/microservices":
@@ -605,7 +605,7 @@ __metadata:
       optional: true
     "@nestjs/websockets":
       optional: true
-  checksum: 10c0/57fb84c6b69f5de032d2c1f00197d4325775e091b32f294411adbe36378a6699e827f89b8b59ce4dc5cac545cda3d99c7f1a83c48f0fcf9f3725c6240c6a419e
+  checksum: 10c0/86f6ea196ee944e121e7f0b80bdcc796abccc266be48ab169114fc059d9633ccc8ffe646bc4e87933c503a34ffa782bf1f3efe848ae668f88aa7fa6f04568aa8
   languageName: node
   linkType: hard
 
@@ -644,13 +644,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openapitools/openapi-generator-cli@npm:^2.13.5":
-  version: 2.13.5
-  resolution: "@openapitools/openapi-generator-cli@npm:2.13.5"
+"@openapitools/openapi-generator-cli@npm:^2.13.9":
+  version: 2.13.9
+  resolution: "@openapitools/openapi-generator-cli@npm:2.13.9"
   dependencies:
-    "@nestjs/axios": "npm:3.0.2"
-    "@nestjs/common": "npm:10.3.0"
-    "@nestjs/core": "npm:10.3.0"
+    "@nestjs/axios": "npm:3.0.3"
+    "@nestjs/common": "npm:10.4.3"
+    "@nestjs/core": "npm:10.4.3"
     "@nuxtjs/opencollective": "npm:0.3.2"
     axios: "npm:1.7.4"
     chalk: "npm:4.1.2"
@@ -668,7 +668,7 @@ __metadata:
     tslib: "npm:2.6.2"
   bin:
     openapi-generator-cli: main.js
-  checksum: 10c0/ca367f104dbac1af1c67de0fed8e4518e411de70444a41c9ee5c7290750a6b0e2248c399e25abcae8a3e57fe0c8f5af906ee50b63e062fa8e09589c7d417fb3a
+  checksum: 10c0/f0325891648d39a80ad1db19cf31d9007a5389036f72f6654198039bdd9d63562fe82d4ddde8e6e091b608b59af2128c22cbfe0daf043b98a6b19ed4da2a7209
   languageName: node
   linkType: hard
 
@@ -908,12 +908,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.5.5":
-  version: 22.5.5
-  resolution: "@types/node@npm:22.5.5"
+"@types/node@npm:^22.6.1":
+  version: 22.6.1
+  resolution: "@types/node@npm:22.6.1"
   dependencies:
     undici-types: "npm:~6.19.2"
-  checksum: 10c0/ead9495cfc6b1da5e7025856dcce2591e9bae635357410c0d2dd619fce797d2a1d402887580ca4b336cb78168b195224869967de370a23f61663cf1e4836121c
+  checksum: 10c0/79fdb14f268070eb21d25f3e81811b73c10dfcc65a638a6546fd97aa3e7dfe473f31a547fd21c43b8559a435b6ab26057066a47b5453bd1b1cdffe14430ac399
   languageName: node
   linkType: hard
 
@@ -2036,6 +2036,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fastify-plugin@npm:^5.0.0":
+  version: 5.0.1
+  resolution: "fastify-plugin@npm:5.0.1"
+  checksum: 10c0/c5e5932e7b8c5713ff881adeade3e8ee8fc288e8249d79cd193a2a2438eef1ad58ae5814f12835acbf04025dbddf2628787cd845f3e550dee847f494a08f7c5b
+  languageName: node
+  linkType: hard
+
 "fastify@npm:^4.26.2":
   version: 4.28.1
   resolution: "fastify@npm:4.28.1"
@@ -3047,7 +3054,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openapi-types@npm:^12.0.0":
+"openapi-types@npm:^12.1.3":
   version: 12.1.3
   resolution: "openapi-types@npm:12.1.3"
   checksum: 10c0/4ad4eb91ea834c237edfa6ab31394e87e00c888fc2918009763389c00d02342345195d6f302d61c3fd807f17723cd48df29b47b538b68375b3827b3758cd520f
@@ -3118,10 +3125,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-to-regexp@npm:3.2.0":
-  version: 3.2.0
-  resolution: "path-to-regexp@npm:3.2.0"
-  checksum: 10c0/2eeb1c698293acf6f89fe5af33b4c20822b3cee3e4e910c43bbee098c8dde34232fc194d5c2bc02df72affada446a181784e24f7a46932af323706be029ed1ba
+"path-to-regexp@npm:3.3.0":
+  version: 3.3.0
+  resolution: "path-to-regexp@npm:3.3.0"
+  checksum: 10c0/ffa0ebe7088d38d435a8d08b0fe6e8c93ceb2a81a65d4dd1d9a538f52e09d5e3474ed5f553cb3b180d894b0caa10698a68737ab599fd1e56b4663d1a64c9f77b
   languageName: node
   linkType: hard
 
@@ -3466,7 +3473,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rfdc@npm:^1.1.4, rfdc@npm:^1.2.0, rfdc@npm:^1.3.0":
+"rfdc@npm:^1.1.4, rfdc@npm:^1.2.0, rfdc@npm:^1.3.0, rfdc@npm:^1.3.1":
   version: 1.4.1
   resolution: "rfdc@npm:1.4.1"
   checksum: 10c0/4614e4292356cafade0b6031527eea9bc90f2372a22c012313be1dcc69a3b90c7338158b414539be863fa95bfcb2ddcd0587be696841af4e6679d85e62c060c7
@@ -3542,9 +3549,9 @@ __metadata:
   dependencies:
     "@fastify/cors": "npm:^9.0.1"
     "@fastify/env": "npm:^4.3.0"
-    "@fastify/swagger": "npm:^8.14.0"
+    "@fastify/swagger": "npm:^9.0.0"
     "@fishjam-cloud/js-server-sdk": "workspace:*"
-    "@types/node": "npm:^22.5.5"
+    "@types/node": "npm:^22.6.1"
     axios: "npm:^1.7.7"
     fastify: "npm:^4.26.2"
     fastify-healthcheck: "npm:^4.4.0"
@@ -4023,6 +4030,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tslib@npm:2.7.0":
+  version: 2.7.0
+  resolution: "tslib@npm:2.7.0"
+  checksum: 10c0/469e1d5bf1af585742128827000711efa61010b699cb040ab1800bcd3ccdd37f63ec30642c9e07c4439c1db6e46345582614275daca3e0f4abae29b0083f04a6
+  languageName: node
+  linkType: hard
+
 "tslib@npm:^1.9.0":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
@@ -4399,16 +4413,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:^2.2.2":
-  version: 2.4.5
-  resolution: "yaml@npm:2.4.5"
-  bin:
-    yaml: bin.mjs
-  checksum: 10c0/e1ee78b381e5c710f715cc4082fd10fc82f7f5c92bd6f075771d20559e175616f56abf1c411f545ea0e9e16e4f84a83a50b42764af5f16ec006328ba9476bb31
-  languageName: node
-  linkType: hard
-
-"yaml@npm:^2.5.1":
+"yaml@npm:^2.4.2, yaml@npm:^2.5.1":
   version: 2.5.1
   resolution: "yaml@npm:2.5.1"
   bin:

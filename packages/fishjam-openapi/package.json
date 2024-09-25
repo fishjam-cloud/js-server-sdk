@@ -38,7 +38,7 @@
     "outDir": "dist"
   },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.13.5",
+    "@openapitools/openapi-generator-cli": "^2.13.9",
     "tsup": "^8.3.0"
   }
 }
