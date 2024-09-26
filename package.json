@@ -14,6 +14,8 @@
   "scripts": {
     "build": "yarn workspaces foreach -At run build",
     "typecheck": "yarn workspaces foreach -A -p run typecheck",
+    "format:check": "yarn workspaces foreach -A -p run format:check",
+    "format:write": "yarn workspaces foreach -A -p run format:write",
     "docs": "typedoc"
   }
 }
