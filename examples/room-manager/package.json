@@ -20,8 +20,8 @@
     "fluent-json-schema": "^5.0.0"
   },
   "devDependencies": {
-    "@fastify/swagger": "^9.0.0",
-    "@types/node": "^22.6.1",
+    "@fastify/swagger": "^8.14.0",
+    "@types/node": "^22.5.5",
     "pino-pretty": "^11.2.2",
     "tsc": "^2.0.4",
     "tsx": "^4.19.1",
