@@ -29,9 +29,9 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
   const websocketUrl = removeTrailingSlash(url);
   const roomService = new RoomService(fastify.config.FISHJAM_URL, fastify.config.FISHJAM_SERVER_TOKEN);
 
-  const getRoomAccessHandler = async (roomName: string, participantName: string, res: FastifyReply) => {
+  const getRoomAccessHandler = async (roomName: string, peerName: string, res: FastifyReply) => {
     try {
-      const accessData = await roomService.getParticipantAccess(roomName, participantName);
+      const accessData = await roomService.getParticipantAccess(roomName, peerName);
       return { ...accessData, url: websocketUrl };
     } catch (error: unknown) {
       const [parsedError, errorCode] = parseError(error);
@@ -49,15 +49,15 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
   };
 
   fastify.get<{ Params: QueryParams }, unknown>(
-    '/:roomName/users/:participantName',
+    '/:roomName/users/:peerName',
     { schema: pathParamParticipantEndpointSchema },
-    (req, res) => getRoomAccessHandler(req.params.roomName, req.params.participantName, res)
+    (req, res) => getRoomAccessHandler(req.params.roomName, req.params.peerName, res)
   );
 
   fastify.get<{ Querystring: GetParticipantAccessQueryParams }, unknown>(
     '/',
     { schema: queryStringParticipantEndpointSchema },
-    (req, res) => getRoomAccessHandler(req.query.roomName, req.query.participantName, res)
+    (req, res) => getRoomAccessHandler(req.query.roomName, req.query.peerName, res)
   );
 
   fastify.post<{ Params: { roomName: string } }>(

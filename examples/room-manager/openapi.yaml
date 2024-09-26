@@ -24,7 +24,7 @@ paths:
         - schema:
             type: string
           in: query
-          name: participantName
+          name: peerName
           required: true
       responses:
         "200":
