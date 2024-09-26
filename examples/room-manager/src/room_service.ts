@@ -91,25 +91,25 @@ export class RoomService {
     }
   }
 
-  private async createParticipant(roomName: string, participantName: string): Promise<ParticipantAccessData> {
+  private async createParticipant(roomName: string, peerName: string): Promise<ParticipantAccessData> {
     const roomId = this.roomNameToRoomIdMap.get(roomName);
 
     if (!roomId) throw new RoomManagerError('Room not found');
 
     const { participant, participantToken } = await this.fishjamClient.createParticipant(roomId, {
       enableSimulcast: fastify.config.ENABLE_SIMULCAST,
-      metadata: { username: participantName },
+      metadata: { username: peerName },
     });
 
     const participantAccess = {
-      participant: { id: participant.id, name: participantName },
+      participant: { id: participant.id, name: peerName },
       room: { id: roomId, name: roomName },
       participantToken,
     };
 
-    this.participantNameToAccessMap.set(participantName, participantAccess);
+    this.participantNameToAccessMap.set(peerName, participantAccess);
 
-    fastify.log.info('Created participant', { participantName, ...participantAccess });
+    fastify.log.info('Created participant', { peerName, ...participantAccess });
 
     return participantAccess;
   }
