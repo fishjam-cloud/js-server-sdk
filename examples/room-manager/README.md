@@ -36,8 +36,8 @@ Otherwise, it will create a new one.
 ### '/api/rooms/:roomName/start-recording'
 
 Will start recording in the specified room.
-> **_WARNING:_**  Not implemented yet!
 
+> **_WARNING:_** Not implemented yet!
 
 ### '/api/rooms/webhook'
 

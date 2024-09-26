@@ -7,7 +7,7 @@ export class RoomManagerError extends Error {
   constructor(errorMessage: string) {
     super(errorMessage);
     this.name = this.constructor.name;
-    this.detail = { "error": errorMessage };
+    this.detail = { error: errorMessage };
   }
 }
 
@@ -23,7 +23,6 @@ export function parseError(error: unknown): [RoomManagerError, number] {
     parsedError = new RoomManagerError(error.message);
     return [parsedError, statusCode];
   }
-
 
   if (isRoomManagerError(error)) {
     return [error, statusCode];
