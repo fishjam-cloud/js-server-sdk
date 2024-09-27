@@ -42,7 +42,7 @@ export class RoomService {
 
     fastify.log.info({ name: 'Peer and room exist', username, roomName });
 
-    return peerAccess;
+    return { ...peerAccess, participant: peerAccess.peer, participantToken: peerAccess.peerToken };
   }
 
   async handleJellyfishMessage(notification: ServerMessage): Promise<void> {
@@ -105,13 +105,15 @@ export class RoomService {
       peer: { id: peer.id, name: peerName },
       room: { id: roomId, name: roomName },
       peerToken,
+      participant: { id: peer.id, name: peerName },
+      participantToken: peerToken,
     };
 
     this.participantNameToAccessMap.set(peerName, peerAccess);
 
     fastify.log.info('Created peer', { peerName, ...peerAccess });
 
-    return peerAccess;
+    return { ...peerAccess, participant: peerAccess.peer, participantToken: peerAccess.peerToken };
   }
 
   private async findOrCreateRoomInFishjam(roomName: string): Promise<Room> {
