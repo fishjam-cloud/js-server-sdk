@@ -7,7 +7,9 @@
     "build": "tsc -p tsconfig.json",
     "start": "tsx watch ./src/index.ts",
     "gen:openapi": "tsx scripts/generate-openapi-schema.ts",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "author": "Fishjam Cloud Team",
   "dependencies": {
