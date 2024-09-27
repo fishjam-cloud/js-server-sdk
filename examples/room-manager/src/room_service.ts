@@ -18,31 +18,31 @@ export class RoomService {
 
   async getParticipantAccess(roomName: string, username: string): Promise<ParticipantAccessData> {
     const room = await this.findOrCreateRoomInFishjam(roomName);
-    const participantAccess = this.participantNameToAccessMap.get(username);
+    const peerAccess = this.participantNameToAccessMap.get(username);
 
-    const participant = room.peers.find((participant) => participant.id === participantAccess?.participant.id);
+    const peer = room.peers.find((peer) => peer.id === peerAccess?.peer.id);
 
     fastify.log.info({
       name: 'Got room',
       roomName,
       roomId: room.id,
-      participants: room.peers,
+      peers: room.peers,
     });
 
-    if (!participant) {
-      fastify.log.info({ name: 'Creating participant' });
+    if (!peer) {
+      fastify.log.info({ name: 'Creating peer' });
       return await this.createParticipant(roomName, username);
     }
 
-    if (!participantAccess?.participantToken) throw new RoomManagerError('Missing participant token in room');
+    if (!peerAccess?.peerToken) throw new RoomManagerError('Missing peer token in room');
 
-    participantAccess.participant = { id: participant.id, name: username };
+    peerAccess.peer = { id: peer.id, name: username };
 
-    this.participantNameToAccessMap.set(username, participantAccess);
+    this.participantNameToAccessMap.set(username, peerAccess);
 
-    fastify.log.info({ name: 'Participant and room exist', username, roomName });
+    fastify.log.info({ name: 'Peer and room exist', username, roomName });
 
-    return participantAccess;
+    return peerAccess;
   }
 
   async handleJellyfishMessage(notification: ServerMessage): Promise<void> {
@@ -55,10 +55,10 @@ export class RoomService {
     const participantToBeRemoved = notification.peerCrashed ?? notification.peerDeleted;
 
     if (participantToBeRemoved) {
-      const { roomId, peerId: participantId } = participantToBeRemoved;
+      const { roomId, peerId } = participantToBeRemoved;
 
       const userAccess = [...this.participantNameToAccessMap.values()].find(
-        ({ room, participant }) => room.id === roomId && participant.id === participantId
+        ({ room, peer }) => room.id === roomId && peer.id === peerId
       );
 
       if (!userAccess) {
@@ -66,9 +66,9 @@ export class RoomService {
         return;
       }
 
-      this.participantNameToAccessMap.delete(userAccess.participant.name);
+      this.participantNameToAccessMap.delete(userAccess.peer.name);
 
-      fastify.log.info({ name: 'Peer deleted from cache', roomId, participantId });
+      fastify.log.info({ name: 'Peer deleted from cache', roomId, peerId: peerId });
     }
 
     const roomToBeRemovedId = (notification.roomDeleted ?? notification.roomCrashed)?.roomId;
@@ -80,8 +80,8 @@ export class RoomService {
         (user) => user.room.id === roomToBeRemovedId
       );
 
-      usersToRemove.forEach(({ participant }) => {
-        this.participantNameToAccessMap.delete(participant.name);
+      usersToRemove.forEach(({ peer }) => {
+        this.participantNameToAccessMap.delete(peer.name);
       });
 
       fastify.log.info({
@@ -96,22 +96,22 @@ export class RoomService {
 
     if (!roomId) throw new RoomManagerError('Room not found');
 
-    const { participant, participantToken } = await this.fishjamClient.createParticipant(roomId, {
+    const { peer, peerToken } = await this.fishjamClient.createParticipant(roomId, {
       enableSimulcast: fastify.config.ENABLE_SIMULCAST,
       metadata: { username: peerName },
     });
 
-    const participantAccess = {
-      participant: { id: participant.id, name: peerName },
+    const peerAccess = {
+      peer: { id: peer.id, name: peerName },
       room: { id: roomId, name: roomName },
-      participantToken,
+      peerToken,
     };
 
-    this.participantNameToAccessMap.set(peerName, participantAccess);
+    this.participantNameToAccessMap.set(peerName, peerAccess);
 
-    fastify.log.info('Created participant', { peerName, ...participantAccess });
+    fastify.log.info('Created peer', { peerName, ...peerAccess });
 
-    return participantAccess;
+    return peerAccess;
   }
 
   private async findOrCreateRoomInFishjam(roomName: string): Promise<Room> {

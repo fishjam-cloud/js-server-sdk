@@ -20,16 +20,16 @@ export interface GetParticipantAccessQueryParams {
 }
 
 export interface ParticipantAccessData {
-  participant: { id: string; name: string };
+  peer: { id: string; name: string };
   room: { id: string; name: string };
-  participantToken: string;
+  peerToken: string;
 }
 
 const response200 = S.object()
-  .prop('participantToken', S.string().required())
+  .prop('peerToken', S.string().required())
   .prop('url', S.string().required())
   .prop('room', S.object().prop('id', S.string()).prop('name', S.string()))
-  .prop('participant', S.object().prop('id', S.string()).prop('name', S.string()));
+  .prop('peer', S.object().prop('id', S.string()).prop('name', S.string()));
 
 const errorResponse410 = S.object()
   .prop('error', S.string().required())
