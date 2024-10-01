@@ -16,10 +16,7 @@ export class FishjamClient {
     this.roomApi = new RoomApi(undefined, config.fishjamUrl, client);
   }
 
-  async createParticipant(
-    roomId: string,
-    options: PeerOptions = {}
-  ): Promise<{ participant: Peer; participantToken: string }> {
+  async createParticipant(roomId: string, options: PeerOptions = {}): Promise<{ peer: Peer; peerToken: string }> {
     const response = await this.roomApi
       .addPeer(roomId, {
         type: 'webrtc',
@@ -31,7 +28,7 @@ export class FishjamClient {
       data: { data },
     } = response;
 
-    return { participant: data.peer, participantToken: data.token };
+    return { peer: data.peer, peerToken: data.token };
   }
 
   async createRoom(config: RoomConfig = {}): Promise<Room> {
