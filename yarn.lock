@@ -395,10 +395,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/error@npm:^3.0.0, @fastify/error@npm:^3.3.0, @fastify/error@npm:^3.4.0":
+"@fastify/error@npm:^3.3.0, @fastify/error@npm:^3.4.0":
   version: 3.4.1
   resolution: "@fastify/error@npm:3.4.1"
   checksum: 10c0/1f1a0faa8c86639afb6f4bd47a9cdc1f0f20ce0d6944340fbdec8218aaba91dc9cae9ed78e24e61bceb782a867efda2b9a6320091f00dcbb896d9c8a9bdf5f96
+  languageName: node
+  linkType: hard
+
+"@fastify/error@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@fastify/error@npm:4.0.0"
+  checksum: 10c0/074b8a6c350c29a8fc8314298d9457fe0c1ba6e7f160e9ae6ba0e18853f1ec7427d768f966700cbf67a4694f3a9a593c6a23e42ce3ed62e40fecdf8026040d9a
   languageName: node
   linkType: hard
 
@@ -433,13 +440,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/under-pressure@npm:^8.2.0":
-  version: 8.5.1
-  resolution: "@fastify/under-pressure@npm:8.5.1"
+"@fastify/under-pressure@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "@fastify/under-pressure@npm:9.0.1"
   dependencies:
-    "@fastify/error": "npm:^3.0.0"
-    fastify-plugin: "npm:^4.0.0"
-  checksum: 10c0/d6f5fc8a9301c490cc0a7764d0006c64abec492224b064a651f0ffce01afe3dbc0810b1f8bebada3cac1ae1426671588c824e6b304e6427aeeffd56ccffd353e
+    "@fastify/error": "npm:^4.0.0"
+    fastify-plugin: "npm:^5.0.0"
+  checksum: 10c0/bbf836fa09d1035d033b494e7c9aa88a69a2b1415eb6e4f706c2833be8b89e994ee4fd900fef1a08937382d77f5a04dae2f7380a94e5a9d847002efb26911883
   languageName: node
   linkType: hard
 
@@ -2008,12 +2015,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fastify-healthcheck@npm:^4.4.0":
-  version: 4.4.0
-  resolution: "fastify-healthcheck@npm:4.4.0"
+"fastify-healthcheck@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "fastify-healthcheck@npm:5.0.0"
   dependencies:
-    "@fastify/under-pressure": "npm:^8.2.0"
-  checksum: 10c0/55fc4aee3c0bde7ec469725b15e68a8c90cca9a78ca91581f0f9ee1610c21308f29aae94f43b839c3828379d49422221106fef9e2190e0e35893c1daa72e3db5
+    "@fastify/under-pressure": "npm:^9.0.1"
+  checksum: 10c0/0162e51215d23a3d6837c235851c936e2508c70c5e245b8bc414990005e33a2c546fabeb2ef68dc6f2d9d7fc298a2ca365a4338d8ee893e51d5195ea8d272c79
   languageName: node
   linkType: hard
 
@@ -3532,7 +3539,7 @@ __metadata:
     "@types/node": "npm:^22.7.4"
     axios: "npm:^1.7.7"
     fastify: "npm:^4.26.2"
-    fastify-healthcheck: "npm:^4.4.0"
+    fastify-healthcheck: "npm:^5.0.0"
     fluent-json-schema: "npm:^5.0.0"
     pino-pretty: "npm:^11.2.2"
     tsc: "npm:^2.0.4"
