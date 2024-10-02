@@ -2,11 +2,11 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { RoomService } from './room_service';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import {
-  GetParticipantAccessQueryParams,
+  GetPeerAccessQueryParams,
   startRecordingSchema,
   QueryParams,
-  queryStringParticipantEndpointSchema,
-  pathParamParticipantEndpointSchema,
+  queryStringPeerEndpointSchema,
+  pathParamPeerEndpointSchema,
 } from './schema';
 import { parseError } from './errors';
 
@@ -31,7 +31,7 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
 
   const getRoomAccessHandler = async (roomName: string, peerName: string, res: FastifyReply) => {
     try {
-      const accessData = await roomService.getParticipantAccess(roomName, peerName);
+      const accessData = await roomService.getPeerAccess(roomName, peerName);
       return { ...accessData, url: websocketUrl };
     } catch (error: unknown) {
       const [parsedError, errorCode] = parseError(error);
@@ -50,13 +50,13 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
 
   fastify.get<{ Params: QueryParams }, unknown>(
     '/:roomName/users/:peerName',
-    { schema: pathParamParticipantEndpointSchema },
+    { schema: pathParamPeerEndpointSchema },
     (req, res) => getRoomAccessHandler(req.params.roomName, req.params.peerName, res)
   );
 
-  fastify.get<{ Querystring: GetParticipantAccessQueryParams }, unknown>(
+  fastify.get<{ Querystring: GetPeerAccessQueryParams }, unknown>(
     '/',
-    { schema: queryStringParticipantEndpointSchema },
+    { schema: queryStringPeerEndpointSchema },
     (req, res) => getRoomAccessHandler(req.query.roomName, req.query.peerName, res)
   );
 

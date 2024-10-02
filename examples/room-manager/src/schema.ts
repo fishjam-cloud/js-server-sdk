@@ -14,12 +14,12 @@ export interface User {
   peer: Peer;
 }
 
-export interface GetParticipantAccessQueryParams {
+export interface GetPeerAccessQueryParams {
   roomName: string;
   peerName: string;
 }
 
-export interface ParticipantAccessData {
+export interface PeerAccessData {
   peer: { id: string; name: string };
   room: { id: string; name: string };
   peerToken: string;
@@ -46,7 +46,7 @@ const errorResponse500 = errorResponse410.prop('cause', S.string());
 
 const parameterSchema = S.object().prop('roomName', S.string().required()).prop('peerName', S.string().required());
 
-export const baseParticipantEndpointSchema: FastifySchema = {
+export const basePeerEndpointSchema: FastifySchema = {
   querystring: parameterSchema,
   operationId: 'getToken',
   response: {
@@ -57,7 +57,7 @@ export const baseParticipantEndpointSchema: FastifySchema = {
   tags: ['room'],
 };
 
-export const queryStringParticipantEndpointSchema: FastifySchema = {
+export const queryStringPeerEndpointSchema: FastifySchema = {
   querystring: parameterSchema,
   operationId: 'getToken',
   response: {
@@ -68,7 +68,7 @@ export const queryStringParticipantEndpointSchema: FastifySchema = {
   tags: ['room'],
 };
 
-export const pathParamParticipantEndpointSchema: FastifySchema = {
+export const pathParamPeerEndpointSchema: FastifySchema = {
   params: parameterSchema,
   operationId: 'getToken',
   response: {
