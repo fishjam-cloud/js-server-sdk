@@ -123,6 +123,7 @@ export class RoomService {
       } catch (err) {
         const roomNotFound = err instanceof RoomNotFoundException;
         if (!roomNotFound) throw err;
+        fastify.log.info({ name: 'Room not found', roomId: roomId });
       }
     }
 
