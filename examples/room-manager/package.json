@@ -17,7 +17,7 @@
     "@fastify/env": "^4.3.0",
     "@fishjam-cloud/js-server-sdk": "workspace:*",
     "axios": "^1.7.7",
-    "fastify": "^4.26.2",
+    "fastify": "^5.0.0",
     "fastify-healthcheck": "^4.4.0",
     "fluent-json-schema": "^5.0.0"
   },
