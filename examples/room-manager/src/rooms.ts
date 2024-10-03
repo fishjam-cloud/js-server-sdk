@@ -33,7 +33,7 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
     }
   };
 
-  const startRecordingHandler = async (req: FastifyRequest<{ Params: { roomName: string } }>, res: FastifyReply) => {
+  const startRecordingHandler = async () => {
     throw new Error('Not yet implemented');
   };
 
