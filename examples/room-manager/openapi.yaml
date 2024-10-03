@@ -34,7 +34,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  token:
+                  peerToken:
                     type: string
                   url:
                     type: string
@@ -45,15 +45,15 @@ paths:
                         type: string
                       name:
                         type: string
-                  username:
-                    type: string
                   peer:
                     type: object
                     properties:
                       id:
                         type: string
+                      name:
+                        type: string
                 required:
-                  - token
+                  - peerToken
                   - url
         '410':
           description: Default Response

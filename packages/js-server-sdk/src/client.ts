@@ -16,7 +16,7 @@ export class FishjamClient {
     this.roomApi = new RoomApi(undefined, config.fishjamUrl, client);
   }
 
-  async createParticipant(roomId: string, options: PeerOptions = {}): Promise<{ peer: Peer; peerToken: string }> {
+  async createPeer(roomId: string, options: PeerOptions = {}): Promise<{ peer: Peer; peerToken: string }> {
     const response = await this.roomApi
       .addPeer(roomId, {
         type: 'webrtc',
@@ -56,8 +56,8 @@ export class FishjamClient {
     return room;
   }
 
-  async deleteParticipant(roomId: string, participantId: string): Promise<void> {
-    await this.roomApi.deletePeer(roomId, participantId).catch((error) => raiseExceptions(error, 'participant'));
+  async deletePeer(roomId: string, peerId: string): Promise<void> {
+    await this.roomApi.deletePeer(roomId, peerId).catch((error) => raiseExceptions(error, 'peer'));
   }
 
   async deleteRoom(roomId: string): Promise<void> {

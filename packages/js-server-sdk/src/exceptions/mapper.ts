@@ -2,14 +2,14 @@ import axios from 'axios';
 import {
   BadRequestException,
   FishjamNotFoundException,
-  ParticipantNotFoundException,
+  PeerNotFoundException,
   RoomNotFoundException,
   ServiceUnavailableException,
   UnauthorizedException,
   UnknownException,
 } from '.';
 
-export const raiseExceptions = (error: axios.AxiosError<any, any>, entity?: 'participant' | 'room') => {
+export const raiseExceptions = (error: axios.AxiosError<any, any>, entity?: 'peer' | 'room') => {
   switch (error.response?.status) {
     case 400:
       throw new BadRequestException(error);
@@ -17,8 +17,8 @@ export const raiseExceptions = (error: axios.AxiosError<any, any>, entity?: 'par
       throw new UnauthorizedException(error);
     case 404:
       switch (entity) {
-        case 'participant':
-          throw new ParticipantNotFoundException(error);
+        case 'peer':
+          throw new PeerNotFoundException(error);
         case 'room':
           throw new RoomNotFoundException(error);
         default:
