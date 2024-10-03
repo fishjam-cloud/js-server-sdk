@@ -100,8 +100,6 @@ export class RoomService {
       peer: { id: peer.id, name: peerName },
       room: { id: roomId, name: roomName },
       peerToken,
-      participant: { id: peer.id, name: peerName },
-      participantToken: peerToken,
     };
 
     this.peerNameToAccessMap.set(peerName, peerAccess);

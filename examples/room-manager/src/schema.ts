@@ -23,19 +23,13 @@ export interface PeerAccessData {
   peer: { id: string; name: string };
   room: { id: string; name: string };
   peerToken: string;
-  // this props should be removed soon, once we migrate to only use peer
-  participant: { id: string; name: string };
-  participantToken: string;
 }
 
 const response200 = S.object()
   .prop('peerToken', S.string().required())
   .prop('url', S.string().required())
   .prop('room', S.object().prop('id', S.string()).prop('name', S.string()))
-  .prop('peer', S.object().prop('id', S.string()).prop('name', S.string()))
-  // this props should be removed soon, once we migrate to only use peer
-  .prop('participant', S.object())
-  .prop('participantToken', S.string());
+  .prop('peer', S.object().prop('id', S.string()).prop('name', S.string()));
 
 const errorResponse410 = S.object()
   .prop('error', S.string().required())
