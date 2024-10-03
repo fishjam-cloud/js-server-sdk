@@ -1,13 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { RoomService } from './room_service';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
-import {
-  GetPeerAccessQueryParams,
-  startRecordingSchema,
-  QueryParams,
-  queryStringPeerEndpointSchema,
-  pathParamPeerEndpointSchema,
-} from './schema';
+import { GetPeerAccessQueryParams, startRecordingSchema, queryStringPeerEndpointSchema } from './schema';
 import { parseError } from './errors';
 
 const removeTrailingSlash = (href: string) => (href.endsWith('/') ? href.slice(0, -1) : href);
@@ -47,12 +41,6 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
     await roomService.handleJellyfishMessage(req.body);
     return res.status(200).send();
   };
-
-  fastify.get<{ Params: QueryParams }, unknown>(
-    '/:roomName/users/:peerName',
-    { schema: pathParamPeerEndpointSchema },
-    (req, res) => getRoomAccessHandler(req.params.roomName, req.params.peerName, res)
-  );
 
   fastify.get<{ Querystring: GetPeerAccessQueryParams }, unknown>(
     '/',

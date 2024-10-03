@@ -2,11 +2,6 @@ import { Peer } from '@fishjam-cloud/js-server-sdk';
 import { FastifySchema } from 'fastify';
 import S from 'fluent-json-schema';
 
-export interface QueryParams {
-  roomName: string;
-  peerName: string;
-}
-
 export interface User {
   username: string;
   room: { id: string; name: string };
@@ -53,17 +48,6 @@ export const basePeerEndpointSchema: FastifySchema = {
 
 export const queryStringPeerEndpointSchema: FastifySchema = {
   querystring: parameterSchema,
-  operationId: 'getToken',
-  response: {
-    200: response200,
-    410: errorResponse410,
-    500: errorResponse500,
-  },
-  tags: ['room'],
-};
-
-export const pathParamPeerEndpointSchema: FastifySchema = {
-  params: parameterSchema,
   operationId: 'getToken',
   response: {
     200: response200,
