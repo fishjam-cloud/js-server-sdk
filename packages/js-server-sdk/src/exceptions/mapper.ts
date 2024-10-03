@@ -9,7 +9,7 @@ import {
   UnknownException,
 } from '.';
 
-export const raiseExceptions = (error: axios.AxiosError<any, any>, entity?: 'peer' | 'room') => {
+export const raiseExceptions = (error: axios.AxiosError<Record<string, string>>, entity?: 'peer' | 'room') => {
   switch (error.response?.status) {
     case 400:
       throw new BadRequestException(error);

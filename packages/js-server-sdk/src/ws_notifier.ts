@@ -54,7 +54,7 @@ export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<N
     }
 
     try {
-      const decodedMessage = ServerMessage.toJSON(ServerMessage.decode(message.binaryData)) as Record<string, any>;
+      const decodedMessage = ServerMessage.toJSON(ServerMessage.decode(message.binaryData)) as Record<string, string>;
       const [notification] = Object.keys(decodedMessage);
 
       if (!this.isAllowedNotification(notification)) return;
