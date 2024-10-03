@@ -71,7 +71,7 @@ export class RoomService {
 
     if (roomToBeRemovedId) {
       const roomName = this.roomNameToRoomIdMap.get(roomToBeRemovedId);
-      roomName && this.roomNameToRoomIdMap.delete(roomName);
+      if (roomName) this.roomNameToRoomIdMap.delete(roomName);
 
       const usersToRemove = [...this.peerNameToAccessMap.values()].filter((user) => user.room.id === roomToBeRemovedId);
 
