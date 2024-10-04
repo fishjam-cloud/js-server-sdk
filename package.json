@@ -19,6 +19,7 @@
   "scripts": {
     "build": "yarn workspaces foreach -At run build",
     "lint": "yarn workspaces foreach -At run lint",
+    "lint:check": "yarn workspaces foreach -At run lint:check",
     "typecheck": "yarn workspaces foreach -A -p run typecheck",
     "format:check": "yarn workspaces foreach -A -p run format:check",
     "format": "yarn workspaces foreach -A -p run format",

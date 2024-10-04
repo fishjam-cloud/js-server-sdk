@@ -10,7 +10,8 @@
     "typecheck": "tsc",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "eslint . "
+    "lint": "eslint . --fix",
+    "lint:check": "eslint . "
   },
   "author": "Fishjam Cloud Team",
   "dependencies": {
