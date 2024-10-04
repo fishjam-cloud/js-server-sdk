@@ -33,5 +33,8 @@ jobs:
       - name: Build SDK
         run: yarn build
 
+      - name: Check lint
+        run: yarn lint
+
       - name: Check typing
         run: yarn typecheck

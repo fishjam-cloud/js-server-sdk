@@ -9,7 +9,9 @@
     "gen:openapi": "tsx scripts/generate-openapi-schema.ts",
     "typecheck": "tsc",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "lint": "eslint . --fix",
+    "lint:check": "eslint . "
   },
   "author": "Fishjam Cloud Team",
   "dependencies": {
