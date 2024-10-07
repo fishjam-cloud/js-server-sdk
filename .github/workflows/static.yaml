@@ -38,3 +38,14 @@ jobs:
 
       - name: Check typing
         run: yarn typecheck
+
+      - name: Generate reference room manager openapi
+        run: yarn generate:openapi ref.yaml
+
+      - name: Compare reference room manager openapi
+        run: |
+          RM_PATH=examples/room-manager
+          if ! cmp --silent "$RM_PATH/openapi.yaml" "$RM_PATH/ref.yaml"; then
+            echo "OpenAPI spec is out of date. Please run 'yarn generate:openapi' and commit the changes."
+            exit 1
+          fi

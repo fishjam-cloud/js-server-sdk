@@ -6,7 +6,7 @@ import { roomsEndpoints } from './rooms';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import healthcheck from 'fastify-healthcheck';
 import fastifySwagger from '@fastify/swagger';
-import { openapi } from './opanapi';
+import { openapi } from './openapi';
 
 const envToLogger = {
   development: {
