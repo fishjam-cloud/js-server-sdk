@@ -39,10 +39,10 @@ jobs:
       - name: Check typing
         run: yarn typecheck
 
-      - name: Generate reference room manager openapi
+      - name: Generate OpenAPI reference 📸
         run: yarn gen:openapi ref.yaml
 
-      - name: Compare reference room manager openapi
+      - name: Compare OpenAPI reference 🔦
         run: |
           RM_PATH=examples/room-manager
           if ! cmp --silent "$RM_PATH/openapi.yaml" "$RM_PATH/ref.yaml"; then
