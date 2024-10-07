@@ -1,6 +1,8 @@
 import { writeFile } from 'node:fs/promises';
 import { fastify } from '../src';
 
+const [fileName] = process.argv.slice(2);
+
 (async () => {
   await fastify.ready();
 
@@ -9,7 +11,7 @@ import { fastify } from '../src';
   }
 
   const schema = fastify.swagger({ yaml: true });
-  await writeFile('openapi.yaml', schema, { flag: 'w+' });
+  await writeFile(fileName ?? 'openapi.yaml', schema, { flag: 'w+' });
 
   await fastify.close();
 })();
