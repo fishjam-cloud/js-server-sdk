@@ -1,4 +1,4 @@
-name: Build and Push Room Manager amd64 Image
+name: Build and Test Room Manager on amd64
 
 on:
   pull_request:
@@ -30,7 +30,21 @@ jobs:
               with:
                 file: examples/room-manager/Dockerfile
                 platforms: linux/amd64
-                push: true
                 cache-from: type=gha
                 cache-to: type=gha,mode=max
                 tags: ghcr.io/${{ github.repository }}/room-manager:${{ github.event.pull_request.head.sha }}
+            - name: Test Room Manager
+              run: | 
+                - docker run -d -p 8080:8080 \
+                --name gh-runner-room-manager \
+                --restart always \
+                -e PORT=8080 \
+                -e PEERLESS_PURGE_TIMEOUT=600 \
+                -e FISHJAM_URL=${{ secrets.ROOM_MANAGER_FISHJAM_URL }} \
+                -e FISHJAM_SERVER_TOKEN=${{ secrets.ROOM_MANAGER_FISHJAM_SERVER_TOKEN }} \
+                ghcr.io/${{ github.repository }}/room-manager:${{ github.event.pull_request.head.sha }}
+                - sleep 5
+                - [ $(curl -s http://127.0.0.1:8080/health | jq -r .status) = "ok" ]
+            - name: Clean up the previous Room Manager container
+              run: docker rm -f gh-runner-room-manager
+
