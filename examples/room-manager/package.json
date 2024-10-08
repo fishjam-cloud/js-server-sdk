@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@fastify/swagger": "^9.1.0",
-    "@types/node": "^22.7.4",
+    "@types/node": "^22.7.5",
     "pino-pretty": "^11.2.2",
     "tsc": "^2.0.4",
     "tsx": "^4.19.1",
