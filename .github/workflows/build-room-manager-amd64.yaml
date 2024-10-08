@@ -1,4 +1,4 @@
-name: Build and Push Room Manager Multiplatform Image
+name: Build and Push Room Manager amd64 Image
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-    build-and-push-image:
+    build-and-push-amd64-image:
         runs-on: ubuntu-latest
         permissions:
             contents: read
