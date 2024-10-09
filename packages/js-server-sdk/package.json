@@ -55,8 +55,8 @@
     "websocket": "^1.0.35"
   },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.13.12",
-    "@types/node": "^22.7.4",
+    "@openapitools/openapi-generator-cli": "^2.14.0",
+    "@types/node": "^22.7.5",
     "@types/websocket": "^1.0.10",
     "tsup": "^8.3.0",
     "typed-emitter": "^2.1.0"
