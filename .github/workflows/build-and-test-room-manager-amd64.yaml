@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-    build-and-push-amd64-image:
+    build-and-test-amd64-image:
         runs-on: ubuntu-latest
         permissions:
             contents: read
@@ -32,19 +32,22 @@ jobs:
                 platforms: linux/amd64
                 cache-from: type=gha
                 cache-to: type=gha,mode=max
-                tags: ghcr.io/${{ github.repository }}/room-manager:${{ github.event.pull_request.head.sha }}
-            - name: Test Room Manager
-              run: | 
-                - docker run -d -p 8080:8080 \
+                tags: room-manager:${{ github.event.pull_request.head.sha }}
+                load: true
+            - name: Run Room Manager
+              run: |
+                docker run -d -p 8080:8080 \
                 --name gh-runner-room-manager \
                 --restart always \
                 -e PORT=8080 \
                 -e PEERLESS_PURGE_TIMEOUT=600 \
                 -e FISHJAM_URL=${{ secrets.ROOM_MANAGER_FISHJAM_URL }} \
                 -e FISHJAM_SERVER_TOKEN=${{ secrets.ROOM_MANAGER_FISHJAM_SERVER_TOKEN }} \
-                ghcr.io/${{ github.repository }}/room-manager:${{ github.event.pull_request.head.sha }}
-                - sleep 5
-                - [ $(curl -s http://127.0.0.1:8080/health | jq -r .status) = "ok" ]
+                room-manager:${{ github.event.pull_request.head.sha }}
+            - name: Test Room Manager
+              run: |
+                sleep 2
+                [[ $(curl -s -vvv http://127.0.0.1:8080/health | jq -r .status) = "ok" ]]
             - name: Clean up the previous Room Manager container
               run: docker rm -f gh-runner-room-manager
 
