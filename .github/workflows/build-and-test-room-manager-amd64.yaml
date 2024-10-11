@@ -44,10 +44,14 @@ jobs:
                 -e FISHJAM_URL=${{ secrets.ROOM_MANAGER_FISHJAM_URL }} \
                 -e FISHJAM_SERVER_TOKEN=${{ secrets.ROOM_MANAGER_FISHJAM_SERVER_TOKEN }} \
                 room-manager:${{ github.event.pull_request.head.sha }}
-            - name: Test Room Manager
+            - name: Test Room Manager Healtcheck
               run: |
                 sleep 2
-                [[ $(curl -s -vvv http://127.0.0.1:8080/health | jq -r .status) = "ok" ]]
-            - name: Clean up the previous Room Manager container
-              run: docker rm -f gh-runner-room-manager
-
+                curl -o tmp1.json -s -vvv http://127.0.0.1:8080/health
+                jq . tmp1.json
+                [[ $(jq -r .status tmp1.json) == "ok" ]]
+            - name: Test Room Manager API
+              run: |
+                 curl -o tmp2.json -s -vvv "http://127.0.0.1:8080/api/rooms?roomName=testRoomName&peerName=testPeerName"
+                 jq '{peerToken: .peerToken, room: .room, peer: .peer}' tmp2.json
+                 [[ $(jq -r .peerToken tmp2.json) != "null" ]]
