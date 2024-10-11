@@ -1,4 +1,4 @@
-name: Build and Push Room Manager Image
+name: Build and Push Room Manager Multiplatform Image
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-    build-and-push-image:
+    build-and-push-multiplatform-image:
         runs-on: ubuntu-latest
         permissions:
             contents: read
