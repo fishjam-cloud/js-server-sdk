@@ -21,7 +21,7 @@
     ".": "./dist/index.js"
   },
   "scripts": {
-    "codegen": "sh protobuf.sh",
+    "gen:proto": "sh protobuf.sh",
     "build": "tsup",
     "typecheck": "tsc --noEmit"
   },
