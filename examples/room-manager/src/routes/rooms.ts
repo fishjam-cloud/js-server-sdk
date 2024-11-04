@@ -21,13 +21,14 @@ export async function rooms(fastify: FastifyInstance) {
       return { ...accessData, url: urlWithoutTrailingSlash };
     } catch (error: unknown) {
       const [parsedError, errorCode] = parseError(error);
-      return res.status(errorCode).send(parsedError.detail);
+
+      res.status(errorCode).send(parsedError.detail);
     }
   };
 
   const webhookHandler = async (req: FastifyRequest<{ Body: ServerMessage }>, res: FastifyReply) => {
     await fastify.fishjam.handleFishjamMessage(req.body);
-    return res.status(200).send();
+    res.status(200).send();
   };
 
   fastify.get<{ Querystring: GetPeerAccessQueryParams }, unknown>(
