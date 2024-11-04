@@ -2,7 +2,7 @@ import Fastify, { FastifyRequest } from 'fastify';
 import cors from '@fastify/cors';
 import { configSchema } from './config';
 import fastifyEnv from '@fastify/env';
-import { roomsEndpoints } from './rooms';
+import { roomsEndpoints } from './routes/rooms';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import healthcheck from 'fastify-healthcheck';
 import fastifySwagger from '@fastify/swagger';
@@ -39,7 +39,6 @@ async function setupServer() {
   );
 
   await fastify.register(fastifySwagger, { openapi });
-
   await fastify.register(healthcheck);
   await fastify.register(roomsEndpoints, { prefix: '/api/rooms' });
 
