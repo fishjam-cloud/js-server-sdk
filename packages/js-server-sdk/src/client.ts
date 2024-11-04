@@ -63,4 +63,11 @@ export class FishjamClient {
   async deleteRoom(roomId: string): Promise<void> {
     await this.roomApi.deleteRoom(roomId).catch((error) => raiseExceptions(error, 'room'));
   }
+
+  async refreshPeerToken(roomId: string, peerId: string): Promise<string> {
+    const refreshTokenResponse = await this.roomApi
+      .refreshToken(roomId, peerId)
+      .catch((error) => raiseExceptions(error, 'peer'));
+    return refreshTokenResponse.data.data.token;
+  }
 }
