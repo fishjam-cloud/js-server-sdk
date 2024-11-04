@@ -1,4 +1,4 @@
-import fp from 'fastify-plugin';
+import fastifyPlugin from 'fastify-plugin';
 import { type FastifyInstance } from 'fastify';
 import { FishjamClient, Room, RoomNotFoundException } from '@fishjam-cloud/js-server-sdk';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
@@ -14,7 +14,7 @@ declare module 'fastify' {
   }
 }
 
-export const fishjamPlugin = fp(async (fastify: FastifyInstance): Promise<void> => {
+export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Promise<void> => {
   if (fastify.hasDecorator('fishjam')) {
     throw new Error('The `fishjamPlugin` plugin has already been registered.');
   }
@@ -42,7 +42,7 @@ export const fishjamPlugin = fp(async (fastify: FastifyInstance): Promise<void> 
 
     if (!peer) {
       fastify.log.info({ name: 'Creating peer' });
-      return await createPeer(roomName, username);
+      return createPeer(roomName, username);
     }
 
     if (!peerAccess?.peerToken) throw new RoomManagerError('Missing peer token in room');
