@@ -1,8 +1,9 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
-import { GetPeerAccessQueryParams, startRecordingSchema, queryStringPeerEndpointSchema } from '../schema';
+
 import { parseError } from '../errors';
-import { fishjamPlugin } from '../plugins/fishjam';
+import { fishjamPlugin } from '../plugins';
+import { GetPeerAccessQueryParams, startRecordingSchema, queryStringPeerEndpointSchema } from '../schema';
 import { httpToWebsocket, removeTrailingSlash } from '../utils';
 
 export async function rooms(fastify: FastifyInstance) {
