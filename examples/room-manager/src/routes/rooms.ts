@@ -2,15 +2,15 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import { GetPeerAccessQueryParams, startRecordingSchema, queryStringPeerEndpointSchema } from '../schema';
 import { parseError } from '../errors';
-import { roomServicePlugin } from '../plugins/roomService';
+import { fishjamPlugin } from '../plugins/fishjam';
 import { httpToWebsocket, removeTrailingSlash } from '../utils';
 
-export async function roomsEndpoints(fastify: FastifyInstance) {
-  await fastify.register(roomServicePlugin);
+export async function rooms(fastify: FastifyInstance) {
+  await fastify.register(fishjamPlugin);
 
   const getRoomAccessHandler = async (roomName: string, peerName: string, res: FastifyReply) => {
     try {
-      const accessData = await fastify.roomService.getPeerAccess(roomName, peerName);
+      const accessData = await fastify.fishjam.getPeerAccess(roomName, peerName);
       const url = httpToWebsocket(fastify.config.FISHJAM_URL);
 
       // When creating a URL object from a URL without a path (e.g., `http://localhost:5002`),
@@ -25,7 +25,7 @@ export async function roomsEndpoints(fastify: FastifyInstance) {
   };
 
   const webhookHandler = async (req: FastifyRequest<{ Body: ServerMessage }>, res: FastifyReply) => {
-    await fastify.roomService.handleJellyfishMessage(req.body);
+    await fastify.fishjam.handleFishjamMessage(req.body);
     return res.status(200).send();
   };
 
