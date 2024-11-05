@@ -1,11 +1,12 @@
 import Fastify, { FastifyRequest } from 'fastify';
 import cors from '@fastify/cors';
-import { configSchema } from './config';
 import fastifyEnv from '@fastify/env';
-import { roomsEndpoints } from './rooms';
+import fastifySwagger from '@fastify/swagger';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import healthcheck from 'fastify-healthcheck';
-import fastifySwagger from '@fastify/swagger';
+
+import { configSchema } from './config';
+import { rooms } from './routes';
 import openapi from './openapi';
 
 const envToLogger = {
@@ -39,9 +40,8 @@ async function setupServer() {
   );
 
   await fastify.register(fastifySwagger, { openapi });
-
   await fastify.register(healthcheck);
-  await fastify.register(roomsEndpoints, { prefix: '/api/rooms' });
+  await fastify.register(rooms, { prefix: '/api/rooms' });
 
   fastify.listen({ port: fastify.config.PORT, host: '0.0.0.0' }, (err) => {
     if (err) {

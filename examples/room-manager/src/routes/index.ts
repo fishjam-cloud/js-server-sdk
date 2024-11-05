@@ -1,0 +1,1 @@
+export { rooms } from './rooms';

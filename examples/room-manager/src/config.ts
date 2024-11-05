@@ -1,3 +1,17 @@
+declare module 'fastify' {
+  interface FastifyInstance {
+    config: {
+      PORT: number;
+      WEBHOOK_URL?: string;
+      PEERLESS_PURGE_TIMEOUT?: number;
+      ENABLE_SIMULCAST: boolean;
+      MAX_PEERS?: number;
+      FISHJAM_URL: string;
+      FISHJAM_SERVER_TOKEN: string;
+    };
+  }
+}
+
 export const configSchema = {
   type: 'object',
   required: ['PORT', 'ENABLE_SIMULCAST', 'FISHJAM_URL', 'FISHJAM_SERVER_TOKEN'],
@@ -31,17 +45,3 @@ export const configSchema = {
     },
   },
 };
-
-declare module 'fastify' {
-  interface FastifyInstance {
-    config: {
-      PORT: number;
-      WEBHOOK_URL?: string;
-      PEERLESS_PURGE_TIMEOUT?: number;
-      ENABLE_SIMULCAST: boolean;
-      MAX_PEERS?: number;
-      FISHJAM_URL: string;
-      FISHJAM_SERVER_TOKEN: string;
-    };
-  }
-}

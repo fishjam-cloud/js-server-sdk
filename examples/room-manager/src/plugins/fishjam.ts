@@ -1,24 +1,35 @@
+import fastifyPlugin from 'fastify-plugin';
+import { type FastifyInstance } from 'fastify';
 import { FishjamClient, Room, RoomNotFoundException } from '@fishjam-cloud/js-server-sdk';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
-import { fastify } from './index';
-import type { PeerAccessData } from './schema';
-import { RoomManagerError } from './errors';
+import { RoomManagerError } from '../errors';
+import { PeerAccessData } from '../schema';
 
-export class RoomService {
-  private readonly peerNameToAccessMap = new Map<string, PeerAccessData>();
-  private readonly roomNameToRoomIdMap = new Map<string, string>();
-  private readonly fishjamClient: FishjamClient;
+declare module 'fastify' {
+  interface FastifyInstance {
+    fishjam: {
+      getPeerAccess: (roomName: string, username: string) => Promise<PeerAccessData>;
+      handleFishjamMessage: (notification: ServerMessage) => Promise<void>;
+    };
+  }
+}
 
-  constructor(fishjamUrl: string, managementToken: string) {
-    this.fishjamClient = new FishjamClient({
-      fishjamUrl,
-      managementToken,
-    });
+export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Promise<void> => {
+  if (fastify.hasDecorator('fishjam')) {
+    throw new Error('The `fishjamPlugin` plugin has already been registered.');
   }
 
-  async getPeerAccess(roomName: string, username: string): Promise<PeerAccessData> {
-    const room = await this.findOrCreateRoomInFishjam(roomName);
-    const peerAccess = this.peerNameToAccessMap.get(username);
+  const fishjamClient = new FishjamClient({
+    fishjamUrl: fastify.config.FISHJAM_URL,
+    managementToken: fastify.config.FISHJAM_SERVER_TOKEN,
+  });
+
+  const peerNameToAccessMap = new Map<string, PeerAccessData>();
+  const roomNameToRoomIdMap = new Map<string, string>();
+
+  async function getPeerAccess(roomName: string, username: string): Promise<PeerAccessData> {
+    const room = await findOrCreateRoomInFishjam(roomName);
+    const peerAccess = peerNameToAccessMap.get(username);
 
     const peer = room.peers.find((peer) => peer.id === peerAccess?.peer.id);
 
@@ -31,7 +42,7 @@ export class RoomService {
 
     if (!peer) {
       fastify.log.info({ name: 'Creating peer' });
-      return await this.createPeer(roomName, username);
+      return createPeer(roomName, username);
     }
 
     if (!peerAccess?.peerToken) throw new RoomManagerError('Missing peer token in room');
@@ -41,7 +52,7 @@ export class RoomService {
     return peerAccess;
   }
 
-  async handleJellyfishMessage(notification: ServerMessage): Promise<void> {
+  async function handleFishjamMessage(notification: ServerMessage): Promise<void> {
     Object.entries(notification)
       .filter(([_, value]) => value)
       .forEach(([name, value]) => {
@@ -53,7 +64,7 @@ export class RoomService {
     if (peerToBeRemoved) {
       const { roomId, peerId } = peerToBeRemoved;
 
-      const userAccess = [...this.peerNameToAccessMap.values()].find(
+      const userAccess = [...peerNameToAccessMap.values()].find(
         ({ room, peer }) => room.id === roomId && peer.id === peerId
       );
 
@@ -62,7 +73,7 @@ export class RoomService {
         return;
       }
 
-      this.peerNameToAccessMap.delete(userAccess.peer.name);
+      peerNameToAccessMap.delete(userAccess.peer.name);
 
       fastify.log.info({ name: 'Peer deleted from cache', roomId, peerId: peerId });
     }
@@ -70,13 +81,13 @@ export class RoomService {
     const roomToBeRemovedId = (notification.roomDeleted ?? notification.roomCrashed)?.roomId;
 
     if (roomToBeRemovedId) {
-      const roomName = this.roomNameToRoomIdMap.get(roomToBeRemovedId);
-      if (roomName) this.roomNameToRoomIdMap.delete(roomName);
+      const roomName = roomNameToRoomIdMap.get(roomToBeRemovedId);
+      if (roomName) roomNameToRoomIdMap.delete(roomName);
 
-      const usersToRemove = [...this.peerNameToAccessMap.values()].filter((user) => user.room.id === roomToBeRemovedId);
+      const usersToRemove = [...peerNameToAccessMap.values()].filter((user) => user.room.id === roomToBeRemovedId);
 
       usersToRemove.forEach(({ peer }) => {
-        this.peerNameToAccessMap.delete(peer.name);
+        peerNameToAccessMap.delete(peer.name);
       });
 
       fastify.log.info({
@@ -86,12 +97,12 @@ export class RoomService {
     }
   }
 
-  private async createPeer(roomName: string, peerName: string): Promise<PeerAccessData> {
-    const roomId = this.roomNameToRoomIdMap.get(roomName);
+  async function createPeer(roomName: string, peerName: string): Promise<PeerAccessData> {
+    const roomId = roomNameToRoomIdMap.get(roomName);
 
     if (!roomId) throw new RoomManagerError('Room not found');
 
-    const { peer, peerToken } = await this.fishjamClient.createPeer(roomId, {
+    const { peer, peerToken } = await fishjamClient.createPeer(roomId, {
       enableSimulcast: fastify.config.ENABLE_SIMULCAST,
       metadata: { username: peerName },
     });
@@ -102,20 +113,20 @@ export class RoomService {
       peerToken,
     };
 
-    this.peerNameToAccessMap.set(peerName, peerAccess);
+    peerNameToAccessMap.set(peerName, peerAccess);
 
     fastify.log.info('Created peer', { peerName, ...peerAccess });
 
     return peerAccess;
   }
 
-  private async findOrCreateRoomInFishjam(roomName: string): Promise<Room> {
-    const roomId = this.roomNameToRoomIdMap.get(roomName);
+  async function findOrCreateRoomInFishjam(roomName: string): Promise<Room> {
+    const roomId = roomNameToRoomIdMap.get(roomName);
 
     if (roomId) {
       try {
-        const room = await this.fishjamClient.getRoom(roomId);
-        fastify.log.info({ name: 'Room already exist in the Fishjam', room });
+        const room = await fishjamClient.getRoom(roomId);
+        fastify.log.info({ name: 'Room already exist in Fishjam', room });
 
         return room;
       } catch (err) {
@@ -126,21 +137,23 @@ export class RoomService {
     }
 
     fastify.log.info({
-      name: 'Creating room in the Fishjam',
+      name: 'Creating room in Fishjam',
       roomId,
       roomName,
     });
 
-    const newRoom = await this.fishjamClient.createRoom({
+    const newRoom = await fishjamClient.createRoom({
       maxPeers: fastify.config.MAX_PEERS,
       webhookUrl: fastify.config.WEBHOOK_URL,
       peerlessPurgeTimeout: fastify.config.PEERLESS_PURGE_TIMEOUT,
     });
 
-    this.roomNameToRoomIdMap.set(roomName, newRoom.id);
+    roomNameToRoomIdMap.set(roomName, newRoom.id);
 
     fastify.log.info({ name: 'Room created', newRoom });
 
     return newRoom;
   }
-}
+
+  fastify.decorate('fishjam', { getPeerAccess, handleFishjamMessage });
+});
