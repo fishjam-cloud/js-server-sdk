@@ -40,6 +40,10 @@
       "src/index.ts",
       "src/proto.ts"
     ],
+    "noExternal": [
+      "fishjam-openapi",
+      "fishjam-proto"
+    ],
     "dts": true,
     "minify": false,
     "format": [
@@ -49,12 +53,12 @@
     "outDir": "dist"
   },
   "dependencies": {
-    "@fishjam-cloud/fishjam-openapi": "workspace:*",
-    "@fishjam-cloud/fishjam-proto": "workspace:*",
     "axios": "^1.7.7",
     "websocket": "^1.0.35"
   },
   "devDependencies": {
+    "@fishjam-cloud/fishjam-openapi": "workspace:*",
+    "@fishjam-cloud/fishjam-proto": "workspace:*",
     "@openapitools/openapi-generator-cli": "^2.14.0",
     "@types/node": "^22.7.5",
     "@types/websocket": "^1.0.10",
