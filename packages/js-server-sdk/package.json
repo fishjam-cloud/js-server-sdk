@@ -28,7 +28,7 @@
     "./proto": "./dist/proto.js"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "tsup --dts-resolve",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
@@ -40,8 +40,11 @@
       "src/index.ts",
       "src/proto.ts"
     ],
-    "dts": true,
-    "minify": false,
+    "noExternal": [
+      "fishjam-openapi",
+      "fishjam-proto"
+    ],
+    "minify": true,
     "format": [
       "cjs",
       "esm"
@@ -49,12 +52,12 @@
     "outDir": "dist"
   },
   "dependencies": {
-    "@fishjam-cloud/fishjam-openapi": "workspace:*",
-    "@fishjam-cloud/fishjam-proto": "workspace:*",
     "axios": "^1.7.7",
     "websocket": "^1.0.35"
   },
   "devDependencies": {
+    "@fishjam-cloud/fishjam-openapi": "workspace:*",
+    "@fishjam-cloud/fishjam-proto": "workspace:*",
     "@openapitools/openapi-generator-cli": "^2.15.3",
     "@types/node": "^22.10.0",
     "@types/websocket": "^1.0.10",
