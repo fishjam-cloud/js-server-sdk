@@ -13,7 +13,7 @@
     "lint": "eslint . --fix",
     "lint:check": "eslint . "
   },
-  "author": "Fishjam Cloud Team",
+  "author": "Fishjam Team",
   "dependencies": {
     "@fastify/cors": "^10.0.1",
     "@fastify/env": "^5.0.1",
