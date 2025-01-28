@@ -15,7 +15,7 @@ Room Manager manages the room names and user names by itself by keeping the mapp
 
 ## Running the Room Manager with Fishjam
 
-We recommend using the provided Room Manger instance on [fishjam.io](fishjam.io). However, if you want to run your own instance, follow the instructions below.
+We recommend using the provided Room Manger instance on [fishjam.io](https://fishjam.io). However, if you want to run your own instance, follow the instructions below.
 
 ## Running the Room Manager locally
 
@@ -33,7 +33,7 @@ docker run -e FISHJAM_URL={url} -e FISHJAM_SERVER_TOKEN={token} -d -p 8000:8080 
 
 ## API
 
-As of now, it exposes 3 endpoints.
+As of now, it exposes 2 endpoints.
 
 ### /api/rooms?roomName=`room_name`&peerName=`peer_name`
 
