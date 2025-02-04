@@ -21,13 +21,13 @@ We recommend using the provided Room Manger instance on [fishjam.io](https://fis
 
 1. Run the build command from **the root of the repository**:
 
-```bash
+```sh
 docker build -t room-manager -f examples/room-manager/Dockerfile .
 ```
 
 2. Run the following command with `{url}` and `{token}` placeholders replaced to start the Room Manager:
 
-```bash
+```sh
 docker run -e FISHJAM_URL={url} -e FISHJAM_SERVER_TOKEN={token} -d -p 8000:8080 room-manager:latest
 ```
 
