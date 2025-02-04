@@ -41,8 +41,8 @@ jobs:
                 --restart always \
                 -e PORT=8080 \
                 -e PEERLESS_PURGE_TIMEOUT=600 \
-                -e FISHJAM_URL=${{ secrets.ROOM_MANAGER_FISHJAM_URL }} \
-                -e FISHJAM_SERVER_TOKEN=${{ secrets.ROOM_MANAGER_FISHJAM_SERVER_TOKEN }} \
+                -e FISHJAM_URL=${{ vars.ROOM_MANAGER_FISHJAM_URL }} \
+                -e FISHJAM_SERVER_TOKEN=${{ vars.ROOM_MANAGER_FISHJAM_SERVER_TOKEN }} \
                 room-manager:${{ github.event.pull_request.head.sha }}
             - name: Test Room Manager Healtcheck
               run: |
