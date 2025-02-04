@@ -2493,12 +2493,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fastify-healthcheck@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "fastify-healthcheck@npm:5.0.0"
+"fastify-healthcheck@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "fastify-healthcheck@npm:5.1.0"
   dependencies:
     "@fastify/under-pressure": "npm:^9.0.1"
-  checksum: 10c0/0162e51215d23a3d6837c235851c936e2508c70c5e245b8bc414990005e33a2c546fabeb2ef68dc6f2d9d7fc298a2ca365a4338d8ee893e51d5195ea8d272c79
+  checksum: 10c0/cd8e482dec9d30a78a72e98f65f24ff17864313355653a9d88ce663cee840758bbc25e0a13a56b9ba74a4eefea04b6ad119463d143c87f9826b271b02cb3a1b3
   languageName: node
   linkType: hard
 
@@ -4246,7 +4246,7 @@ __metadata:
     "@types/node": "npm:^22.7.5"
     axios: "npm:^1.7.9"
     fastify: "npm:^5.2.1"
-    fastify-healthcheck: "npm:^5.0.0"
+    fastify-healthcheck: "npm:^5.1.0"
     fluent-json-schema: "npm:^5.0.0"
     pino-pretty: "npm:^11.2.2"
     tsc: "npm:^2.0.4"
