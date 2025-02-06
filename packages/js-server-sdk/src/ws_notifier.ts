@@ -5,7 +5,21 @@ import { ServerMessage, ServerMessage_EventType } from './proto';
 import { FishjamConfig } from './types';
 import { httpToWebsocket } from './utlis';
 
-const allowedNotifications = [
+export type AllowedNotifications =
+  | 'roomCreated'
+  | 'roomDeleted'
+  | 'roomCrashed'
+  | 'peerAdded'
+  | 'peerDeleted'
+  | 'peerConnected'
+  | 'peerDisconnected'
+  | 'peerMetadataUpdated'
+  | 'peerCrashed'
+  | 'trackAdded'
+  | 'trackRemoved'
+  | 'trackMetadataUpdated';
+
+const allowedNotificationsList: ReadonlyArray<AllowedNotifications> = [
   'roomCreated',
   'roomDeleted',
   'roomCrashed',
@@ -20,10 +34,14 @@ const allowedNotifications = [
   'trackMetadataUpdated',
 ] as const;
 
-type ErrorEventHandler = (msg: Error) => void;
-type CloseEventHandler = (code: number, reason: string) => void;
-type NotificationEvents = Record<(typeof allowedNotifications)[number], (message: ServerMessage) => void>;
+export type ErrorEventHandler = (msg: Error) => void;
+export type CloseEventHandler = (code: number, reason: string) => void;
+export type NotificationEvents = Record<AllowedNotifications, (message: ServerMessage) => void>;
 
+/**
+ * Notifier object that can be used to notify about various events related to Fishjam App
+ * @category Client
+ */
 export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<NotificationEvents>) {
   private readonly client: WebSocket.client;
 
@@ -86,7 +104,7 @@ export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<N
     connection.on('close', (code, reason) => onClose(code, reason));
   }
 
-  private isAllowedNotification(notification: string): notification is (typeof allowedNotifications)[number] {
-    return allowedNotifications.includes(notification as (typeof allowedNotifications)[number]);
+  private isAllowedNotification(notification: string): notification is AllowedNotifications {
+    return allowedNotificationsList.includes(notification as AllowedNotifications);
   }
 }
