@@ -2,6 +2,7 @@ import fastifyPlugin from 'fastify-plugin';
 import { type FastifyInstance } from 'fastify';
 import { FishjamClient, Room, RoomNotFoundException } from '@fishjam-cloud/js-server-sdk';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
+import { type RoomConfigVideoCodecEnum } from '@fishjam-cloud/fishjam-openapi';
 import { RoomManagerError } from '../errors';
 import { PeerAccessData } from '../schema';
 
@@ -146,6 +147,7 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
       maxPeers: fastify.config.MAX_PEERS,
       webhookUrl: fastify.config.WEBHOOK_URL,
       peerlessPurgeTimeout: fastify.config.PEERLESS_PURGE_TIMEOUT,
+      videoCodec: fastify.config.ROOM_VIDEO_CODEC as RoomConfigVideoCodecEnum,
     });
 
     roomNameToRoomIdMap.set(roomName, newRoom.id);
