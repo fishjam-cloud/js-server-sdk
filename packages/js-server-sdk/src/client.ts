@@ -100,7 +100,7 @@ export class FishjamClient {
    * If  already created peer was not connected to room for more than 24 hours, token will became invalid. This method can be used to generate new peer_token for existing peer.
    * @param roomId
    * @param peerId
-   * @returns
+   * @returns refreshed peer token
    */
   async refreshPeerToken(roomId: string, peerId: string): Promise<string> {
     const refreshTokenResponse = await this.roomApi
