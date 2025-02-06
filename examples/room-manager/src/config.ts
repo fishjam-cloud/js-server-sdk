@@ -8,6 +8,7 @@ declare module 'fastify' {
       MAX_PEERS?: number;
       FISHJAM_URL: string;
       FISHJAM_SERVER_TOKEN: string;
+      ROOM_VIDEO_CODEC: string;
     };
   }
 }
@@ -42,6 +43,10 @@ export const configSchema = {
     FISHJAM_SERVER_TOKEN: {
       type: 'string',
       default: 'development',
+    },
+    ROOM_VIDEO_CODEC: {
+      type: 'string',
+      default: 'vp8',
     },
   },
 };
