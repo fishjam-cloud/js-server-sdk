@@ -1,9 +1,11 @@
 {
-  "$schema": "https://typedoc.org/schema.json",
-  "entryPoints": ["packages/*"],
-  "name": "Fishjam SDK",
+  "entryPoints": ["packages/js-server-sdk*"],
+  "name": "Fishjam Server SDK",
   "entryPointStrategy": "packages",
   "includeVersion": true,
   "plugin": ["typedoc-material-theme"],
-  "themeColor": "#FCF6E7"
+  "themeColor": "#FCF6E7",
+  "readme": "none",
+  "treatValidationWarningsAsErrors": true,
+  "treatWarningsAsErrors": true
 }
