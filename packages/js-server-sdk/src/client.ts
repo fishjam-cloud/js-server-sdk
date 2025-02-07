@@ -4,8 +4,8 @@ import { FishjamConfig, Room } from './types';
 import { raiseExceptions } from './exceptions/mapper';
 
 /**
- * Client class that allows to manage Rooms and Peers for Fishjam App.
- * It requires Fishjam URL and management token that can be retrieved from Fishjam Dashboard.
+ * Client class that allows to manage Rooms and Peers for a Fishjam App.
+ * It requires the Fishjam URL and management token that can be retrieved from the Fishjam Dashboard.
  * @category Client
  */
 export class FishjamClient {
