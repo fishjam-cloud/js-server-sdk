@@ -1,8 +1,12 @@
 import fastifyPlugin from 'fastify-plugin';
 import { type FastifyInstance } from 'fastify';
-import { FishjamClient, Room, RoomNotFoundException } from '@fishjam-cloud/js-server-sdk';
+import {
+  FishjamClient,
+  Room,
+  RoomNotFoundException,
+  type RoomConfigVideoCodecEnum,
+} from '@fishjam-cloud/js-server-sdk';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
-import { type RoomConfigVideoCodecEnum } from '@fishjam-cloud/fishjam-openapi';
 import { RoomManagerError } from '../errors';
 import { PeerAccessData } from '../schema';
 
