@@ -22,7 +22,7 @@ export class FishjamClient {
   }
 
   /**
-   * Create new room. All peers connected to same room will be able to send/receive streams to each other
+   * Create a new room. All peers connected to the same room will be able to send/receive streams to each other.
    */
   async createRoom(config: RoomConfig = {}): Promise<Room> {
     const response = await this.roomApi.createRoom(config).catch(raiseExceptions);
@@ -39,7 +39,7 @@ export class FishjamClient {
   }
 
   /**
-   * Delete existing room. All peers connected to this room will be disconnected and removed.
+   * Delete an existing room. All peers connected to this room will be disconnected and removed.
    * @param roomId
    */
   async deleteRoom(roomId: string): Promise<void> {
@@ -47,7 +47,7 @@ export class FishjamClient {
   }
 
   /**
-   * Get list of all existing rooms.
+   * Get a list of all existing rooms.
    */
   async getAllRooms(): Promise<Room[]> {
     const getAllRoomsRepsonse = await this.roomApi.getAllRooms().catch(raiseExceptions);
@@ -55,7 +55,7 @@ export class FishjamClient {
   }
 
   /**
-   * Create new peer assigned to room
+   * Create a new peer assigned to a room.
    * @param roomId
    * @param options
    * @returns
@@ -76,7 +76,7 @@ export class FishjamClient {
   }
 
   /**
-   * Get details about given room
+   * Get details about a given room.
    * @param roomId
    * @returns
    */
@@ -87,7 +87,7 @@ export class FishjamClient {
   }
 
   /**
-   * Delete peer - this will also disconnect peer from room
+   * Delete a peer - this will also disconnect the peer from the room.
    * @param roomId
    * @param peerId
    */
@@ -96,8 +96,8 @@ export class FishjamClient {
   }
 
   /**
-   * Refresh peer token for already existing peer.
-   * If  already created peer was not connected to room for more than 24 hours, token will became invalid. This method can be used to generate new peer_token for existing peer.
+   * Refresh the peer token for an already existing peer.
+   * If an already created peer has not been connected to the room for more than 24 hours, the token will become invalid. This method can be used to generate a new peer token for the existing peer.
    * @param roomId
    * @param peerId
    * @returns refreshed peer token
