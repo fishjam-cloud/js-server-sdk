@@ -39,7 +39,7 @@ export type CloseEventHandler = (code: number, reason: string) => void;
 export type NotificationEvents = Record<AllowedNotifications, (message: ServerMessage) => void>;
 
 /**
- * Notifier object that can be used to notify about various events related to Fishjam App
+ * Notifier object that can be used to get notified about various events related to the Fishjam App.
  * @category Client
  */
 export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<NotificationEvents>) {
