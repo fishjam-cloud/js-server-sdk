@@ -1,4 +1,4 @@
-export { Peer, PeerStatus, RoomConfig, PeerOptions } from '@fishjam-cloud/fishjam-openapi';
+export { Peer, PeerStatus, RoomConfig, PeerOptions, RoomConfigVideoCodecEnum } from '@fishjam-cloud/fishjam-openapi';
 export { FishjamWSNotifier } from './ws_notifier';
 export { FishjamClient } from './client';
 export * from './exceptions';
