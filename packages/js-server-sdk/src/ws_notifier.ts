@@ -5,7 +5,7 @@ import { ServerMessage, ServerMessage_EventType } from './proto';
 import { FishjamConfig } from './types';
 import { httpToWebsocket } from './utlis';
 
-export type AllowedNotifications =
+export type ExpectedEvents =
   | 'roomCreated'
   | 'roomDeleted'
   | 'roomCrashed'
@@ -19,7 +19,7 @@ export type AllowedNotifications =
   | 'trackRemoved'
   | 'trackMetadataUpdated';
 
-const allowedNotificationsList: ReadonlyArray<AllowedNotifications> = [
+const expectedEventsList: ReadonlyArray<ExpectedEvents> = [
   'roomCreated',
   'roomDeleted',
   'roomCrashed',
@@ -36,7 +36,7 @@ const allowedNotificationsList: ReadonlyArray<AllowedNotifications> = [
 
 export type ErrorEventHandler = (msg: Error) => void;
 export type CloseEventHandler = (code: number, reason: string) => void;
-export type NotificationEvents = Record<AllowedNotifications, (message: ServerMessage) => void>;
+export type NotificationEvents = Record<ExpectedEvents, (message: ServerMessage) => void>;
 
 /**
  * Notifier object that can be used to get notified about various events related to the Fishjam App.
@@ -75,7 +75,7 @@ export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<N
       const decodedMessage = ServerMessage.toJSON(ServerMessage.decode(message.binaryData)) as Record<string, string>;
       const [notification] = Object.keys(decodedMessage);
 
-      if (!this.isAllowedNotification(notification)) return;
+      if (!this.isExpectedEvent(notification)) return;
 
       this.emit(notification, decodedMessage);
     } catch (e) {
@@ -104,7 +104,7 @@ export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<N
     connection.on('close', (code, reason) => onClose(code, reason));
   }
 
-  private isAllowedNotification(notification: string): notification is AllowedNotifications {
-    return allowedNotificationsList.includes(notification as AllowedNotifications);
+  private isExpectedEvent(notification: string): notification is ExpectedEvents {
+    return expectedEventsList.includes(notification as ExpectedEvents);
   }
 }
