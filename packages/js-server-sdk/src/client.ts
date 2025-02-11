@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { RoomApi, RoomConfig, PeerOptions, Peer } from '@fishjam-cloud/fishjam-openapi';
-import { FishjamConfig, Room } from './types';
+import { RoomApi, RoomConfig, PeerOptions } from '@fishjam-cloud/fishjam-openapi';
+import { FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
 import { raiseExceptions } from './exceptions/mapper';
 
 /**
@@ -35,14 +35,14 @@ export class FishjamClient {
       },
     } = response;
 
-    return room;
+    return room as Room;
   }
 
   /**
    * Delete an existing room. All peers connected to this room will be disconnected and removed.
    * @param roomId
    */
-  async deleteRoom(roomId: string): Promise<void> {
+  async deleteRoom(roomId: RoomId): Promise<void> {
     await this.roomApi.deleteRoom(roomId).catch((error) => raiseExceptions(error, 'room'));
   }
 
@@ -51,7 +51,7 @@ export class FishjamClient {
    */
   async getAllRooms(): Promise<Room[]> {
     const getAllRoomsRepsonse = await this.roomApi.getAllRooms().catch(raiseExceptions);
-    return getAllRoomsRepsonse.data.data.map(({ components: _, ...room }) => room) ?? [];
+    return getAllRoomsRepsonse.data.data.map(({ components: _, ...room }) => room as Room) ?? [];
   }
 
   /**
@@ -60,7 +60,7 @@ export class FishjamClient {
    * @param options
    * @returns
    */
-  async createPeer(roomId: string, options: PeerOptions = {}): Promise<{ peer: Peer; peerToken: string }> {
+  async createPeer(roomId: RoomId, options: PeerOptions = {}): Promise<{ peer: Peer; peerToken: string }> {
     const response = await this.roomApi
       .addPeer(roomId, {
         type: 'webrtc',
@@ -72,7 +72,7 @@ export class FishjamClient {
       data: { data },
     } = response;
 
-    return { peer: data.peer, peerToken: data.token };
+    return { peer: data.peer as Peer, peerToken: data.token };
   }
 
   /**
@@ -80,10 +80,10 @@ export class FishjamClient {
    * @param roomId
    * @returns
    */
-  async getRoom(roomId: string): Promise<Room> {
+  async getRoom(roomId: RoomId): Promise<Room> {
     const getRoomResponse = await this.roomApi.getRoom(roomId).catch((error) => raiseExceptions(error, 'room'));
     const { components: _, ...room } = getRoomResponse.data.data;
-    return room;
+    return room as Room;
   }
 
   /**
@@ -91,7 +91,7 @@ export class FishjamClient {
    * @param roomId
    * @param peerId
    */
-  async deletePeer(roomId: string, peerId: string): Promise<void> {
+  async deletePeer(roomId: RoomId, peerId: PeerId): Promise<void> {
     await this.roomApi.deletePeer(roomId, peerId).catch((error) => raiseExceptions(error, 'peer'));
   }
 
@@ -102,7 +102,7 @@ export class FishjamClient {
    * @param peerId
    * @returns refreshed peer token
    */
-  async refreshPeerToken(roomId: string, peerId: string): Promise<string> {
+  async refreshPeerToken(roomId: RoomId, peerId: PeerId): Promise<string> {
     const refreshTokenResponse = await this.roomApi
       .refreshToken(roomId, peerId)
       .catch((error) => raiseExceptions(error, 'peer'));

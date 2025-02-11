@@ -3,6 +3,7 @@ import { type FastifyInstance } from 'fastify';
 import {
   FishjamClient,
   Room,
+  RoomId,
   RoomNotFoundException,
   type RoomConfigVideoCodecEnum,
 } from '@fishjam-cloud/js-server-sdk';
@@ -30,7 +31,7 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
   });
 
   const peerNameToAccessMap = new Map<string, PeerAccessData>();
-  const roomNameToRoomIdMap = new Map<string, string>();
+  const roomNameToRoomIdMap = new Map<string, RoomId>();
 
   async function getPeerAccess(roomName: string, username: string): Promise<PeerAccessData> {
     const room = await findOrCreateRoomInFishjam(roomName);
