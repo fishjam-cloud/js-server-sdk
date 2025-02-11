@@ -52,12 +52,12 @@
     "outDir": "dist"
   },
   "dependencies": {
+    "@fishjam-cloud/fishjam-openapi": "workspace:*",
+    "@fishjam-cloud/fishjam-proto": "workspace:*",
     "axios": "^1.7.9",
     "websocket": "^1.0.35"
   },
   "devDependencies": {
-    "@fishjam-cloud/fishjam-openapi": "workspace:*",
-    "@fishjam-cloud/fishjam-proto": "workspace:*",
     "@openapitools/openapi-generator-cli": "^2.16.3",
     "@types/node": "^22.13.1",
     "@types/websocket": "^1.0.10",
