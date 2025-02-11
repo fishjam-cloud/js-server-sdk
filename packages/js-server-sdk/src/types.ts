@@ -3,7 +3,7 @@ import { Peer as OpenApiPeer, RoomConfig } from '@fishjam-cloud/fishjam-openapi'
 // branded types are useful for restricting where given value can be passed
 declare const brand: unique symbol;
 /**
- * Branded type
+ * Branded type helper
  */
 export type Brand<T, TBrand extends string> = T & { [brand]: TBrand };
 
