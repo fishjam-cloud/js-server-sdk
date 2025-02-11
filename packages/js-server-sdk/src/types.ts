@@ -7,7 +7,14 @@ declare const brand: unique symbol;
  */
 export type Brand<T, TBrand extends string> = T & { [brand]: TBrand };
 
+/**
+ * ID of the Room.
+ * Room can be created with {@link FishjamClient.createRoom}.
+ */
 export type RoomId = Brand<string, 'RoomId'>;
+/**
+ * ID of Peer. Peer is associated with Room and can be created with {@link FishjamClient.createPeer}.
+ */
 export type PeerId = Brand<string, 'PeerId'>;
 
 export type Peer = Omit<OpenApiPeer, 'id'> & { id: PeerId };

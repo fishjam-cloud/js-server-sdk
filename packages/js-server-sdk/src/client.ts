@@ -21,7 +21,6 @@ export class FishjamClient {
    *   managementToken: fastify.config.FISHJAM_SERVER_TOKEN,
    * });
    * ```
-   * @param config
    */
   constructor(config: FishjamConfig) {
     const client = axios.create({
@@ -61,8 +60,8 @@ export class FishjamClient {
    * Get a list of all existing rooms.
    */
   async getAllRooms(): Promise<Room[]> {
-    const getAllRoomsRepsonse = await this.roomApi.getAllRooms().catch(raiseExceptions);
-    return getAllRoomsRepsonse.data.data.map(({ components: _, ...room }) => room as Room) ?? [];
+    const getAllRoomsResponse = await this.roomApi.getAllRooms().catch(raiseExceptions);
+    return getAllRoomsResponse.data.data.map(({ components: _, ...room }) => room as Room) ?? [];
   }
 
   /**
