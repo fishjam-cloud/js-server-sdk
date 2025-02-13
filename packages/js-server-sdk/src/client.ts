@@ -11,6 +11,17 @@ import { raiseExceptions } from './exceptions/mapper';
 export class FishjamClient {
   private readonly roomApi: RoomApi;
 
+  /**
+   * Create new instance of Fishjam Client.
+   *
+   * Example usage:
+   * ```
+   * const fishjamClient = new FishjamClient({
+   *   fishjamUrl: fastify.config.FISHJAM_URL,
+   *   managementToken: fastify.config.FISHJAM_SERVER_TOKEN,
+   * });
+   * ```
+   */
   constructor(config: FishjamConfig) {
     const client = axios.create({
       headers: {
@@ -40,7 +51,6 @@ export class FishjamClient {
 
   /**
    * Delete an existing room. All peers connected to this room will be disconnected and removed.
-   * @param roomId
    */
   async deleteRoom(roomId: RoomId): Promise<void> {
     await this.roomApi.deleteRoom(roomId).catch((error) => raiseExceptions(error, 'room'));
@@ -50,15 +60,12 @@ export class FishjamClient {
    * Get a list of all existing rooms.
    */
   async getAllRooms(): Promise<Room[]> {
-    const getAllRoomsRepsonse = await this.roomApi.getAllRooms().catch(raiseExceptions);
-    return getAllRoomsRepsonse.data.data.map(({ components: _, ...room }) => room as Room) ?? [];
+    const getAllRoomsResponse = await this.roomApi.getAllRooms().catch(raiseExceptions);
+    return getAllRoomsResponse.data.data.map(({ components: _, ...room }) => room as Room) ?? [];
   }
 
   /**
    * Create a new peer assigned to a room.
-   * @param roomId
-   * @param options
-   * @returns
    */
   async createPeer(roomId: RoomId, options: PeerOptions = {}): Promise<{ peer: Peer; peerToken: string }> {
     const response = await this.roomApi
@@ -77,8 +84,6 @@ export class FishjamClient {
 
   /**
    * Get details about a given room.
-   * @param roomId
-   * @returns
    */
   async getRoom(roomId: RoomId): Promise<Room> {
     const getRoomResponse = await this.roomApi.getRoom(roomId).catch((error) => raiseExceptions(error, 'room'));
@@ -88,8 +93,6 @@ export class FishjamClient {
 
   /**
    * Delete a peer - this will also disconnect the peer from the room.
-   * @param roomId
-   * @param peerId
    */
   async deletePeer(roomId: RoomId, peerId: PeerId): Promise<void> {
     await this.roomApi.deletePeer(roomId, peerId).catch((error) => raiseExceptions(error, 'peer'));
@@ -98,8 +101,6 @@ export class FishjamClient {
   /**
    * Refresh the peer token for an already existing peer.
    * If an already created peer has not been connected to the room for more than 24 hours, the token will become invalid. This method can be used to generate a new peer token for the existing peer.
-   * @param roomId
-   * @param peerId
    * @returns refreshed peer token
    */
   async refreshPeerToken(roomId: RoomId, peerId: PeerId): Promise<string> {
