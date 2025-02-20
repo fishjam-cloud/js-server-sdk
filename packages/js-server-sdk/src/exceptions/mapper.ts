@@ -35,5 +35,7 @@ export const mapException = (error: unknown, entity?: 'peer' | 'room') => {
       default:
         return new UnknownException(error);
     }
-  } else return error;
+  } else {
+    return error;
+  }
 };
