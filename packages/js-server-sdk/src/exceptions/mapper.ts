@@ -6,6 +6,7 @@ import {
   RoomNotFoundException,
   ServiceUnavailableException,
   UnauthorizedException,
+  UnknownException,
 } from '.';
 type AxiosError = axios.AxiosError<Record<string, string>>;
 function isAxiosException(error: unknown): error is AxiosError {
@@ -31,6 +32,8 @@ export const raiseExceptions = (error: unknown, entity?: 'peer' | 'room') => {
 
       case 503:
         return new ServiceUnavailableException(error);
+      default:
+        return new UnknownException(error);
     }
   } else return error;
 };
