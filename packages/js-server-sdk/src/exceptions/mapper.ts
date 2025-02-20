@@ -13,7 +13,7 @@ function isAxiosException(error: unknown): error is AxiosError {
   return !!error && typeof error === 'object' && 'isAxiosError' in error && !!error.isAxiosError;
 }
 
-export const raiseExceptions = (error: unknown, entity?: 'peer' | 'room') => {
+export const mapException = (error: unknown, entity?: 'peer' | 'room') => {
   if (isAxiosException(error)) {
     switch (error.response?.status) {
       case 400:

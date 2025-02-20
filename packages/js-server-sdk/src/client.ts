@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { RoomApi, RoomConfig, PeerOptions } from '@fishjam-cloud/fishjam-openapi';
 import { FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
-import { raiseExceptions } from './exceptions/mapper';
+import { mapException } from './exceptions/mapper';
 
 /**
  * Client class that allows to manage Rooms and Peers for a Fishjam App.
@@ -49,7 +49,7 @@ export class FishjamClient {
 
       return room as Room;
     } catch (error) {
-      throw raiseExceptions(error);
+      throw mapException(error);
     }
   }
 
@@ -60,7 +60,7 @@ export class FishjamClient {
     try {
       await this.roomApi.deleteRoom(roomId);
     } catch (error) {
-      throw raiseExceptions(error, 'room');
+      throw mapException(error, 'room');
     }
   }
 
@@ -72,7 +72,7 @@ export class FishjamClient {
       const getAllRoomsResponse = await this.roomApi.getAllRooms();
       return getAllRoomsResponse.data.data.map(({ components: _, ...room }) => room as Room) ?? [];
     } catch (error) {
-      throw raiseExceptions(error);
+      throw mapException(error);
     }
   }
 
@@ -92,7 +92,7 @@ export class FishjamClient {
 
       return { peer: data.peer as Peer, peerToken: data.token };
     } catch (error) {
-      throw raiseExceptions(error);
+      throw mapException(error);
     }
   }
 
@@ -105,7 +105,7 @@ export class FishjamClient {
       const { components: _, ...room } = getRoomResponse.data.data;
       return room as Room;
     } catch (error) {
-      throw raiseExceptions(error, 'room');
+      throw mapException(error, 'room');
     }
   }
 
@@ -116,7 +116,7 @@ export class FishjamClient {
     try {
       await this.roomApi.deletePeer(roomId, peerId);
     } catch (error) {
-      throw raiseExceptions(error, 'peer');
+      throw mapException(error, 'peer');
     }
   }
 
@@ -130,7 +130,7 @@ export class FishjamClient {
       const refreshTokenResponse = await this.roomApi.refreshToken(roomId, peerId);
       return refreshTokenResponse.data.data.token;
     } catch (error) {
-      throw raiseExceptions(error, 'peer');
+      throw mapException(error, 'peer');
     }
   }
 }
