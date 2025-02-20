@@ -1,6 +1,6 @@
 {
   "name": "@fishjam-cloud/fishjam-proto",
-  "version": "0.5.0",
+  "version": "0.13.0",
   "private": true,
   "description": "Fishjam Proto",
   "homepage": "https://github.com/fishjam-cloud/js-server-sdk",
