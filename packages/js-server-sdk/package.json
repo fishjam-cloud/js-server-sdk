@@ -28,7 +28,7 @@
     "./proto": "./dist/proto.js"
   },
   "scripts": {
-    "build": "tsup --dts",
+    "build": "tsup --dts-resolve",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
