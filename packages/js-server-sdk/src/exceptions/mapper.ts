@@ -6,29 +6,31 @@ import {
   RoomNotFoundException,
   ServiceUnavailableException,
   UnauthorizedException,
-  UnknownException,
 } from '.';
+type AxiosError = axios.AxiosError<Record<string, string>>;
+function isAxiosException(error: unknown): error is AxiosError {
+  return !!error && typeof error === 'object' && 'isAxiosError' in error && !!error.isAxiosError;
+}
 
-export const raiseExceptions = (error: axios.AxiosError<Record<string, string>>, entity?: 'peer' | 'room') => {
-  switch (error.response?.status) {
-    case 400:
-      throw new BadRequestException(error);
-    case 401:
-      throw new UnauthorizedException(error);
-    case 404:
-      switch (entity) {
-        case 'peer':
-          throw new PeerNotFoundException(error);
-        case 'room':
-          throw new RoomNotFoundException(error);
-        default:
-          throw new FishjamNotFoundException(error);
-      }
-    case 502:
-      throw new UnknownException(error);
-    case 503:
-      throw new ServiceUnavailableException(error);
-    default:
-      throw new UnknownException(error);
-  }
+export const raiseExceptions = (error: unknown, entity?: 'peer' | 'room') => {
+  if (isAxiosException(error)) {
+    switch (error.response?.status) {
+      case 400:
+        return new BadRequestException(error);
+      case 401:
+        throw new UnauthorizedException(error);
+      case 404:
+        switch (entity) {
+          case 'peer':
+            return new PeerNotFoundException(error);
+          case 'room':
+            return new RoomNotFoundException(error);
+          default:
+            return new FishjamNotFoundException(error);
+        }
+
+      case 503:
+        return new ServiceUnavailableException(error);
+    }
+  } else return error;
 };
