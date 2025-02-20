@@ -2,9 +2,13 @@ import axios from 'axios';
 
 export class FishjamBaseException extends Error {
   statusCode: number;
+  axiosCode?: string;
+  details?: string;
   constructor(error: axios.AxiosError<Record<string, string>>) {
-    super(error.response?.data['detail'] ?? error.response?.data['errors'] ?? 'Unknown error');
+    super(error.message);
     this.statusCode = error.response?.status ?? 500;
+    this.axiosCode = error.code;
+    this.details = error.response?.data['detail'] ?? error.response?.data['errors'] ?? 'Unknown error';
   }
 }
 

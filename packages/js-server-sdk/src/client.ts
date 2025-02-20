@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { RoomApi, RoomConfig, PeerOptions } from '@fishjam-cloud/fishjam-openapi';
 import { FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
-import { raiseExceptions } from './exceptions/mapper';
+import { mapException } from './exceptions/mapper';
 
 /**
  * Client class that allows to manage Rooms and Peers for a Fishjam App.
@@ -36,66 +36,88 @@ export class FishjamClient {
    * Create a new room. All peers connected to the same room will be able to send/receive streams to each other.
    */
   async createRoom(config: RoomConfig = {}): Promise<Room> {
-    const response = await this.roomApi.createRoom(config).catch(raiseExceptions);
+    try {
+      const response = await this.roomApi.createRoom(config);
 
-    const {
-      data: {
+      const {
         data: {
-          room: { components: _, ...room },
+          data: {
+            room: { components: _, ...room },
+          },
         },
-      },
-    } = response;
+      } = response;
 
-    return room as Room;
+      return room as Room;
+    } catch (error) {
+      throw mapException(error);
+    }
   }
 
   /**
    * Delete an existing room. All peers connected to this room will be disconnected and removed.
    */
   async deleteRoom(roomId: RoomId): Promise<void> {
-    await this.roomApi.deleteRoom(roomId).catch((error) => raiseExceptions(error, 'room'));
+    try {
+      await this.roomApi.deleteRoom(roomId);
+    } catch (error) {
+      throw mapException(error, 'room');
+    }
   }
 
   /**
    * Get a list of all existing rooms.
    */
   async getAllRooms(): Promise<Room[]> {
-    const getAllRoomsResponse = await this.roomApi.getAllRooms().catch(raiseExceptions);
-    return getAllRoomsResponse.data.data.map(({ components: _, ...room }) => room as Room) ?? [];
+    try {
+      const getAllRoomsResponse = await this.roomApi.getAllRooms();
+      return getAllRoomsResponse.data.data.map(({ components: _, ...room }) => room as Room) ?? [];
+    } catch (error) {
+      throw mapException(error);
+    }
   }
 
   /**
    * Create a new peer assigned to a room.
    */
   async createPeer(roomId: RoomId, options: PeerOptions = {}): Promise<{ peer: Peer; peerToken: string }> {
-    const response = await this.roomApi
-      .addPeer(roomId, {
+    try {
+      const response = await this.roomApi.addPeer(roomId, {
         type: 'webrtc',
         options,
-      })
-      .catch(raiseExceptions);
+      });
 
-    const {
-      data: { data },
-    } = response;
+      const {
+        data: { data },
+      } = response;
 
-    return { peer: data.peer as Peer, peerToken: data.token };
+      return { peer: data.peer as Peer, peerToken: data.token };
+    } catch (error) {
+      throw mapException(error);
+    }
   }
 
   /**
    * Get details about a given room.
    */
   async getRoom(roomId: RoomId): Promise<Room> {
-    const getRoomResponse = await this.roomApi.getRoom(roomId).catch((error) => raiseExceptions(error, 'room'));
-    const { components: _, ...room } = getRoomResponse.data.data;
-    return room as Room;
+    try {
+      const getRoomResponse = await this.roomApi.getRoom(roomId);
+      const { components: _, ...room } = getRoomResponse.data.data;
+      return room as Room;
+    } catch (error) {
+      throw mapException(error, 'room');
+    }
   }
 
   /**
    * Delete a peer - this will also disconnect the peer from the room.
    */
   async deletePeer(roomId: RoomId, peerId: PeerId): Promise<void> {
-    await this.roomApi.deletePeer(roomId, peerId).catch((error) => raiseExceptions(error, 'peer'));
+    try {
+      await this.roomApi.deletePeer(roomId, peerId);
+    } catch (error) {
+      throw mapException(error, 'peer');
+    }
   }
 
   /**
@@ -104,9 +126,11 @@ export class FishjamClient {
    * @returns refreshed peer token
    */
   async refreshPeerToken(roomId: RoomId, peerId: PeerId): Promise<string> {
-    const refreshTokenResponse = await this.roomApi
-      .refreshToken(roomId, peerId)
-      .catch((error) => raiseExceptions(error, 'peer'));
-    return refreshTokenResponse.data.data.token;
+    try {
+      const refreshTokenResponse = await this.roomApi.refreshToken(roomId, peerId);
+      return refreshTokenResponse.data.data.token;
+    } catch (error) {
+      throw mapException(error, 'peer');
+    }
   }
 }
