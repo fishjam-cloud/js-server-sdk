@@ -18,7 +18,7 @@ export class FishjamClient {
    * ```
    * const fishjamClient = new FishjamClient({
    *   fishjamUrl: fastify.config.FISHJAM_URL,
-   *   managementToken: fastify.config.FISHJAM_SERVER_TOKEN,
+   *   managementToken: fastify.config.FISHJAM_MANAGEMENT_TOKEN,
    * });
    * ```
    */
