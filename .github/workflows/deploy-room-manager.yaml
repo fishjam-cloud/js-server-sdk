@@ -27,7 +27,6 @@ jobs:
           --restart always \
           -e PORT=8080 \
           -e PEERLESS_PURGE_TIMEOUT=600 \
-          -e FISHJAM_URL=${{ secrets.ROOM_MANAGER_FISHJAM_URL }} \
-          -e FISHJAM_MANAGEMENT_TOKEN=${{ secrets.ROOM_MANAGER_FISHJAM_SERVER_TOKEN }} \
-          -e WEBHOOK_URL=${{ secrets.ROOM_MANAGER_WEBHOOK_URL }} \
+          -e FISHJAM_URL=${{ vars.ROOM_MANAGER_FISHJAM_URL }} \
+          -e FISHJAM_MANAGEMENT_TOKEN=${{ vars.ROOM_MANAGER_FISHJAM_SERVER_TOKEN }} \
           gh-runner-room-manager
