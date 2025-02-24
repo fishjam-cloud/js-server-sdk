@@ -7,7 +7,7 @@ declare module 'fastify' {
       ENABLE_SIMULCAST: boolean;
       MAX_PEERS?: number;
       FISHJAM_URL: string;
-      FISHJAM_MANAGEMENT_TOKEN: string;
+      FISHJAM_SERVER_TOKEN: string;
       ROOM_VIDEO_CODEC: string;
     };
   }
@@ -15,7 +15,7 @@ declare module 'fastify' {
 
 export const configSchema = {
   type: 'object',
-  required: ['PORT', 'ENABLE_SIMULCAST', 'FISHJAM_URL', 'FISHJAM_MANAGEMENT_TOKEN'],
+  required: ['PORT', 'ENABLE_SIMULCAST', 'FISHJAM_URL', 'FISHJAM_SERVER_TOKEN'],
   properties: {
     PORT: {
       type: 'string',
@@ -40,7 +40,7 @@ export const configSchema = {
       type: 'string',
       default: 'http://localhost:5002',
     },
-    FISHJAM_MANAGEMENT_TOKEN: {
+    FISHJAM_SERVER_TOKEN: {
       type: 'string',
       default: 'development',
     },
