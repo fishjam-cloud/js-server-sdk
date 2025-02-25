@@ -53,6 +53,8 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
 
     if (!peerAccess?.peerToken) throw new RoomManagerError('Missing peer token in room');
 
+    peerAccess.peerToken = await fishjamClient.refreshPeerToken(room.id, peer.id);
+
     fastify.log.info({ name: 'Peer and room exist', username, roomName });
 
     return peerAccess;
