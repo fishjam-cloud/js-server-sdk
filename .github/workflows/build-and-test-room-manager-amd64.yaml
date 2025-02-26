@@ -9,49 +9,49 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-test-amd64-image:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          file: examples/room-manager/Dockerfile
-          platforms: linux/amd64
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          tags: room-manager:${{ github.event.pull_request.head.sha }}
-          load: true
-      - name: Run Room Manager
-        run: |
-          docker run -d -p 8080:8080 \
-          --name gh-runner-room-manager \
-          --restart always \
-          -e PORT=8080 \
-          -e PEERLESS_PURGE_TIMEOUT=600 \
-          -e FISHJAM_URL=${{ vars.ROOM_MANAGER_FISHJAM_URL }} \
-          -e FISHJAM_MANAGEMENT_TOKEN=${{ vars.ROOM_MANAGER_FISHJAM_SERVER_TOKEN }} \
-          room-manager:${{ github.event.pull_request.head.sha }}
-      - name: Test Room Manager Healtcheck
-        run: |
-          sleep 2
-          curl -o tmp1.json -s -vvv http://127.0.0.1:8080/health
-          jq . tmp1.json
-          [[ $(jq -r .status tmp1.json) == "ok" ]]
-      - name: Test Room Manager API
-        run: |
-          curl -o tmp2.json -s -vvv "http://127.0.0.1:8080/api/rooms?roomName=testRoomName&peerName=testPeerName"
-          jq '{peerToken: .peerToken, room: .room, peer: .peer}' tmp2.json
-          [[ $(jq -r .peerToken tmp2.json) != "null" ]]
+    build-and-test-amd64-image:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@v3
+              with:
+                registry: ghcr.io
+                username: ${{ github.actor }}
+                password: ${{ secrets.GITHUB_TOKEN }}
+            - name: Build and push Docker image
+              uses: docker/build-push-action@v6
+              with:
+                file: examples/room-manager/Dockerfile
+                platforms: linux/amd64
+                cache-from: type=gha
+                cache-to: type=gha,mode=max
+                tags: room-manager:${{ github.event.pull_request.head.sha }}
+                load: true
+            - name: Run Room Manager
+              run: |
+                docker run -d -p 8080:8080 \
+                --name gh-runner-room-manager \
+                --restart always \
+                -e PORT=8080 \
+                -e PEERLESS_PURGE_TIMEOUT=600 \
+                -e FISHJAM_URL=${{ vars.ROOM_MANAGER_FISHJAM_URL }} \
+                -e FISHJAM_SERVER_TOKEN=${{ vars.ROOM_MANAGER_FISHJAM_SERVER_TOKEN }} \
+                room-manager:${{ github.event.pull_request.head.sha }}
+            - name: Test Room Manager Healtcheck
+              run: |
+                sleep 2
+                curl -o tmp1.json -s -vvv http://127.0.0.1:8080/health
+                jq . tmp1.json
+                [[ $(jq -r .status tmp1.json) == "ok" ]]
+            - name: Test Room Manager API
+              run: |
+                 curl -o tmp2.json -s -vvv "http://127.0.0.1:8080/api/rooms?roomName=testRoomName&peerName=testPeerName"
+                 jq '{peerToken: .peerToken, room: .room, peer: .peer}' tmp2.json
+                 [[ $(jq -r .peerToken tmp2.json) != "null" ]]

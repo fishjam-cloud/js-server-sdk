@@ -28,7 +28,7 @@ docker build -t room-manager -f examples/room-manager/Dockerfile .
 2. Run the following command with `{url}` and `{token}` placeholders replaced to start the Room Manager:
 
 ```sh
-docker run -e FISHJAM_URL={url} -e FISHJAM_MANAGEMENT_TOKEN={token} -d -p 8000:8080 room-manager:latest
+docker run -e FISHJAM_URL={url} -e FISHJAM_SERVER_TOKEN={token} -d -p 8000:8080 room-manager:latest
 ```
 
 ## API
