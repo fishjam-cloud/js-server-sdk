@@ -26,11 +26,6 @@ export async function rooms(fastify: FastifyInstance) {
     }
   };
 
-  const webhookHandler = async (req: FastifyRequest<{ Body: ServerMessage }>, res: FastifyReply) => {
-    await fastify.fishjam.handleFishjamMessage(req.body);
-    res.status(200).send();
-  };
-
   fastify.get<{ Querystring: GetPeerAccessQueryParams }, unknown>(
     '/',
     { schema: queryStringPeerEndpointSchema },
@@ -39,5 +34,4 @@ export async function rooms(fastify: FastifyInstance) {
   fastify.post<{ Params: { roomName: string } }>('/:roomName/start-recording', { schema: startRecordingSchema }, () => {
     throw new Error('Not yet implemented');
   });
-  fastify.post<{ Body: ServerMessage }>('/webhook', webhookHandler);
 }
