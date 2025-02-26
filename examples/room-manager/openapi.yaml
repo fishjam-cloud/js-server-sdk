@@ -101,11 +101,6 @@ paths:
       responses:
         "200":
           description: Default Response
-  /api/rooms/webhook:
-    post:
-      responses:
-        "200":
-          description: Default Response
 servers:
   - url: http://localhost:5004
     description: Development server
