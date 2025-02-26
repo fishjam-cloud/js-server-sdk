@@ -41,6 +41,3 @@ Simple as that - send a plain GET request and receive an auth token.
 Room Manager will search its memory for the username for the requested room and return a token.
 Otherwise, it will create a new one.
 
-### /api/rooms/webhook
-
-Exposes a webhook endpoint to allow the Fishjam instance to send notifications to the Room Manager.
