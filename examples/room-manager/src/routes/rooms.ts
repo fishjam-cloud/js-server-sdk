@@ -1,5 +1,4 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
+import { FastifyInstance, FastifyReply } from 'fastify';
 
 import { parseError } from '../errors';
 import { fishjamPlugin } from '../plugins';
