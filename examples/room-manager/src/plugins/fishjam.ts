@@ -27,7 +27,7 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
 
   const fishjamClient = new FishjamClient({
     fishjamUrl: fastify.config.FISHJAM_URL,
-    managementToken: fastify.config.FISHJAM_SERVER_TOKEN,
+    managementToken: fastify.config.FISHJAM_MANAGEMENT_TOKEN ?? fastify.config.FISHJAM_SERVER_TOKEN ?? '',
   });
 
   const peerNameToAccessMap = new Map<string, PeerAccessData>();
