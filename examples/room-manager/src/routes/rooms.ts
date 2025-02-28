@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyReply } from 'fastify';
 
 import { parseError } from '../errors';
 import { fishjamPlugin } from '../plugins';
-import { GetPeerAccessQueryParams, startRecordingSchema, queryStringPeerEndpointSchema } from '../schema';
+import { GetPeerAccessQueryParams, queryStringPeerEndpointSchema } from '../schema';
 import { httpToWebsocket, removeTrailingSlash } from '../utils';
 
 export async function rooms(fastify: FastifyInstance) {
@@ -30,7 +30,4 @@ export async function rooms(fastify: FastifyInstance) {
     { schema: queryStringPeerEndpointSchema },
     (req, res) => getRoomAccessHandler(req.query.roomName, req.query.peerName, res)
   );
-  fastify.post<{ Params: { roomName: string } }>('/:roomName/start-recording', { schema: startRecordingSchema }, () => {
-    throw new Error('Not yet implemented');
-  });
 }
