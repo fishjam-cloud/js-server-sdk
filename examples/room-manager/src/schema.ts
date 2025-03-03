@@ -56,9 +56,3 @@ export const queryStringPeerEndpointSchema: FastifySchema = {
   },
   tags: ['room'],
 };
-
-export const startRecordingSchema = {
-  params: S.object().prop('roomName', S.string().required()),
-  operationId: 'startRecording',
-  tags: ['room'],
-};
