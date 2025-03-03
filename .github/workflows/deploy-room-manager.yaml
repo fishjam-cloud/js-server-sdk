@@ -29,5 +29,4 @@ jobs:
           -e PEERLESS_PURGE_TIMEOUT=600 \
           -e FISHJAM_URL=${{ secrets.ROOM_MANAGER_FISHJAM_URL }} \
           -e FISHJAM_MANAGEMENT_TOKEN=${{ secrets.ROOM_MANAGER_FISHJAM_SERVER_TOKEN }} \
-          -e WEBHOOK_URL=${{ secrets.ROOM_MANAGER_WEBHOOK_URL }} \
           gh-runner-room-manager
