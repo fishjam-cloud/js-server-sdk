@@ -40,11 +40,11 @@ export const configSchema = {
     },
     FISHJAM_SERVER_TOKEN: {
       type: 'string',
-      default: 'development',
+      default: 'development1',
     },
     FISHJAM_MANAGEMENT_TOKEN: {
       type: 'string',
-      default: 'development',
+      default: undefined,
     },
     ROOM_VIDEO_CODEC: {
       type: 'string',
