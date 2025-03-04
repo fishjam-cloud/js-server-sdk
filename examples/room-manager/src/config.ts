@@ -40,7 +40,7 @@ export const configSchema = {
     },
     FISHJAM_SERVER_TOKEN: {
       type: 'string',
-      default: 'development1',
+      default: undefined,
     },
     FISHJAM_MANAGEMENT_TOKEN: {
       type: 'string',
