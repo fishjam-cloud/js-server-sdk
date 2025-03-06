@@ -1,6 +1,12 @@
 import fastifyPlugin from 'fastify-plugin';
 import { type FastifyInstance } from 'fastify';
-import { FishjamClient, Room, RoomNotFoundException } from '@fishjam-cloud/js-server-sdk';
+import {
+  FishjamClient,
+  Room,
+  RoomId,
+  RoomNotFoundException,
+  type RoomConfigVideoCodecEnum,
+} from '@fishjam-cloud/js-server-sdk';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import { RoomManagerError } from '../errors';
 import { PeerAccessData } from '../schema';
@@ -21,11 +27,11 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
 
   const fishjamClient = new FishjamClient({
     fishjamUrl: fastify.config.FISHJAM_URL,
-    managementToken: fastify.config.FISHJAM_SERVER_TOKEN,
+    managementToken: fastify.config.FISHJAM_MANAGEMENT_TOKEN ?? fastify.config.FISHJAM_SERVER_TOKEN ?? 'development',
   });
 
   const peerNameToAccessMap = new Map<string, PeerAccessData>();
-  const roomNameToRoomIdMap = new Map<string, string>();
+  const roomNameToRoomIdMap = new Map<string, RoomId>();
 
   async function getPeerAccess(roomName: string, username: string): Promise<PeerAccessData> {
     const room = await findOrCreateRoomInFishjam(roomName);
@@ -46,6 +52,8 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
     }
 
     if (!peerAccess?.peerToken) throw new RoomManagerError('Missing peer token in room');
+
+    peerAccess.peerToken = await fishjamClient.refreshPeerToken(room.id, peer.id);
 
     fastify.log.info({ name: 'Peer and room exist', username, roomName });
 
@@ -144,8 +152,8 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
 
     const newRoom = await fishjamClient.createRoom({
       maxPeers: fastify.config.MAX_PEERS,
-      webhookUrl: fastify.config.WEBHOOK_URL,
       peerlessPurgeTimeout: fastify.config.PEERLESS_PURGE_TIMEOUT,
+      videoCodec: fastify.config.ROOM_VIDEO_CODEC as RoomConfigVideoCodecEnum,
     });
 
     roomNameToRoomIdMap.set(roomName, newRoom.id);

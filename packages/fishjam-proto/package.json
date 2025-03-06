@@ -1,6 +1,6 @@
 {
   "name": "@fishjam-cloud/fishjam-proto",
-  "version": "0.5.0",
+  "version": "0.13.0",
   "private": true,
   "description": "Fishjam Proto",
   "homepage": "https://github.com/fishjam-cloud/js-server-sdk",
@@ -42,7 +42,7 @@
     "protobufjs": "^7.4.0"
   },
   "devDependencies": {
-    "ts-proto": "^2.2.3",
-    "tsup": "^8.3.0"
+    "ts-proto": "^2.6.1",
+    "tsup": "^8.3.6"
   }
 }

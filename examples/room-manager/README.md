@@ -21,14 +21,14 @@ We recommend using the provided Room Manger instance on [fishjam.io](https://fis
 
 1. Run the build command from **the root of the repository**:
 
-```bash
+```sh
 docker build -t room-manager -f examples/room-manager/Dockerfile .
 ```
 
 2. Run the following command with `{url}` and `{token}` placeholders replaced to start the Room Manager:
 
-```bash
-docker run -e FISHJAM_URL={url} -e FISHJAM_SERVER_TOKEN={token} -d -p 8000:8080 room-manager:latest
+```sh
+docker run -e FISHJAM_URL={url} -e FISHJAM_MANAGEMENT_TOKEN={token} -d -p 8000:8080 room-manager:latest
 ```
 
 ## API
@@ -40,7 +40,3 @@ As of now, it exposes 2 endpoints.
 Simple as that - send a plain GET request and receive an auth token.
 Room Manager will search its memory for the username for the requested room and return a token.
 Otherwise, it will create a new one.
-
-### /api/rooms/webhook
-
-Exposes a webhook endpoint to allow the Fishjam instance to send notifications to the Room Manager.
