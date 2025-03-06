@@ -27,7 +27,7 @@ export const fastify = Fastify({ logger: envToLogger.development, ignoreTrailing
 
 async function setupServer() {
   await fastify.register(cors, { origin: '*' });
-  await fastify.register(fastifyEnv, { schema: configSchema });
+  await fastify.register(fastifyEnv, { schema: configSchema, dotenv: true });
 
   fastify.log.info({ config: fastify.config });
 
