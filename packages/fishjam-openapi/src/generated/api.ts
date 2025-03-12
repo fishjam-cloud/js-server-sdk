@@ -62,6 +62,38 @@ export interface AddPeerRequest {
     'type': string;
 }
 /**
+ * Response containing verification information
+ * @export
+ * @interface BroadcasterVerifyTokenResponse
+ */
+export interface BroadcasterVerifyTokenResponse {
+    /**
+     * 
+     * @type {BroadcasterVerifyTokenResponseData}
+     * @memberof BroadcasterVerifyTokenResponse
+     */
+    'data': BroadcasterVerifyTokenResponseData;
+}
+/**
+ * 
+ * @export
+ * @interface BroadcasterVerifyTokenResponseData
+ */
+export interface BroadcasterVerifyTokenResponseData {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof BroadcasterVerifyTokenResponseData
+     */
+    'authenticated': boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof BroadcasterVerifyTokenResponseData
+     */
+    'streamId'?: string;
+}
+/**
  * @type Component
  * Describes component
  * @export
@@ -852,11 +884,11 @@ export interface RoomConfig {
      */
     'peerlessPurgeTimeout'?: number | null;
     /**
-     * 
+     * The use-case of the room. If not provided, this defaults to full_feature.
      * @type {string}
      * @memberof RoomConfig
      */
-    'roomType'?: RoomConfigRoomTypeEnum | null;
+    'roomType'?: RoomConfigRoomTypeEnum;
     /**
      * Enforces video codec for each peer in the room
      * @type {string}
@@ -873,7 +905,8 @@ export interface RoomConfig {
 
 export const RoomConfigRoomTypeEnum = {
     FullFeature: 'full_feature',
-    AudioOnly: 'audio_only'
+    AudioOnly: 'audio_only',
+    Broadcaster: 'broadcaster'
 } as const;
 
 export type RoomConfigRoomTypeEnum = typeof RoomConfigRoomTypeEnum[keyof typeof RoomConfigRoomTypeEnum];
@@ -1158,6 +1191,114 @@ export interface UserListingResponse {
      */
     'data': Array<User>;
 }
+
+/**
+ * BroadcasterApi - axios parameter creator
+ * @export
+ */
+export const BroadcasterApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Verify token provided by broadcaster
+         * @param {string} token Token
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        verifyToken: async (token: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'token' is not null or undefined
+            assertParamExists('verifyToken', 'token', token)
+            const localVarPath = `/broadcaster/verify/{token}`
+                .replace(`{${"token"}}`, encodeURIComponent(String(token)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * BroadcasterApi - functional programming interface
+ * @export
+ */
+export const BroadcasterApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = BroadcasterApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Verify token provided by broadcaster
+         * @param {string} token Token
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async verifyToken(token: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BroadcasterVerifyTokenResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.verifyToken(token, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['BroadcasterApi.verifyToken']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * BroadcasterApi - factory interface
+ * @export
+ */
+export const BroadcasterApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = BroadcasterApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Verify token provided by broadcaster
+         * @param {string} token Token
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        verifyToken(token: string, options?: any): AxiosPromise<BroadcasterVerifyTokenResponse> {
+            return localVarFp.verifyToken(token, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * BroadcasterApi - object-oriented interface
+ * @export
+ * @class BroadcasterApi
+ * @extends {BaseAPI}
+ */
+export class BroadcasterApi extends BaseAPI {
+    /**
+     * 
+     * @summary Verify token provided by broadcaster
+     * @param {string} token Token
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof BroadcasterApi
+     */
+    public verifyToken(token: string, options?: RawAxiosRequestConfig) {
+        return BroadcasterApiFp(this.configuration).verifyToken(token, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
 
 /**
  * DefaultApi - axios parameter creator
@@ -3106,6 +3247,114 @@ export class UserApi extends BaseAPI {
      */
     public getAllUsers(options?: RawAxiosRequestConfig) {
         return UserApiFp(this.configuration).getAllUsers(options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * ViewerApi - axios parameter creator
+ * @export
+ */
+export const ViewerApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Generate token for single viewer
+         * @param {string} roomId Room ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        generateToken: async (roomId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'roomId' is not null or undefined
+            assertParamExists('generateToken', 'roomId', roomId)
+            const localVarPath = `/room/{room_id}/viewer`
+                .replace(`{${"room_id"}}`, encodeURIComponent(String(roomId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ViewerApi - functional programming interface
+ * @export
+ */
+export const ViewerApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ViewerApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Generate token for single viewer
+         * @param {string} roomId Room ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async generateToken(roomId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.generateToken(roomId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ViewerApi.generateToken']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * ViewerApi - factory interface
+ * @export
+ */
+export const ViewerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ViewerApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Generate token for single viewer
+         * @param {string} roomId Room ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        generateToken(roomId: string, options?: any): AxiosPromise<string> {
+            return localVarFp.generateToken(roomId, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ViewerApi - object-oriented interface
+ * @export
+ * @class ViewerApi
+ * @extends {BaseAPI}
+ */
+export class ViewerApi extends BaseAPI {
+    /**
+     * 
+     * @summary Generate token for single viewer
+     * @param {string} roomId Room ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ViewerApi
+     */
+    public generateToken(roomId: string, options?: RawAxiosRequestConfig) {
+        return ViewerApiFp(this.configuration).generateToken(roomId, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
