@@ -25,10 +25,10 @@
   },
   "devDependencies": {
     "@fastify/swagger": "^9.4.2",
-    "@types/node": "^22.13.5",
+    "@types/node": "^22.13.10",
     "pino-pretty": "^13.0.0",
     "tsc": "^2.0.4",
     "tsx": "^4.19.3",
-    "typescript": "~5.7.3"
+    "typescript": "~5.8.2"
   }
 }
