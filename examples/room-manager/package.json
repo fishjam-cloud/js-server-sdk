@@ -15,7 +15,7 @@
   },
   "author": "Fishjam Team",
   "dependencies": {
-    "@fastify/cors": "^10.1.0",
+    "@fastify/cors": "^11.0.0",
     "@fastify/env": "^5.0.2",
     "@fishjam-cloud/js-server-sdk": "workspace:*",
     "axios": "^1.7.9",
