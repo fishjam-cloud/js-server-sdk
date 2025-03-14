@@ -44,7 +44,7 @@
       "fishjam-openapi",
       "fishjam-proto"
     ],
-    "minify": true,
+    "minify": false,
     "format": [
       "cjs",
       "esm"
