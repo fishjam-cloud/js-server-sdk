@@ -10,7 +10,7 @@ export async function rooms(fastify: FastifyInstance) {
 
   const getRoomAccessHandler = async (params: GetPeerAccessQueryParams, res: FastifyReply) => {
     try {
-      const accessData = await fastify.fishjam.getPeerAccess(params.roomName, params.roomName, params.roomType);
+      const accessData = await fastify.fishjam.getPeerAccess(params.roomName, params.peerName, params.roomType);
       const url = httpToWebsocket(fastify.config.FISHJAM_URL);
 
       // When creating a URL object from a URL without a path (e.g., `http://localhost:5002`),
