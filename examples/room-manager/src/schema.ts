@@ -1,4 +1,4 @@
-import { Peer } from '@fishjam-cloud/js-server-sdk';
+import { Peer, type RoomConfigRoomTypeEnum } from '@fishjam-cloud/js-server-sdk';
 import { FastifySchema } from 'fastify';
 import S from 'fluent-json-schema';
 
@@ -12,6 +12,7 @@ export interface User {
 export interface GetPeerAccessQueryParams {
   roomName: string;
   peerName: string;
+  roomType: RoomConfigRoomTypeEnum;
 }
 
 export interface PeerAccessData {
@@ -33,7 +34,15 @@ const errorResponse410 = S.object()
 
 const errorResponse500 = errorResponse410.prop('cause', S.string());
 
-const parameterSchema = S.object().prop('roomName', S.string().required()).prop('peerName', S.string().required());
+const parameterSchema = S.object()
+  .prop('roomName', S.string().required())
+  .prop('peerName', S.string().required())
+  .prop(
+    'roomType',
+    S.string()
+      .enum(['full_feature', 'audio_only', 'broadcaster'] satisfies RoomConfigRoomTypeEnum[])
+      .default('full_feature')
+  );
 
 export const basePeerEndpointSchema: FastifySchema = {
   querystring: parameterSchema,
