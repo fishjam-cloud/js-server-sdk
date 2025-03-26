@@ -8,9 +8,9 @@ import { httpToWebsocket, removeTrailingSlash } from '../utils';
 export async function rooms(fastify: FastifyInstance) {
   await fastify.register(fishjamPlugin);
 
-  const getRoomAccessHandler = async (roomName: string, peerName: string, res: FastifyReply) => {
+  const getRoomAccessHandler = async (params: GetPeerAccessQueryParams, res: FastifyReply) => {
     try {
-      const accessData = await fastify.fishjam.getPeerAccess(roomName, peerName);
+      const accessData = await fastify.fishjam.getPeerAccess(params.roomName, params.roomName, params.roomType);
       const url = httpToWebsocket(fastify.config.FISHJAM_URL);
 
       // When creating a URL object from a URL without a path (e.g., `http://localhost:5002`),
@@ -28,6 +28,6 @@ export async function rooms(fastify: FastifyInstance) {
   fastify.get<{ Querystring: GetPeerAccessQueryParams }, unknown>(
     '/',
     { schema: queryStringPeerEndpointSchema },
-    (req, res) => getRoomAccessHandler(req.query.roomName, req.query.peerName, res)
+    (req, res) => getRoomAccessHandler(req.query, res)
   );
 }

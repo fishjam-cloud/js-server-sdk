@@ -3,6 +3,7 @@ import { type FastifyInstance } from 'fastify';
 import {
   FishjamClient,
   Room,
+  RoomConfigRoomTypeEnum,
   RoomId,
   RoomNotFoundException,
   type RoomConfigVideoCodecEnum,
@@ -14,7 +15,7 @@ import { PeerAccessData } from '../schema';
 declare module 'fastify' {
   interface FastifyInstance {
     fishjam: {
-      getPeerAccess: (roomName: string, username: string) => Promise<PeerAccessData>;
+      getPeerAccess: (roomName: string, peerName: string, roomType?: RoomConfigRoomTypeEnum) => Promise<PeerAccessData>;
       handleFishjamMessage: (notification: ServerMessage) => Promise<void>;
     };
   }
@@ -33,9 +34,13 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
   const peerNameToAccessMap = new Map<string, PeerAccessData>();
   const roomNameToRoomIdMap = new Map<string, RoomId>();
 
-  async function getPeerAccess(roomName: string, username: string): Promise<PeerAccessData> {
-    const room = await findOrCreateRoomInFishjam(roomName);
-    const peerAccess = peerNameToAccessMap.get(username);
+  async function getPeerAccess(
+    roomName: string,
+    peerName: string,
+    roomType: RoomConfigRoomTypeEnum = 'full_feature'
+  ): Promise<PeerAccessData> {
+    const room = await findOrCreateRoomInFishjam(roomName, roomType);
+    const peerAccess = peerNameToAccessMap.get(peerName);
 
     const peer = room.peers.find((peer) => peer.id === peerAccess?.peer.id);
 
@@ -48,14 +53,14 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
 
     if (!peer) {
       fastify.log.info({ name: 'Creating peer' });
-      return createPeer(roomName, username);
+      return createPeer(roomName, peerName);
     }
 
     if (!peerAccess?.peerToken) throw new RoomManagerError('Missing peer token in room');
 
     peerAccess.peerToken = await fishjamClient.refreshPeerToken(room.id, peer.id);
 
-    fastify.log.info({ name: 'Peer and room exist', username, roomName });
+    fastify.log.info({ name: 'Peer and room exist', peerName, roomName });
 
     return peerAccess;
   }
@@ -128,7 +133,7 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
     return peerAccess;
   }
 
-  async function findOrCreateRoomInFishjam(roomName: string): Promise<Room> {
+  async function findOrCreateRoomInFishjam(roomName: string, roomType: RoomConfigRoomTypeEnum): Promise<Room> {
     const roomId = roomNameToRoomIdMap.get(roomName);
 
     if (roomId) {
@@ -148,12 +153,14 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
       name: 'Creating room in Fishjam',
       roomId,
       roomName,
+      roomType,
     });
 
     const newRoom = await fishjamClient.createRoom({
       maxPeers: fastify.config.MAX_PEERS,
       peerlessPurgeTimeout: fastify.config.PEERLESS_PURGE_TIMEOUT,
       videoCodec: fastify.config.ROOM_VIDEO_CODEC as RoomConfigVideoCodecEnum,
+      roomType,
     });
 
     roomNameToRoomIdMap.set(roomName, newRoom.id);
