@@ -26,6 +26,16 @@ paths:
           in: query
           name: peerName
           required: true
+        - schema:
+            type: string
+            enum:
+              - full_feature
+              - audio_only
+              - broadcaster
+            default: full_feature
+          in: query
+          name: roomType
+          required: false
       responses:
         "200":
           description: Default Response
