@@ -17,6 +17,7 @@ declare module 'fastify' {
     fishjam: {
       getPeerAccess: (roomName: string, peerName: string, roomType?: RoomConfigRoomTypeEnum) => Promise<PeerAccessData>;
       handleFishjamMessage: (notification: ServerMessage) => Promise<void>;
+      getBroadcastAccessToken: (roomId: RoomId) => Promise<string>;
     };
   }
 }
@@ -170,5 +171,9 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
     return newRoom;
   }
 
-  fastify.decorate('fishjam', { getPeerAccess, handleFishjamMessage });
+  fastify.decorate('fishjam', {
+    getPeerAccess,
+    handleFishjamMessage,
+    getBroadcastAccessToken: (roomId: RoomId) => fishjamClient.createBroadcastToken(roomId),
+  });
 });

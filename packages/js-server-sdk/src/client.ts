@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { RoomApi, RoomConfig, PeerOptions } from '@fishjam-cloud/fishjam-openapi';
+import { RoomApi, RoomConfig, PeerOptions, ViewerApi } from '@fishjam-cloud/fishjam-openapi';
 import { FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
 import { mapException } from './exceptions/mapper';
 
@@ -10,6 +10,7 @@ import { mapException } from './exceptions/mapper';
  */
 export class FishjamClient {
   private readonly roomApi: RoomApi;
+  private readonly viewerApi: ViewerApi;
 
   /**
    * Create new instance of Fishjam Client.
@@ -30,6 +31,7 @@ export class FishjamClient {
     });
 
     this.roomApi = new RoomApi(undefined, config.fishjamUrl, client);
+    this.viewerApi = new ViewerApi(undefined, config.fishjamUrl, client);
   }
 
   /**
@@ -131,6 +133,15 @@ export class FishjamClient {
       return refreshTokenResponse.data.data.token;
     } catch (error) {
       throw mapException(error, 'peer');
+    }
+  }
+
+  async createBroadcastToken(roomId: RoomId) {
+    try {
+      const tokenResponse = await this.viewerApi.generateToken(roomId);
+      return tokenResponse.data;
+    } catch (error) {
+      throw mapException(error);
     }
   }
 }
