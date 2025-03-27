@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyReply } from 'fastify';
-import type { FishjamClient, RoomId } from '@fishjam-cloud/js-server-sdk';
+import type { RoomId } from '@fishjam-cloud/js-server-sdk';
 
 import { parseError } from '../errors';
 import { fishjamPlugin } from '../plugins';

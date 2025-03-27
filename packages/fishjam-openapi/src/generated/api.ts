@@ -1191,6 +1191,19 @@ export interface UserListingResponse {
      */
     'data': Array<User>;
 }
+/**
+ * Token for authorizing broadcaster viewer connection
+ * @export
+ * @interface ViewerToken
+ */
+export interface ViewerToken {
+    /**
+     * 
+     * @type {string}
+     * @memberof ViewerToken
+     */
+    'token'?: string;
+}
 
 /**
  * BroadcasterApi - axios parameter creator
@@ -3260,8 +3273,8 @@ export const ViewerApiAxiosParamCreator = function (configuration?: Configuratio
     return {
         /**
          * 
-         * @summary Generate token for single viewer
-         * @param {string} roomId Room ID
+         * @summary Generate single broadcaster access token
+         * @param {string} roomId A room id.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -3304,12 +3317,12 @@ export const ViewerApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @summary Generate token for single viewer
-         * @param {string} roomId Room ID
+         * @summary Generate single broadcaster access token
+         * @param {string} roomId A room id.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async generateToken(roomId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+        async generateToken(roomId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ViewerToken>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.generateToken(roomId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ViewerApi.generateToken']?.[localVarOperationServerIndex]?.url;
@@ -3327,12 +3340,12 @@ export const ViewerApiFactory = function (configuration?: Configuration, basePat
     return {
         /**
          * 
-         * @summary Generate token for single viewer
-         * @param {string} roomId Room ID
+         * @summary Generate single broadcaster access token
+         * @param {string} roomId A room id.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        generateToken(roomId: string, options?: any): AxiosPromise<string> {
+        generateToken(roomId: string, options?: any): AxiosPromise<ViewerToken> {
             return localVarFp.generateToken(roomId, options).then((request) => request(axios, basePath));
         },
     };
@@ -3347,8 +3360,8 @@ export const ViewerApiFactory = function (configuration?: Configuration, basePat
 export class ViewerApi extends BaseAPI {
     /**
      * 
-     * @summary Generate token for single viewer
-     * @param {string} roomId Room ID
+     * @summary Generate single broadcaster access token
+     * @param {string} roomId A room id.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ViewerApi

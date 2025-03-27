@@ -7,6 +7,7 @@ import {
   RoomId,
   RoomNotFoundException,
   type RoomConfigVideoCodecEnum,
+  type ViewerToken,
 } from '@fishjam-cloud/js-server-sdk';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import { RoomManagerError } from '../errors';
@@ -17,7 +18,7 @@ declare module 'fastify' {
     fishjam: {
       getPeerAccess: (roomName: string, peerName: string, roomType?: RoomConfigRoomTypeEnum) => Promise<PeerAccessData>;
       handleFishjamMessage: (notification: ServerMessage) => Promise<void>;
-      getBroadcastAccessToken: (roomId: RoomId) => Promise<string>;
+      getBroadcastAccessToken: (roomId: RoomId) => Promise<ViewerToken>;
     };
   }
 }
