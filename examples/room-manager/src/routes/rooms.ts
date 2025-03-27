@@ -23,9 +23,9 @@ async function getRoomAccessHandler(fastify: FastifyInstance, params: GetPeerAcc
   }
 }
 
-async function createBroadcastToken(fastify: FastifyInstance, roomId: RoomId, res: FastifyReply) {
+async function createBroadcastViewerToken(fastify: FastifyInstance, roomId: RoomId, res: FastifyReply) {
   try {
-    return await fastify.fishjam.getBroadcastAccessToken(roomId);
+    return await fastify.fishjam.getBroadcastViewerToken(roomId);
   } catch (error: unknown) {
     const [parsedError, errorCode] = parseError(error);
 
@@ -42,7 +42,7 @@ export async function rooms(fastify: FastifyInstance) {
     (req, res) => getRoomAccessHandler(fastify, req.query, res)
   );
 
-  fastify.get<{ Params: { roomId: RoomId } }, unknown>('/:roomId/broadcast-access-token', (req, res) =>
-    createBroadcastToken(fastify, req.params.roomId, res)
+  fastify.get<{ Params: { roomId: RoomId } }, unknown>('/:roomId/broadcast-viewer-token', (req, res) =>
+    createBroadcastViewerToken(fastify, req.params.roomId, res)
   );
 }
