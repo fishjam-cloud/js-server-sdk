@@ -55,3 +55,5 @@ jobs:
           curl -o tmp2.json -s -vvv "http://127.0.0.1:8080/api/rooms?roomName=testRoomName&peerName=testPeerName"
           jq '{peerToken: .peerToken, room: .room, peer: .peer}' tmp2.json
           [[ $(jq -r .peerToken tmp2.json) != "null" ]]
+          [[ $(jq -r .room.name tmp2.json) == "testRoomName" ]]
+          [[ $(jq -r .peer.name tmp2.json) == "testPeerName" ]]
