@@ -99,6 +99,9 @@ paths:
                   - error
   /api/rooms/{roomName}/broadcast-viewer-token:
     get:
+      operationId: getBroadcastViewerToken
+      tags:
+        - room
       parameters:
         - schema:
             type: string
@@ -108,6 +111,47 @@ paths:
       responses:
         "200":
           description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  peerToken:
+                    type: string
+                  url:
+                    type: string
+                  room:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                  peer:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                required:
+                  - peerToken
+                  - url
+        "404":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  path:
+                    type: string
+                  method:
+                    type: string
+                required:
+                  - error
 servers:
   - url: http://localhost:5004
     description: Development server

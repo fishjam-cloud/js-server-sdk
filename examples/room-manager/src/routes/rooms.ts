@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyReply } from 'fastify';
 
 import { parseError } from '../errors';
 import { fishjamPlugin } from '../plugins';
-import { GetPeerAccessQueryParams, queryStringPeerEndpointSchema } from '../schema';
+import { GetPeerAccessQueryParams, peerEndpointSchema, viewerEndpointSchema } from '../schema';
 import { httpToWebsocket, removeTrailingSlash } from '../utils';
 
 async function getRoomAccessHandler(fastify: FastifyInstance, params: GetPeerAccessQueryParams, res: FastifyReply) {
@@ -35,13 +35,13 @@ async function createBroadcastViewerToken(fastify: FastifyInstance, roomName: st
 export async function rooms(fastify: FastifyInstance) {
   await fastify.register(fishjamPlugin);
 
-  fastify.get<{ Querystring: GetPeerAccessQueryParams }, unknown>(
-    '/',
-    { schema: queryStringPeerEndpointSchema },
-    (req, res) => getRoomAccessHandler(fastify, req.query, res)
+  fastify.get<{ Querystring: GetPeerAccessQueryParams }, unknown>('/', { schema: peerEndpointSchema }, (req, res) =>
+    getRoomAccessHandler(fastify, req.query, res)
   );
 
-  fastify.get<{ Params: { roomName: string } }, unknown>('/:roomName/broadcast-viewer-token', (req, res) =>
-    createBroadcastViewerToken(fastify, req.params.roomName, res)
+  fastify.get<{ Params: { roomName: string } }, unknown>(
+    '/:roomName/broadcast-viewer-token',
+    { schema: viewerEndpointSchema },
+    (req, res) => createBroadcastViewerToken(fastify, req.params.roomName, res)
   );
 }
