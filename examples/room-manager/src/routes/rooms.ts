@@ -1,5 +1,4 @@
 import { FastifyInstance, FastifyReply } from 'fastify';
-import type { RoomId } from '@fishjam-cloud/js-server-sdk';
 
 import { parseError } from '../errors';
 import { fishjamPlugin } from '../plugins';
@@ -23,9 +22,9 @@ async function getRoomAccessHandler(fastify: FastifyInstance, params: GetPeerAcc
   }
 }
 
-async function createBroadcastViewerToken(fastify: FastifyInstance, roomId: RoomId, res: FastifyReply) {
+async function createBroadcastViewerToken(fastify: FastifyInstance, roomName: string, res: FastifyReply) {
   try {
-    return await fastify.fishjam.getBroadcastViewerToken(roomId);
+    return await fastify.fishjam.getBroadcastViewerToken(roomName);
   } catch (error: unknown) {
     const [parsedError, errorCode] = parseError(error);
 
@@ -42,7 +41,7 @@ export async function rooms(fastify: FastifyInstance) {
     (req, res) => getRoomAccessHandler(fastify, req.query, res)
   );
 
-  fastify.get<{ Params: { roomId: RoomId } }, unknown>('/:roomId/broadcast-viewer-token', (req, res) =>
-    createBroadcastViewerToken(fastify, req.params.roomId, res)
+  fastify.get<{ Params: { roomName: string } }, unknown>('/:roomName/broadcast-viewer-token', (req, res) =>
+    createBroadcastViewerToken(fastify, req.params.roomName, res)
   );
 }

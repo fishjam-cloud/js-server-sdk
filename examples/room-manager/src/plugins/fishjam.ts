@@ -18,7 +18,7 @@ declare module 'fastify' {
     fishjam: {
       getPeerAccess: (roomName: string, peerName: string, roomType?: RoomConfigRoomTypeEnum) => Promise<PeerAccessData>;
       handleFishjamMessage: (notification: ServerMessage) => Promise<void>;
-      getBroadcastViewerToken: (roomId: RoomId) => Promise<ViewerToken>;
+      getBroadcastViewerToken: (roomName: string) => Promise<ViewerToken>;
     };
   }
 }
@@ -172,9 +172,16 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
     return newRoom;
   }
 
+  function getBroadcastViewerToken(roomName: string) {
+    const roomId = roomNameToRoomIdMap.get(roomName);
+    if (!roomId) throw new RoomManagerError('Room not found');
+
+    return fishjamClient.createBroadcastViewerToken(roomId);
+  }
+
   fastify.decorate('fishjam', {
     getPeerAccess,
     handleFishjamMessage,
-    getBroadcastViewerToken: (roomId: RoomId) => fishjamClient.createBroadcastViewerToken(roomId),
+    getBroadcastViewerToken,
   });
 });
