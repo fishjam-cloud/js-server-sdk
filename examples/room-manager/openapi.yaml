@@ -97,13 +97,13 @@ paths:
                     type: string
                 required:
                   - error
-  /api/rooms/{roomId}/broadcast-viewer-token:
+  /api/rooms/{roomName}/broadcast-viewer-token:
     get:
       parameters:
         - schema:
             type: string
           in: path
-          name: roomId
+          name: roomName
           required: true
       responses:
         "200":
