@@ -27,12 +27,12 @@ const response200 = S.object()
   .prop('room', S.object().prop('id', S.string()).prop('name', S.string()))
   .prop('peer', S.object().prop('id', S.string()).prop('name', S.string()));
 
-const errorResponse410 = S.object()
+const baseErrorResponse = S.object()
   .prop('error', S.string().required())
   .prop('path', S.string())
   .prop('method', S.string());
 
-const errorResponse500 = errorResponse410.prop('cause', S.string());
+const errorResponse500 = baseErrorResponse.prop('cause', S.string());
 
 const parameterSchema = S.object()
   .prop('roomName', S.string().required())
@@ -44,24 +44,23 @@ const parameterSchema = S.object()
       .default('full_feature')
   );
 
-export const basePeerEndpointSchema: FastifySchema = {
+export const peerEndpointSchema: FastifySchema = {
   querystring: parameterSchema,
   operationId: 'getToken',
   response: {
     200: response200,
-    410: errorResponse410,
+    410: baseErrorResponse,
     500: errorResponse500,
   },
   tags: ['room'],
 };
 
-export const queryStringPeerEndpointSchema: FastifySchema = {
-  querystring: parameterSchema,
-  operationId: 'getToken',
+export const viewerEndpointSchema: FastifySchema = {
+  params: S.object().prop('roomName', S.string().required()),
+  operationId: 'getBroadcastViewerToken',
   response: {
     200: response200,
-    410: errorResponse410,
-    500: errorResponse500,
+    404: baseErrorResponse,
   },
   tags: ['room'],
 };

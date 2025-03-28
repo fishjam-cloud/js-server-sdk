@@ -7,6 +7,7 @@ import {
   RoomId,
   RoomNotFoundException,
   type RoomConfigVideoCodecEnum,
+  type ViewerToken,
 } from '@fishjam-cloud/js-server-sdk';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import { RoomManagerError } from '../errors';
@@ -17,6 +18,7 @@ declare module 'fastify' {
     fishjam: {
       getPeerAccess: (roomName: string, peerName: string, roomType?: RoomConfigRoomTypeEnum) => Promise<PeerAccessData>;
       handleFishjamMessage: (notification: ServerMessage) => Promise<void>;
+      getBroadcastViewerToken: (roomName: string) => Promise<ViewerToken>;
     };
   }
 }
@@ -113,7 +115,7 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
   async function createPeer(roomName: string, peerName: string): Promise<PeerAccessData> {
     const roomId = roomNameToRoomIdMap.get(roomName);
 
-    if (!roomId) throw new RoomManagerError('Room not found');
+    if (!roomId) throw new RoomManagerError('Room not found', 404);
 
     const { peer, peerToken } = await fishjamClient.createPeer(roomId, {
       enableSimulcast: fastify.config.ENABLE_SIMULCAST,
@@ -170,5 +172,16 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
     return newRoom;
   }
 
-  fastify.decorate('fishjam', { getPeerAccess, handleFishjamMessage });
+  function getBroadcastViewerToken(roomName: string) {
+    const roomId = roomNameToRoomIdMap.get(roomName);
+    if (!roomId) throw new RoomManagerError('Room not found', 404);
+
+    return fishjamClient.createBroadcastViewerToken(roomId);
+  }
+
+  fastify.decorate('fishjam', {
+    getPeerAccess,
+    handleFishjamMessage,
+    getBroadcastViewerToken,
+  });
 });
