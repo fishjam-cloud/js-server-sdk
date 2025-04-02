@@ -2,6 +2,7 @@ import fastifyPlugin from 'fastify-plugin';
 import { type FastifyInstance } from 'fastify';
 import {
   FishjamClient,
+  PeerId,
   Room,
   RoomConfigRoomTypeEnum,
   RoomId,
@@ -57,6 +58,8 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
       fastify.log.info({ name: 'Creating peer' });
       return createPeer(roomName, peerName);
     }
+
+    await ensurePeerIsDisconnected(room.id, peer.id);
 
     if (!peerAccess?.peerToken) throw new RoomManagerError('Missing peer token in room');
 
@@ -170,6 +173,15 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
     fastify.log.info({ name: 'Room created', newRoom });
 
     return newRoom;
+  }
+
+  async function ensurePeerIsDisconnected(roomId: RoomId, peerId: PeerId) {
+    const room = await fishjamClient.getRoom(roomId);
+    const isPeerConnected = room.peers.some((peer) => peer.id === peerId && peer.status === 'connected');
+
+    if (isPeerConnected) {
+      throw new RoomManagerError('Peer is already connected', 409);
+    }
   }
 
   function getBroadcastViewerToken(roomName: string) {
