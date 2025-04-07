@@ -55,11 +55,13 @@ export const peerEndpointSchema: FastifySchema = {
   tags: ['room'],
 };
 
+const viewerTokenResponse = S.object().prop('token', S.string());
+
 export const viewerEndpointSchema: FastifySchema = {
   params: S.object().prop('roomName', S.string().required()),
   operationId: 'getBroadcastViewerToken',
   response: {
-    200: response200,
+    200: viewerTokenResponse,
     404: baseErrorResponse,
   },
   tags: ['room'],
