@@ -116,27 +116,8 @@ paths:
               schema:
                 type: object
                 properties:
-                  peerToken:
+                  token:
                     type: string
-                  url:
-                    type: string
-                  room:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      name:
-                        type: string
-                  peer:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      name:
-                        type: string
-                required:
-                  - peerToken
-                  - url
         "404":
           description: Default Response
           content:
