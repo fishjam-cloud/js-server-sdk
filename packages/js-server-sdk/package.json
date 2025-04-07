@@ -58,10 +58,10 @@
   "devDependencies": {
     "@fishjam-cloud/fishjam-openapi": "workspace:*",
     "@fishjam-cloud/fishjam-proto": "workspace:*",
-    "@openapitools/openapi-generator-cli": "^2.16.3",
-    "@types/node": "^22.13.5",
+    "@openapitools/openapi-generator-cli": "^2.18.4",
+    "@types/node": "^22.13.16",
     "@types/websocket": "^1.0.10",
-    "tsup": "^8.3.6",
+    "tsup": "^8.4.0",
     "typed-emitter": "^2.1.0"
   }
 }
