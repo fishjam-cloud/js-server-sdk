@@ -51,9 +51,9 @@ export async function rooms(fastify: FastifyInstance) {
     async (req, res) => {
       try {
         await fastify.fishjam.getBroadcasterRoomStatus(req.params.roomName);
-        return res.status(200).send({ message: 'Ok' });
+        res.status(200).send({ text: 'ok' });
       } catch {
-        return res.status(404).send({ message: 'Not found' });
+        res.status(404).send({ text: 'Not found' });
       }
     } //getBroadcasterRoomStatus(fastify, req.params.roomName, res)
   );
