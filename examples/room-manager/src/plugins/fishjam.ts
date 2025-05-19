@@ -20,6 +20,7 @@ declare module 'fastify' {
       getPeerAccess: (roomName: string, peerName: string, roomType?: RoomConfigRoomTypeEnum) => Promise<PeerAccessData>;
       handleFishjamMessage: (notification: ServerMessage) => Promise<void>;
       getBroadcastViewerToken: (roomName: string) => Promise<ViewerToken>;
+      getBroadcasterRoomStatus: (roomName: string) => Promise<void>;
     };
   }
 }
@@ -36,6 +37,20 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
 
   const peerNameToAccessMap = new Map<string, PeerAccessData>();
   const roomNameToRoomIdMap = new Map<string, RoomId>();
+
+  async function getBroadcasterRoomStatus(roomName: string): Promise<void> {
+    const roomId = roomNameToRoomIdMap.get(roomName);
+
+    if (!roomId) throw new RoomManagerError('Room not found', 404);
+
+    const response = await fetch(
+      `https://fishjam.io/api/v1/connect/cfd9354b21d144eebf1964e16d0ed1ed/api/streams/${roomId}/status`
+    );
+
+    if (!response.ok) {
+      throw new RoomManagerError('Failed to get broadcaster room status', 404);
+    }
+  }
 
   async function getPeerAccess(
     roomName: string,
@@ -195,5 +210,6 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
     getPeerAccess,
     handleFishjamMessage,
     getBroadcastViewerToken,
+    getBroadcasterRoomStatus,
   });
 });

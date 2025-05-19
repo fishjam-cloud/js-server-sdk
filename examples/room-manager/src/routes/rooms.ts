@@ -44,4 +44,14 @@ export async function rooms(fastify: FastifyInstance) {
     { schema: viewerEndpointSchema },
     (req, res) => createBroadcastViewerToken(fastify, req.params.roomName, res)
   );
+
+  fastify.get<{ Params: { roomName: string } }, unknown>(
+    '/:roomName/status',
+    { schema: viewerEndpointSchema },
+    async (req, res) => {
+      await fastify.fishjam.getBroadcasterRoomStatus(req.params.roomName);
+
+      return res.status(200).send({ message: 'Room status retrieved' });
+    } //getBroadcasterRoomStatus(fastify, req.params.roomName, res)
+  );
 }
