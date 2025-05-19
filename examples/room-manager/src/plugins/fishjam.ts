@@ -39,17 +39,25 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
   const roomNameToRoomIdMap = new Map<string, RoomId>();
 
   async function getBroadcasterRoomStatus(roomName: string): Promise<void> {
+    async function resolveBroadcasterURLAfterRedirect() {
+      const response = await fetch(`https://server.fishjam.stream/broadcaster`);
+      return response.url;
+    }
+
     const roomId = roomNameToRoomIdMap.get(roomName);
 
     if (!roomId) throw new RoomManagerError('Room not found', 404);
 
-    const urlToFetch = `https://fishjam.io/api/v1/connect/cfd9354b21d144eebf1964e16d0ed1ed/api/streams/${roomId}/status`;
+    const broadcasterURL = await resolveBroadcasterURLAfterRedirect();
 
-    fastify.log.info({ urlToFetch });
-
-    const response = await fetch(urlToFetch);
+    const response = await fetch(`${broadcasterURL}/api/streams/${roomId}/status`);
 
     if (!response.ok) {
+      if (response.status !== 404) {
+        const error = await response.json();
+        fastify.log.error(error);
+      }
+
       throw new RoomManagerError('Failed to get broadcaster room status', 404);
     }
   }
