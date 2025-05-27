@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { RoomApi, RoomConfig, PeerOptions, ViewerApi } from '@fishjam-cloud/fishjam-openapi';
-import { FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
+import { RoomApi, PeerOptions, ViewerApi, RoomConfigRoomTypeEnum } from '@fishjam-cloud/fishjam-openapi';
+import { NewRoomConfig, FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
 import { mapException } from './exceptions/mapper';
 
 /**
@@ -37,9 +37,11 @@ export class FishjamClient {
   /**
    * Create a new room. All peers connected to the same room will be able to send/receive streams to each other.
    */
-  async createRoom(config: RoomConfig = {}): Promise<Room> {
+  async createRoom(config: NewRoomConfig = {}): Promise<Room> {
     try {
-      const response = await this.roomApi.createRoom(config);
+      // TODO: remove after changing type broadcaster to livestream in Fishjam
+      const parsedRoomType = config.roomType == 'livestream' ? RoomConfigRoomTypeEnum.Broadcaster : config.roomType;
+      const response = await this.roomApi.createRoom({ ...config, roomType: parsedRoomType });
 
       const {
         data: {

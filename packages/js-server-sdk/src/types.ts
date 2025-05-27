@@ -1,4 +1,4 @@
-import { Peer as OpenApiPeer, RoomConfig } from '@fishjam-cloud/fishjam-openapi';
+import { Peer as OpenApiPeer, RoomConfig, RoomConfigRoomTypeEnum } from '@fishjam-cloud/fishjam-openapi';
 
 // branded types are useful for restricting where given value can be passed
 declare const brand: unique symbol;
@@ -29,3 +29,5 @@ export type FishjamConfig = {
   fishjamUrl: string;
   managementToken: string;
 };
+
+export type NewRoomConfig = Omit<RoomConfig, 'roomType'> & { roomType?: RoomConfigRoomTypeEnum | 'livestream' };
