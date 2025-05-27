@@ -32,6 +32,7 @@ paths:
               - full_feature
               - audio_only
               - broadcaster
+              - livestream
             default: full_feature
           in: query
           name: roomType
