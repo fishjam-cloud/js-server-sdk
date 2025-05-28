@@ -14,12 +14,14 @@ import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import { RoomManagerError } from '../errors';
 import { PeerAccessData } from '../schema';
 
+type RoomType = RoomConfigRoomTypeEnum | 'livestream';
+
 declare module 'fastify' {
   interface FastifyInstance {
     fishjam: {
-      getPeerAccess: (roomName: string, peerName: string, roomType?: RoomConfigRoomTypeEnum) => Promise<PeerAccessData>;
+      getPeerAccess: (roomName: string, peerName: string, roomType?: RoomType) => Promise<PeerAccessData>;
       handleFishjamMessage: (notification: ServerMessage) => Promise<void>;
-      getBroadcastViewerToken: (roomName: string) => Promise<ViewerToken>;
+      getLivestreamViewerToken: (roomName: string) => Promise<ViewerToken>;
     };
   }
 }
@@ -40,7 +42,7 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
   async function getPeerAccess(
     roomName: string,
     peerName: string,
-    roomType: RoomConfigRoomTypeEnum = 'full_feature'
+    roomType: RoomType = 'full_feature'
   ): Promise<PeerAccessData> {
     const room = await findOrCreateRoomInFishjam(roomName, roomType);
     const peerAccess = peerNameToAccessMap.get(peerName);
@@ -138,7 +140,7 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
     return peerAccess;
   }
 
-  async function findOrCreateRoomInFishjam(roomName: string, roomType: RoomConfigRoomTypeEnum): Promise<Room> {
+  async function findOrCreateRoomInFishjam(roomName: string, roomType: RoomType): Promise<Room> {
     const roomId = roomNameToRoomIdMap.get(roomName);
 
     if (roomId) {
@@ -184,16 +186,16 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
     }
   }
 
-  function getBroadcastViewerToken(roomName: string) {
+  function getLivestreamViewerToken(roomName: string) {
     const roomId = roomNameToRoomIdMap.get(roomName);
     if (!roomId) throw new RoomManagerError('Room not found', 404);
 
-    return fishjamClient.createBroadcastViewerToken(roomId);
+    return fishjamClient.createLivestreamViewerToken(roomId);
   }
 
   fastify.decorate('fishjam', {
     getPeerAccess,
     handleFishjamMessage,
-    getBroadcastViewerToken,
+    getLivestreamViewerToken,
   });
 });

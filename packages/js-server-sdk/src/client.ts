@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { RoomApi, RoomConfig, PeerOptions, ViewerApi } from '@fishjam-cloud/fishjam-openapi';
-import { FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
+import { RoomApi, PeerOptions, ViewerApi, RoomConfigRoomTypeEnum } from '@fishjam-cloud/fishjam-openapi';
+import { FishjamConfig, PeerId, Room, RoomId, Peer, RoomConfig } from './types';
 import { mapException } from './exceptions/mapper';
 
 /**
@@ -39,7 +39,9 @@ export class FishjamClient {
    */
   async createRoom(config: RoomConfig = {}): Promise<Room> {
     try {
-      const response = await this.roomApi.createRoom(config);
+      // TODO: remove after changing type broadcaster to livestream in Fishjam
+      const parsedRoomType = config.roomType == 'livestream' ? RoomConfigRoomTypeEnum.Broadcaster : config.roomType;
+      const response = await this.roomApi.createRoom({ ...config, roomType: parsedRoomType });
 
       const {
         data: {
@@ -137,10 +139,10 @@ export class FishjamClient {
   }
 
   /**
-   * Creates a broadcast viewer token for the given room.
-   * @returns a broadcast viewer token
+   * Creates a livestream viewer token for the given room.
+   * @returns a livestream viewer token
    */
-  async createBroadcastViewerToken(roomId: RoomId) {
+  async createLivestreamViewerToken(roomId: RoomId) {
     try {
       const tokenResponse = await this.viewerApi.generateToken(roomId);
       return tokenResponse.data;

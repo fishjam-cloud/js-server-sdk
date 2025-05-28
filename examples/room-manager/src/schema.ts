@@ -40,7 +40,9 @@ const parameterSchema = S.object()
   .prop(
     'roomType',
     S.string()
-      .enum(['full_feature', 'audio_only', 'broadcaster'] satisfies RoomConfigRoomTypeEnum[])
+      // FIXME: after Fishjam updates roomType broadcaster to livestream
+      // .enum(['full_feature', 'audio_only', 'livestream'] satisfies RoomConfigRoomTypeEnum[])
+      .enum(['full_feature', 'audio_only', 'broadcaster', 'livestream'])
       .default('full_feature')
   );
 
