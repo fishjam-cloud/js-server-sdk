@@ -139,10 +139,10 @@ export class FishjamClient {
   }
 
   /**
-   * Creates a broadcast viewer token for the given room.
-   * @returns a broadcast viewer token
+   * Creates a livestream viewer token for the given room.
+   * @returns a livestream viewer token
    */
-  async createBroadcastViewerToken(roomId: RoomId) {
+  async createLivestreamViewerToken(roomId: RoomId) {
     try {
       const tokenResponse = await this.viewerApi.generateToken(roomId);
       return tokenResponse.data;
