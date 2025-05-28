@@ -44,4 +44,10 @@ export async function rooms(fastify: FastifyInstance) {
     { schema: viewerEndpointSchema },
     (req, res) => createLivestreamViewerToken(fastify, req.params.roomName, res)
   );
+
+  fastify.get<{ Params: { roomName: string } }, unknown>(
+    '/:roomName/livestream-viewer-token',
+    { schema: viewerEndpointSchema },
+    (req, res) => createLivestreamViewerToken(fastify, req.params.roomName, res)
+  );
 }
