@@ -163,8 +163,6 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
       roomType,
     });
 
-    roomType = roomType == 'livestream' ? RoomConfigRoomTypeEnum.Broadcaster : roomType;
-
     const newRoom = await fishjamClient.createRoom({
       maxPeers: fastify.config.MAX_PEERS,
       peerlessPurgeTimeout: fastify.config.PEERLESS_PURGE_TIMEOUT,
