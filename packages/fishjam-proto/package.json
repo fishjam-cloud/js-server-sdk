@@ -43,6 +43,6 @@
   },
   "devDependencies": {
     "ts-proto": "^2.7.0",
-    "tsup": "^8.4.0"
+    "tsup": "^8.5.0"
   }
 }
