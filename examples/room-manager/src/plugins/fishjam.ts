@@ -163,7 +163,6 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
 
     const newRoom = await fishjamClient.createRoom({
       maxPeers: fastify.config.MAX_PEERS,
-      peerlessPurgeTimeout: fastify.config.PEERLESS_PURGE_TIMEOUT,
       videoCodec: fastify.config.ROOM_VIDEO_CODEC as RoomConfigVideoCodecEnum,
       roomType,
     });

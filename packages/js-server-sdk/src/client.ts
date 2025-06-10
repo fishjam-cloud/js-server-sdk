@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { RoomApi, PeerOptions, ViewerApi, RoomConfigRoomTypeEnum, RoomConfig } from '@fishjam-cloud/fishjam-openapi';
-import { FishjamConfig, PeerId, Room, RoomId, Peer, RoomOptions } from './types';
+import { RoomApi, PeerOptions, ViewerApi, RoomConfig } from '@fishjam-cloud/fishjam-openapi';
+import { FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
 import { mapException } from './exceptions/mapper';
 
 /**
