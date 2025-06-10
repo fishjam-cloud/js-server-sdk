@@ -40,10 +40,8 @@ const parameterSchema = S.object()
   .prop(
     'roomType',
     S.string()
-      // FIXME: after Fishjam updates roomType broadcaster to livestream
-      // .enum(['full_feature', 'audio_only', 'livestream'] satisfies RoomConfigRoomTypeEnum[])
-      .enum(['full_feature', 'audio_only', 'broadcaster', 'livestream'])
-      .default('full_feature')
+      .enum(['conference', 'audio_only', 'livestream'] satisfies RoomConfigRoomTypeEnum[])
+      .default('conference')
   );
 
 export const peerEndpointSchema: FastifySchema = {

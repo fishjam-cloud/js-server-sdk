@@ -29,11 +29,10 @@ paths:
         - schema:
             type: string
             enum:
-              - full_feature
+              - conference
               - audio_only
-              - broadcaster
               - livestream
-            default: full_feature
+            default: conference
           in: query
           name: roomType
           required: false
