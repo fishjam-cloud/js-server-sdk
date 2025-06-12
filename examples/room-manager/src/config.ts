@@ -2,7 +2,6 @@ declare module 'fastify' {
   interface FastifyInstance {
     config: {
       PORT: number;
-      PEERLESS_PURGE_TIMEOUT?: number;
       ENABLE_SIMULCAST: boolean;
       MAX_PEERS?: number;
       FISHJAM_URL: string;
@@ -22,9 +21,6 @@ export const configSchema = {
     PORT: {
       type: 'string',
       default: 8080,
-    },
-    PEERLESS_PURGE_TIMEOUT: {
-      type: 'number',
     },
     ENABLE_SIMULCAST: {
       type: 'boolean',

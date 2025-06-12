@@ -1,4 +1,4 @@
-import { Peer as OpenApiPeer, RoomConfigRoomTypeEnum, RoomConfigVideoCodecEnum } from '@fishjam-cloud/fishjam-openapi';
+import { Peer as OpenApiPeer, RoomConfig } from '@fishjam-cloud/fishjam-openapi';
 
 // branded types are useful for restricting where given value can be passed
 declare const brand: unique symbol;
@@ -22,43 +22,10 @@ export type Peer = Omit<OpenApiPeer, 'id'> & { id: PeerId };
 export type Room = {
   id: RoomId;
   peers: Peer[];
-  config: RoomOptions;
+  config: RoomConfig;
 };
 
 export type FishjamConfig = {
   fishjamUrl: string;
   managementToken: string;
-};
-
-export type RoomOptions = {
-  /**
-   * Maximum amount of peers allowed into the room
-   * @type {number}
-   */
-  maxPeers?: number | null;
-  /**
-   * Duration (in seconds) after which the peer will be removed if it is disconnected. If not provided, this feature is disabled.
-   * @type {number}
-   */
-  peerDisconnectedTimeout?: number | null;
-  /**
-   * Duration (in seconds) after which the room will be removed if no peers are connected. If not provided, this feature is disabled.
-   * @type {number}
-   */
-  peerlessPurgeTimeout?: number | null;
-  /**
-   * The use-case of the room. If not provided, this defaults to full_feature.
-   * @type {string}
-   */
-  roomType?: RoomConfigRoomTypeEnum | 'livestream';
-  /**
-   * Enforces video codec for each peer in the room
-   * @type {string}
-   */
-  videoCodec?: RoomConfigVideoCodecEnum | null;
-  /**
-   * URL where Fishjam notifications will be sent
-   * @type {string}
-   */
-  webhookUrl?: string | null;
 };
