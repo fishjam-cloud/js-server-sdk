@@ -13,6 +13,7 @@ export interface GetPeerAccessQueryParams {
   roomName: string;
   peerName: string;
   roomType: RoomConfigRoomTypeEnum;
+  public: boolean;
 }
 
 export interface PeerAccessData {
@@ -42,7 +43,8 @@ const parameterSchema = S.object()
     S.string()
       .enum(['conference', 'audio_only', 'livestream'] satisfies RoomConfigRoomTypeEnum[])
       .default('conference')
-  );
+  )
+  .prop('public', S.boolean().default(false));
 
 export const peerEndpointSchema: FastifySchema = {
   querystring: parameterSchema,
