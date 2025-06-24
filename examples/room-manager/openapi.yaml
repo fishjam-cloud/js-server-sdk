@@ -36,6 +36,12 @@ paths:
           in: query
           name: roomType
           required: false
+        - schema:
+            type: boolean
+            default: false
+          in: query
+          name: public
+          required: false
       responses:
         "200":
           description: Default Response
