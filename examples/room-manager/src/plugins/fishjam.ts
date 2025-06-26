@@ -4,6 +4,7 @@ import {
   FishjamClient,
   PeerId,
   Room,
+  RoomConfig,
   RoomConfigRoomTypeEnum,
   RoomId,
   RoomNotFoundException,
@@ -17,7 +18,12 @@ import { PeerAccessData } from '../schema';
 declare module 'fastify' {
   interface FastifyInstance {
     fishjam: {
-      getPeerAccess: (roomName: string, peerName: string, roomType?: RoomConfigRoomTypeEnum) => Promise<PeerAccessData>;
+      getPeerAccess: (
+        roomName: string,
+        peerName: string,
+        roomType?: RoomConfigRoomTypeEnum,
+        isPublic?: boolean
+      ) => Promise<PeerAccessData>;
       handleFishjamMessage: (notification: ServerMessage) => Promise<void>;
       getLivestreamViewerToken: (roomName: string) => Promise<ViewerToken>;
     };
@@ -40,9 +46,16 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
   async function getPeerAccess(
     roomName: string,
     peerName: string,
-    roomType: RoomConfigRoomTypeEnum = 'conference'
+    roomType: RoomConfigRoomTypeEnum = 'conference',
+    isPublic: boolean = false
   ): Promise<PeerAccessData> {
-    const room = await findOrCreateRoomInFishjam(roomName, roomType);
+    const config: RoomConfig = {
+      maxPeers: fastify.config.MAX_PEERS,
+      videoCodec: fastify.config.ROOM_VIDEO_CODEC as RoomConfigVideoCodecEnum,
+      roomType,
+      public: isPublic,
+    };
+    const room = await findOrCreateRoomInFishjam(roomName, config);
     const peerAccess = peerNameToAccessMap.get(peerName);
 
     const peer = room.peers.find((peer) => peer.id === peerAccess?.peer.id);
@@ -138,7 +151,7 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
     return peerAccess;
   }
 
-  async function findOrCreateRoomInFishjam(roomName: string, roomType: RoomConfigRoomTypeEnum): Promise<Room> {
+  async function findOrCreateRoomInFishjam(roomName: string, roomConfig: RoomConfig): Promise<Room> {
     const roomId = roomNameToRoomIdMap.get(roomName);
 
     if (roomId) {
@@ -158,14 +171,10 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
       name: 'Creating room in Fishjam',
       roomId,
       roomName,
-      roomType,
+      ...roomConfig,
     });
 
-    const newRoom = await fishjamClient.createRoom({
-      maxPeers: fastify.config.MAX_PEERS,
-      videoCodec: fastify.config.ROOM_VIDEO_CODEC as RoomConfigVideoCodecEnum,
-      roomType,
-    });
+    const newRoom = await fishjamClient.createRoom(roomConfig);
 
     roomNameToRoomIdMap.set(roomName, newRoom.id);
 
