@@ -876,7 +876,7 @@ export interface RoomConfig {
      * @type {boolean}
      * @memberof RoomConfig
      */
-    'public'?: boolean | null;
+    'public'?: boolean;
     /**
      * The use-case of the room. If not provided, this defaults to conference.
      * @type {string}
