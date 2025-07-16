@@ -174,6 +174,41 @@ paths:
                     type: string
                 required:
                   - error
+  /api/rooms/{roomName}/livestream-streamer-token:
+    get:
+      operationId: getBroadcastViewerToken
+      tags: *a1
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: roomName
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        "404":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  path:
+                    type: string
+                  method:
+                    type: string
+                required:
+                  - error
 servers:
   - url: http://localhost:5004
     description: Development server
