@@ -37,6 +37,16 @@ async function createLivestreamViewerToken(fastify: FastifyInstance, roomName: s
   }
 }
 
+async function createLivestreamStreamerToken(fastify: FastifyInstance, roomName: string, res: FastifyReply) {
+  try {
+    return await fastify.fishjam.getLivestreamStreamerToken(roomName);
+  } catch (error: unknown) {
+    const [parsedError, errorCode] = parseError(error);
+
+    res.status(errorCode).send(parsedError.detail);
+  }
+}
+
 export async function rooms(fastify: FastifyInstance) {
   await fastify.register(fishjamPlugin);
 
@@ -54,5 +64,11 @@ export async function rooms(fastify: FastifyInstance) {
     '/:roomName/livestream-viewer-token',
     { schema: viewerEndpointSchema },
     (req, res) => createLivestreamViewerToken(fastify, req.params.roomName, res)
+  );
+
+  fastify.get<{ Params: { roomName: string } }, unknown>(
+    '/:roomName/livestream-streamer-token',
+    { schema: viewerEndpointSchema },
+    (req, res) => createLivestreamStreamerToken(fastify, req.params.roomName, res)
   );
 }

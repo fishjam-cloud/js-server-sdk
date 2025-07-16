@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { RoomApi, PeerOptions, ViewerApi, RoomConfig } from '@fishjam-cloud/fishjam-openapi';
+import { RoomApi, PeerOptions, ViewerApi, RoomConfig, StreamerApi } from '@fishjam-cloud/fishjam-openapi';
 import { FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
 import { mapException } from './exceptions/mapper';
 
@@ -11,6 +11,7 @@ import { mapException } from './exceptions/mapper';
 export class FishjamClient {
   private readonly roomApi: RoomApi;
   private readonly viewerApi: ViewerApi;
+  private readonly streamerApi: StreamerApi;
 
   /**
    * Create new instance of Fishjam Client.
@@ -32,6 +33,7 @@ export class FishjamClient {
 
     this.roomApi = new RoomApi(undefined, config.fishjamUrl, client);
     this.viewerApi = new ViewerApi(undefined, config.fishjamUrl, client);
+    this.streamerApi = new StreamerApi(undefined, config.fishjamUrl, client);
   }
 
   /**
@@ -142,7 +144,20 @@ export class FishjamClient {
    */
   async createLivestreamViewerToken(roomId: RoomId) {
     try {
-      const tokenResponse = await this.viewerApi.generateToken(roomId);
+      const tokenResponse = await this.viewerApi.generateToken2(roomId);
+      return tokenResponse.data;
+    } catch (error) {
+      throw mapException(error);
+    }
+  }
+
+  /**
+   * Creates a livestream streamer token for the given room.
+   * @returns a livestream streamer token
+   */
+  async createLivestreamStreamerToken(roomId: RoomId) {
+    try {
+      const tokenResponse = await this.streamerApi.generateToken(roomId);
       return tokenResponse.data;
     } catch (error) {
       throw mapException(error);
