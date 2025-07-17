@@ -75,7 +75,7 @@ async function createLivestreamStreamerToken(
   res: FastifyReply
 ) {
   try {
-    return fastify.fishjam.getLivestreamStreamerToken(params.roomName, params.public);
+    return await fastify.fishjam.getLivestreamStreamerToken(params.roomName, params.public);
   } catch (error: unknown) {
     const [parsedError, errorCode] = parseError(error);
 
