@@ -202,9 +202,9 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
 
   async function getLivestreamStreamerToken(roomName: string, isPublic: boolean): Promise<LivestreamData> {
     const room = await findOrCreateRoomInFishjam(roomName, { roomType: 'livestream', public: isPublic });
-    const { token } = await fishjamClient.createLivestreamStreamerToken(room.id);
+    const { token: streamerToken } = await fishjamClient.createLivestreamStreamerToken(room.id);
 
-    return { token, room: { id: room.id, name: roomName } };
+    return { streamerToken, room: { id: room.id, name: roomName } };
   }
 
   fastify.decorate('fishjam', {

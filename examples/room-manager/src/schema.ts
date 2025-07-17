@@ -29,7 +29,7 @@ export interface PeerAccessData {
 
 export interface LivestreamData {
   room: { id: string; name: string };
-  token: string;
+  streamerToken: string;
 }
 
 const response200 = S.object()
@@ -72,7 +72,7 @@ export const peerEndpointSchema: FastifySchema = {
 };
 
 const streamResponse = S.object()
-  .prop('token', S.string())
+  .prop('streamerToken', S.string())
   .prop('room', S.object().prop('id', S.string()).prop('name', S.string()));
 
 export const streamEndpointSchema: FastifySchema = {
