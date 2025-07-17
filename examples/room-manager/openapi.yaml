@@ -12,7 +12,7 @@ paths:
           description: Default Response
   /api/rooms:
     get:
-      operationId: getToken
+      operationId: getPeerToken
       tags:
         - room
       parameters:
@@ -31,16 +31,9 @@ paths:
             enum:
               - conference
               - audio_only
-              - livestream
             default: conference
           in: query
           name: roomType
-          required: false
-        - schema:
-            type: boolean
-            default: false
-          in: query
-          name: public
           required: false
       responses:
         "200":
@@ -71,7 +64,7 @@ paths:
                 required:
                   - peerToken
                   - url
-        "410":
+        "401":
           description: Default Response
           content:
             application/json:
@@ -105,7 +98,7 @@ paths:
                   - error
   /api/rooms/{roomName}/broadcast-viewer-token:
     get:
-      operationId: getBroadcastViewerToken
+      operationId: getViewerToken
       tags: &a1
         - room
       parameters:
@@ -141,7 +134,7 @@ paths:
                   - error
   /api/rooms/{roomName}/livestream-viewer-token:
     get:
-      operationId: getBroadcastViewerToken
+      operationId: getViewerToken
       tags: *a1
       parameters:
         - schema:
@@ -174,16 +167,23 @@ paths:
                     type: string
                 required:
                   - error
-  /api/rooms/{roomName}/livestream-streamer-token:
+  /api/rooms/livestream:
     get:
-      operationId: getBroadcastViewerToken
-      tags: *a1
+      operationId: getStreamToken
+      tags:
+        - room
       parameters:
         - schema:
             type: string
-          in: path
+          in: query
           name: roomName
           required: true
+        - schema:
+            type: boolean
+            default: false
+          in: query
+          name: public
+          required: false
       responses:
         "200":
           description: Default Response
@@ -194,6 +194,13 @@ paths:
                 properties:
                   token:
                     type: string
+                  room:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
         "404":
           description: Default Response
           content:
