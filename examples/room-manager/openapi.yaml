@@ -105,7 +105,7 @@ paths:
                   - error
   /api/rooms/{roomName}/broadcast-viewer-token:
     get:
-      operationId: getViewerToken
+      operationId: getLivestreamViewerToken
       tags: &a1
         - room
       parameters:
@@ -141,7 +141,7 @@ paths:
                   - error
   /api/rooms/{roomName}/livestream-viewer-token:
     get:
-      operationId: getViewerToken
+      operationId: getLivestreamViewerToken
       tags: *a1
       parameters:
         - schema:
@@ -176,7 +176,7 @@ paths:
                   - error
   /api/rooms/livestream:
     get:
-      operationId: getStreamToken
+      operationId: getLivestreamStreamerToken
       tags:
         - room
       parameters:
@@ -199,7 +199,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  token:
+                  streamerToken:
                     type: string
                   room:
                     type: object

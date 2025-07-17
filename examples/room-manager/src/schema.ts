@@ -77,7 +77,7 @@ const streamResponse = S.object()
 
 export const streamEndpointSchema: FastifySchema = {
   querystring: streamConfigSchema,
-  operationId: 'getStreamToken',
+  operationId: 'getLivestreamStreamerToken',
   response: {
     200: streamResponse,
     404: baseErrorResponse,
@@ -89,7 +89,7 @@ const viewerTokenResponse = S.object().prop('token', S.string());
 
 export const viewerEndpointSchema: FastifySchema = {
   params: S.object().prop('roomName', S.string().required()),
-  operationId: 'getViewerToken',
+  operationId: 'getLivestreamViewerToken',
   response: {
     200: viewerTokenResponse,
     404: baseErrorResponse,
