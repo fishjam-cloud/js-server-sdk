@@ -13,6 +13,7 @@ export interface GetPeerAccessQueryParams {
   roomName: string;
   peerName: string;
   roomType: RoomConfigRoomTypeEnum;
+  public: boolean;
 }
 
 export interface LivestreamQueryParams {
@@ -50,9 +51,10 @@ const roomConfigSchema = S.object()
   .prop(
     'roomType',
     S.string()
-      .enum(['conference', 'audio_only'] satisfies RoomConfigRoomTypeEnum[])
+      .enum(['conference', 'audio_only', 'livestream'] satisfies RoomConfigRoomTypeEnum[])
       .default('conference')
-  );
+  )
+  .prop('public', S.boolean().default(false));
 
 const streamConfigSchema = S.object()
   .prop('roomName', S.string().required())
