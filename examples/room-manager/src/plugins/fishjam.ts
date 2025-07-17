@@ -13,7 +13,7 @@ import {
 } from '@fishjam-cloud/js-server-sdk';
 import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import { RoomManagerError } from '../errors';
-import { PeerAccessData } from '../schema';
+import { LivestreamData, PeerAccessData } from '../schema';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -26,6 +26,7 @@ declare module 'fastify' {
       ) => Promise<PeerAccessData>;
       handleFishjamMessage: (notification: ServerMessage) => Promise<void>;
       getLivestreamViewerToken: (roomName: string) => Promise<ViewerToken>;
+      getLivestreamStreamerToken: (roomName: string, isPublic: boolean) => Promise<LivestreamData>;
     };
   }
 }
@@ -199,9 +200,17 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
     return fishjamClient.createLivestreamViewerToken(roomId);
   }
 
+  async function getLivestreamStreamerToken(roomName: string, isPublic: boolean): Promise<LivestreamData> {
+    const room = await findOrCreateRoomInFishjam(roomName, { roomType: 'livestream', public: isPublic });
+    const { token: streamerToken } = await fishjamClient.createLivestreamStreamerToken(room.id);
+
+    return { streamerToken, room: { id: room.id, name: roomName } };
+  }
+
   fastify.decorate('fishjam', {
     getPeerAccess,
     handleFishjamMessage,
     getLivestreamViewerToken,
+    getLivestreamStreamerToken,
   });
 });

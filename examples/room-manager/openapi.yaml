@@ -12,7 +12,7 @@ paths:
           description: Default Response
   /api/rooms:
     get:
-      operationId: getToken
+      operationId: getPeerToken
       tags:
         - room
       parameters:
@@ -71,7 +71,7 @@ paths:
                 required:
                   - peerToken
                   - url
-        "410":
+        "401":
           description: Default Response
           content:
             application/json:
@@ -105,7 +105,7 @@ paths:
                   - error
   /api/rooms/{roomName}/broadcast-viewer-token:
     get:
-      operationId: getBroadcastViewerToken
+      operationId: getLivestreamViewerToken
       tags: &a1
         - room
       parameters:
@@ -141,7 +141,7 @@ paths:
                   - error
   /api/rooms/{roomName}/livestream-viewer-token:
     get:
-      operationId: getBroadcastViewerToken
+      operationId: getLivestreamViewerToken
       tags: *a1
       parameters:
         - schema:
@@ -159,6 +159,55 @@ paths:
                 properties:
                   token:
                     type: string
+        "404":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  path:
+                    type: string
+                  method:
+                    type: string
+                required:
+                  - error
+  /api/rooms/livestream:
+    get:
+      operationId: getLivestreamStreamerToken
+      tags:
+        - room
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: roomName
+          required: true
+        - schema:
+            type: boolean
+            default: false
+          in: query
+          name: public
+          required: false
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  streamerToken:
+                    type: string
+                  room:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
         "404":
           description: Default Response
           content:
