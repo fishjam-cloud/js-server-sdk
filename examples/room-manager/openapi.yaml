@@ -31,9 +31,16 @@ paths:
             enum:
               - conference
               - audio_only
+              - livestream
             default: conference
           in: query
           name: roomType
+          required: false
+        - schema:
+            type: boolean
+            default: false
+          in: query
+          name: public
           required: false
       responses:
         "200":
