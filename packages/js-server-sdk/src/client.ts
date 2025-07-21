@@ -144,7 +144,7 @@ export class FishjamClient {
    */
   async createLivestreamViewerToken(roomId: RoomId) {
     try {
-      const tokenResponse = await this.viewerApi.generateToken2(roomId);
+      const tokenResponse = await this.viewerApi.generateViewerToken(roomId);
       return tokenResponse.data;
     } catch (error) {
       throw mapException(error);
@@ -157,7 +157,7 @@ export class FishjamClient {
    */
   async createLivestreamStreamerToken(roomId: RoomId) {
     try {
-      const tokenResponse = await this.streamerApi.generateToken(roomId);
+      const tokenResponse = await this.streamerApi.generateStreamerToken(roomId);
       return tokenResponse.data;
     } catch (error) {
       throw mapException(error);

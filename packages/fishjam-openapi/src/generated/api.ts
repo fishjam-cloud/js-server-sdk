@@ -1364,6 +1364,36 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary Handle notification from broadcaster
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        notification: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/notifications`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Returns status information for the shutdown process of Fishjam.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1420,6 +1450,18 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Handle notification from broadcaster
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async notification(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.notification(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.notification']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Returns status information for the shutdown process of Fishjam.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1451,6 +1493,15 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary Handle notification from broadcaster
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        notification(options?: any): AxiosPromise<void> {
+            return localVarFp.notification(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Returns status information for the shutdown process of Fishjam.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1477,6 +1528,17 @@ export class DefaultApi extends BaseAPI {
      */
     public drainNode(options?: RawAxiosRequestConfig) {
         return DefaultApiFp(this.configuration).drainNode(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Handle notification from broadcaster
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public notification(options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).notification(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3029,9 +3091,9 @@ export const StreamerApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        generateToken: async (roomId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        generateStreamerToken: async (roomId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'roomId' is not null or undefined
-            assertParamExists('generateToken', 'roomId', roomId)
+            assertParamExists('generateStreamerToken', 'roomId', roomId)
             const localVarPath = `/room/{room_id}/streamer`
                 .replace(`{${"room_id"}}`, encodeURIComponent(String(roomId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -3073,10 +3135,10 @@ export const StreamerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async generateToken(roomId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StreamerToken>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.generateToken(roomId, options);
+        async generateStreamerToken(roomId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StreamerToken>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.generateStreamerToken(roomId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['StreamerApi.generateToken']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['StreamerApi.generateStreamerToken']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -3096,8 +3158,8 @@ export const StreamerApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        generateToken(roomId: string, options?: any): AxiosPromise<StreamerToken> {
-            return localVarFp.generateToken(roomId, options).then((request) => request(axios, basePath));
+        generateStreamerToken(roomId: string, options?: any): AxiosPromise<StreamerToken> {
+            return localVarFp.generateStreamerToken(roomId, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -3117,8 +3179,8 @@ export class StreamerApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof StreamerApi
      */
-    public generateToken(roomId: string, options?: RawAxiosRequestConfig) {
-        return StreamerApiFp(this.configuration).generateToken(roomId, options).then((request) => request(this.axios, this.basePath));
+    public generateStreamerToken(roomId: string, options?: RawAxiosRequestConfig) {
+        return StreamerApiFp(this.configuration).generateStreamerToken(roomId, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -3395,9 +3457,9 @@ export const ViewerApiAxiosParamCreator = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        generateToken2: async (roomId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        generateViewerToken: async (roomId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'roomId' is not null or undefined
-            assertParamExists('generateToken2', 'roomId', roomId)
+            assertParamExists('generateViewerToken', 'roomId', roomId)
             const localVarPath = `/room/{room_id}/viewer`
                 .replace(`{${"room_id"}}`, encodeURIComponent(String(roomId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -3439,10 +3501,10 @@ export const ViewerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async generateToken2(roomId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ViewerToken>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.generateToken2(roomId, options);
+        async generateViewerToken(roomId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ViewerToken>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.generateViewerToken(roomId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['ViewerApi.generateToken2']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['ViewerApi.generateViewerToken']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -3462,8 +3524,8 @@ export const ViewerApiFactory = function (configuration?: Configuration, basePat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        generateToken2(roomId: string, options?: any): AxiosPromise<ViewerToken> {
-            return localVarFp.generateToken2(roomId, options).then((request) => request(axios, basePath));
+        generateViewerToken(roomId: string, options?: any): AxiosPromise<ViewerToken> {
+            return localVarFp.generateViewerToken(roomId, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -3483,8 +3545,8 @@ export class ViewerApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ViewerApi
      */
-    public generateToken2(roomId: string, options?: RawAxiosRequestConfig) {
-        return ViewerApiFp(this.configuration).generateToken2(roomId, options).then((request) => request(this.axios, this.basePath));
+    public generateViewerToken(roomId: string, options?: RawAxiosRequestConfig) {
+        return ViewerApiFp(this.configuration).generateViewerToken(roomId, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
