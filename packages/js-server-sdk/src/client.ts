@@ -31,9 +31,11 @@ export class FishjamClient {
       },
     });
 
-    this.roomApi = new RoomApi(undefined, config.fishjamUrl, client);
-    this.viewerApi = new ViewerApi(undefined, config.fishjamUrl, client);
-    this.streamerApi = new StreamerApi(undefined, config.fishjamUrl, client);
+    const fishjamUrl = config.fishjamUrl ?? `https://fishjam.io/api/v1/connect/${config.fishjamId}`;
+
+    this.roomApi = new RoomApi(undefined, fishjamUrl, client);
+    this.viewerApi = new ViewerApi(undefined, fishjamUrl, client);
+    this.streamerApi = new StreamerApi(undefined, fishjamUrl, client);
   }
 
   /**
