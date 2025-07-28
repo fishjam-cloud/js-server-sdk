@@ -52,8 +52,6 @@ paths:
                 properties:
                   peerToken:
                     type: string
-                  url:
-                    type: string
                   room:
                     type: object
                     properties:
@@ -70,7 +68,6 @@ paths:
                         type: string
                 required:
                   - peerToken
-                  - url
         "401":
           description: Default Response
           content:

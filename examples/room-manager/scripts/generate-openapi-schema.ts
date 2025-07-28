@@ -4,6 +4,9 @@ import { fastify } from '../src';
 const [fileName] = process.argv.slice(2);
 
 (async () => {
+  if (fastify.config) {
+    fastify.config.FISHJAM_ID = 'dummy_id';
+  }
   await fastify.ready();
 
   if (fastify.swagger === null || fastify.swagger === undefined) {
