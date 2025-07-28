@@ -10,7 +10,7 @@ export const httpToWebsocket = (httpUrl: string) => {
 };
 
 export const getFishjamUrl = (config: FishjamConfig) => {
-  if (!config.fishjamId || !config.fishjamUrl) throw new MissingFishjamIdException();
+  if (!config.fishjamId && !config.fishjamUrl) throw new MissingFishjamIdException();
 
   return config.fishjamUrl ?? `https://fishjam.io/api/v1/connect/${config.fishjamId}`;
 };
