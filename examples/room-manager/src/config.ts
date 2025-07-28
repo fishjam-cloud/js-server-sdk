@@ -33,9 +33,11 @@ export const configSchema = {
     },
     FISHJAM_ID: {
       type: 'string',
+      default: undefined,
     },
     FISHJAM_URL: {
       type: 'string',
+      default: undefined,
     },
     FISHJAM_SERVER_TOKEN: {
       type: 'string',

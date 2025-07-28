@@ -1,0 +1,225 @@
+openapi: 3.0.0
+info:
+  title: Room manager
+  version: 0.1.0
+components:
+  schemas: {}
+paths:
+  /health:
+    get:
+      responses:
+        "200":
+          description: Default Response
+  /api/rooms:
+    get:
+      operationId: getPeerToken
+      tags:
+        - room
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: roomName
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: peerName
+          required: true
+        - schema:
+            type: string
+            enum:
+              - conference
+              - audio_only
+              - livestream
+            default: conference
+          in: query
+          name: roomType
+          required: false
+        - schema:
+            type: boolean
+            default: false
+          in: query
+          name: public
+          required: false
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  peerToken:
+                    type: string
+                  room:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                  peer:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                required:
+                  - peerToken
+        "401":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  path:
+                    type: string
+                  method:
+                    type: string
+                required:
+                  - error
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  path:
+                    type: string
+                  method:
+                    type: string
+                  cause:
+                    type: string
+                required:
+                  - error
+  /api/rooms/{roomName}/broadcast-viewer-token:
+    get:
+      operationId: getLivestreamViewerToken
+      tags: &a1
+        - room
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: roomName
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        "404":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  path:
+                    type: string
+                  method:
+                    type: string
+                required:
+                  - error
+  /api/rooms/{roomName}/livestream-viewer-token:
+    get:
+      operationId: getLivestreamViewerToken
+      tags: *a1
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: roomName
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        "404":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  path:
+                    type: string
+                  method:
+                    type: string
+                required:
+                  - error
+  /api/rooms/livestream:
+    get:
+      operationId: getLivestreamStreamerToken
+      tags:
+        - room
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: roomName
+          required: true
+        - schema:
+            type: boolean
+            default: false
+          in: query
+          name: public
+          required: false
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  streamerToken:
+                    type: string
+                  room:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+        "404":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  path:
+                    type: string
+                  method:
+                    type: string
+                required:
+                  - error
+servers:
+  - url: http://localhost:5004
+    description: Development server

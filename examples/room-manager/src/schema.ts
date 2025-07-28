@@ -34,7 +34,6 @@ export interface LivestreamData {
 
 const response200 = S.object()
   .prop('peerToken', S.string().required())
-  .prop('url', S.string().required())
   .prop('room', S.object().prop('id', S.string()).prop('name', S.string()))
   .prop('peer', S.object().prop('id', S.string()).prop('name', S.string()));
 
