@@ -2,7 +2,6 @@ import axios from 'axios';
 import { RoomApi, PeerOptions, ViewerApi, RoomConfig, StreamerApi } from '@fishjam-cloud/fishjam-openapi';
 import { FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
 import { mapException } from './exceptions/mapper';
-import { getFishjamUrl } from './utils';
 
 /**
  * Client class that allows to manage Rooms and Peers for a Fishjam App.
@@ -32,11 +31,9 @@ export class FishjamClient {
       },
     });
 
-    const fishjamUrl = getFishjamUrl(config);
-
-    this.roomApi = new RoomApi(undefined, fishjamUrl, client);
-    this.viewerApi = new ViewerApi(undefined, fishjamUrl, client);
-    this.streamerApi = new StreamerApi(undefined, fishjamUrl, client);
+    this.roomApi = new RoomApi(undefined, config.fishjamUrl, client);
+    this.viewerApi = new ViewerApi(undefined, config.fishjamUrl, client);
+    this.streamerApi = new StreamerApi(undefined, config.fishjamUrl, client);
   }
 
   /**

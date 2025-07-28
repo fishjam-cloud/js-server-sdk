@@ -1,11 +1,5 @@
 import axios from 'axios';
 
-export class MissingFishjamIdException extends Error {
-  constructor() {
-    super('Fishjam ID is required');
-  }
-}
-
 export class FishjamBaseException extends Error {
   statusCode: number;
   axiosCode?: string;
