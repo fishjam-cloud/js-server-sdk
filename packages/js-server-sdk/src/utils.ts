@@ -1,3 +1,4 @@
+import { MissingFishjamIdException } from './exceptions';
 import type { FishjamConfig } from './types';
 
 export const httpToWebsocket = (httpUrl: string) => {
@@ -8,5 +9,8 @@ export const httpToWebsocket = (httpUrl: string) => {
   return url.href;
 };
 
-export const getFishjamUrl = (config: FishjamConfig) =>
-  config.fishjamUrl ?? `https://fishjam.io/api/v1/connect/${config.fishjamId}`;
+export const getFishjamUrl = (config: FishjamConfig) => {
+  if (!config.fishjamId || !config.fishjamUrl) throw new MissingFishjamIdException();
+
+  return config.fishjamUrl ?? `https://fishjam.io/api/v1/connect/${config.fishjamId}`;
+};
