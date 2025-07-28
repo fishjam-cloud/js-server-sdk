@@ -9,6 +9,7 @@ import {
   streamEndpointSchema,
   viewerEndpointSchema,
 } from '../schema';
+import { httpToWebsocket, removeTrailingSlash } from '../utils';
 
 async function getRoomAccessHandler(fastify: FastifyInstance, params: GetPeerAccessQueryParams, res: FastifyReply) {
   try {
@@ -18,8 +19,13 @@ async function getRoomAccessHandler(fastify: FastifyInstance, params: GetPeerAcc
       params.roomType,
       params.public
     );
+    const url = httpToWebsocket(fastify.config.FISHJAM_URL);
 
-    return accessData;
+    // When creating a URL object from a URL without a path (e.g., `http://localhost:5002`),
+    // the `href` field may contain an additional '/' at the end (`http://localhost:5002/`).
+    const urlWithoutTrailingSlash = removeTrailingSlash(url);
+
+    return { ...accessData, url: urlWithoutTrailingSlash };
   } catch (error: unknown) {
     const [parsedError, errorCode] = parseError(error);
 

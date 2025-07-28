@@ -26,19 +26,6 @@ export type Room = {
 };
 
 export type FishjamConfig = {
-  /*
-   * Fishjam ID is a unique identifier for your account and environment.
-   * Visit https://fishjam.io/app/ to get your Fishjam ID.
-   */
-  fishjamId?: string;
-  /*
-   * @deprecated
-   */
-  fishjamUrl?: string;
-  /*
-   * Management token is a secret token authorizing to perform actions on your account.
-   * Never share this token with anyone.
-   * Visit https://fishjam.io/app/ to get your Management Token.
-   */
+  fishjamUrl: string;
   managementToken: string;
 };
