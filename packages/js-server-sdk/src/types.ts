@@ -30,7 +30,7 @@ export type FishjamConfig = {
    * Fishjam ID is a unique identifier for your account and environment.
    * Visit https://fishjam.io/app/ to get your Fishjam ID.
    */
-  fishjamId: string;
+  fishjamId?: string;
   /*
    * @deprecated
    */
