@@ -17,7 +17,11 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: yarn
       - run: yarn build
-      - run: yarn npm publish --access public 
+      - run: yarn npm dist-tag rm @fishjam-cloud/js-server-sdk dev
+        working-directory: packages/js-server-sdk
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: yarn npm dist-tag add @fishjam-cloud/js-server-sdk latest
         working-directory: packages/js-server-sdk
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
