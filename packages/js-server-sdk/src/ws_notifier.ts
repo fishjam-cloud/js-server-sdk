@@ -15,9 +15,14 @@ export type ExpectedEvents =
   | 'peerDisconnected'
   | 'peerMetadataUpdated'
   | 'peerCrashed'
+  | 'streamConnected'
+  | 'streamDisconnected'
+  | 'viewerConnected'
+  | 'viewerDisconnected'
   | 'trackAdded'
   | 'trackRemoved'
-  | 'trackMetadataUpdated';
+  | 'trackMetadataUpdated'
+  | 'trackData';
 
 const expectedEventsList: ReadonlyArray<ExpectedEvents> = [
   'roomCreated',
@@ -29,9 +34,14 @@ const expectedEventsList: ReadonlyArray<ExpectedEvents> = [
   'peerDisconnected',
   'peerMetadataUpdated',
   'peerCrashed',
+  'streamConnected',
+  'streamDisconnected',
+  'viewerConnected',
+  'viewerDisconnected',
   'trackAdded',
   'trackRemoved',
   'trackMetadataUpdated',
+  'trackData',
 ] as const;
 
 export type ErrorEventHandler = (msg: Error) => void;
