@@ -1,0 +1,20 @@
+{
+  "name": "app",
+  "version": "1.0.50",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --watch src/index.ts"
+  },
+  "dependencies": {
+    "@fishjam-cloud/js-server-sdk": "workspace:*",
+    "@google/genai": "^1.13.0",
+    "@grotto/logysia": "^0.1.6",
+    "bun": "^1.2.20",
+    "elysia": "latest"
+  },
+  "devDependencies": {
+    "@types/bun": "^1",
+    "bun-types": "latest"
+  },
+  "module": "src/index.js"
+}
