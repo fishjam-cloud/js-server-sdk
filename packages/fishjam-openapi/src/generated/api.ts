@@ -26,25 +26,6 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerM
 /**
  * 
  * @export
- * @interface AddComponentRequest
- */
-export interface AddComponentRequest {
-    /**
-     * 
-     * @type {ComponentOptions}
-     * @memberof AddComponentRequest
-     */
-    'options'?: ComponentOptions;
-    /**
-     * Component type
-     * @type {string}
-     * @memberof AddComponentRequest
-     */
-    'type': string;
-}
-/**
- * 
- * @export
  * @interface AddPeerRequest
  */
 export interface AddPeerRequest {
@@ -55,12 +36,14 @@ export interface AddPeerRequest {
      */
     'options': PeerOptions;
     /**
-     * Peer type
-     * @type {string}
+     * 
+     * @type {PeerType}
      * @memberof AddPeerRequest
      */
-    'type': string;
+    'type': PeerType;
 }
+
+
 /**
  * Response containing verification information
  * @export
@@ -94,527 +77,6 @@ export interface BroadcasterVerifyTokenResponseData {
     'streamId'?: string;
 }
 /**
- * @type Component
- * Describes component
- * @export
- */
-export type Component = { type: 'file' } & ComponentFile | { type: 'hls' } & ComponentHLS | { type: 'recording' } & ComponentRecording | { type: 'rtsp' } & ComponentRTSP | { type: 'sip' } & ComponentSIP;
-
-/**
- * Response containing component details
- * @export
- * @interface ComponentDetailsResponse
- */
-export interface ComponentDetailsResponse {
-    /**
-     * 
-     * @type {Component}
-     * @memberof ComponentDetailsResponse
-     */
-    'data': Component;
-}
-/**
- * Describes the File component
- * @export
- * @interface ComponentFile
- */
-export interface ComponentFile {
-    /**
-     * Assigned component ID
-     * @type {string}
-     * @memberof ComponentFile
-     */
-    'id': string;
-    /**
-     * 
-     * @type {ComponentPropertiesFile}
-     * @memberof ComponentFile
-     */
-    'properties'?: ComponentPropertiesFile;
-    /**
-     * List of all component\'s tracks
-     * @type {Array<Track>}
-     * @memberof ComponentFile
-     */
-    'tracks': Array<Track>;
-    /**
-     * Component type
-     * @type {string}
-     * @memberof ComponentFile
-     */
-    'type': string;
-}
-/**
- * Describes the HLS component
- * @export
- * @interface ComponentHLS
- */
-export interface ComponentHLS {
-    /**
-     * Assigned component ID
-     * @type {string}
-     * @memberof ComponentHLS
-     */
-    'id': string;
-    /**
-     * 
-     * @type {ComponentPropertiesHLS}
-     * @memberof ComponentHLS
-     */
-    'properties': ComponentPropertiesHLS;
-    /**
-     * List of all component\'s tracks
-     * @type {Array<Track>}
-     * @memberof ComponentHLS
-     */
-    'tracks': Array<Track>;
-    /**
-     * Component type
-     * @type {string}
-     * @memberof ComponentHLS
-     */
-    'type': string;
-}
-/**
- * @type ComponentOptions
- * Component-specific options
- * @export
- */
-export type ComponentOptions = ComponentOptionsFile | ComponentOptionsHLS | ComponentOptionsRTSP | ComponentOptionsRecording | ComponentOptionsSIP;
-
-/**
- * Options specific to the File component
- * @export
- * @interface ComponentOptionsFile
- */
-export interface ComponentOptionsFile {
-    /**
-     * Path to track file. Must be either opus encapsulated in Ogg or raw h264
-     * @type {string}
-     * @memberof ComponentOptionsFile
-     */
-    'filePath': string;
-    /**
-     * Framerate of video in a file. It is only valid for video track
-     * @type {number}
-     * @memberof ComponentOptionsFile
-     */
-    'framerate'?: number | null;
-}
-/**
- * Options specific to the HLS component
- * @export
- * @interface ComponentOptionsHLS
- */
-export interface ComponentOptionsHLS {
-    /**
-     * Whether the component should use LL-HLS
-     * @type {boolean}
-     * @memberof ComponentOptionsHLS
-     */
-    'lowLatency'?: boolean;
-    /**
-     * Whether the video is stored after end of stream
-     * @type {boolean}
-     * @memberof ComponentOptionsHLS
-     */
-    'persistent'?: boolean;
-    /**
-     * 
-     * @type {S3Credentials1}
-     * @memberof ComponentOptionsHLS
-     */
-    's3'?: S3Credentials1 | null;
-    /**
-     * Whether the HLS component should subscribe to tracks automatically or manually.
-     * @type {string}
-     * @memberof ComponentOptionsHLS
-     */
-    'subscribeMode'?: ComponentOptionsHLSSubscribeModeEnum;
-    /**
-     * Duration of stream available for viewer
-     * @type {number}
-     * @memberof ComponentOptionsHLS
-     */
-    'targetWindowDuration'?: number | null;
-}
-
-export const ComponentOptionsHLSSubscribeModeEnum = {
-    Auto: 'auto',
-    Manual: 'manual'
-} as const;
-
-export type ComponentOptionsHLSSubscribeModeEnum = typeof ComponentOptionsHLSSubscribeModeEnum[keyof typeof ComponentOptionsHLSSubscribeModeEnum];
-
-/**
- * Options specific to the RTSP component
- * @export
- * @interface ComponentOptionsRTSP
- */
-export interface ComponentOptionsRTSP {
-    /**
-     * Interval (in ms) in which keep-alive RTSP messages will be sent to the remote stream source
-     * @type {number}
-     * @memberof ComponentOptionsRTSP
-     */
-    'keepAliveInterval'?: number;
-    /**
-     * Whether to attempt to create client-side NAT binding by sending an empty datagram from client to source, after the completion of RTSP setup
-     * @type {boolean}
-     * @memberof ComponentOptionsRTSP
-     */
-    'pierceNat'?: boolean;
-    /**
-     * Delay (in ms) between successive reconnect attempts
-     * @type {number}
-     * @memberof ComponentOptionsRTSP
-     */
-    'reconnectDelay'?: number;
-    /**
-     * Local port RTP stream will be received at
-     * @type {number}
-     * @memberof ComponentOptionsRTSP
-     */
-    'rtpPort'?: number;
-    /**
-     * URI of RTSP source stream
-     * @type {string}
-     * @memberof ComponentOptionsRTSP
-     */
-    'sourceUri': string;
-}
-/**
- * Options specific to the Recording component
- * @export
- * @interface ComponentOptionsRecording
- */
-export interface ComponentOptionsRecording {
-    /**
-     * 
-     * @type {S3Credentials1}
-     * @memberof ComponentOptionsRecording
-     */
-    'credentials'?: S3Credentials1 | null;
-    /**
-     * Path prefix under which all recording are stored
-     * @type {string}
-     * @memberof ComponentOptionsRecording
-     */
-    'pathPrefix'?: string | null;
-    /**
-     * Whether the Recording component should subscribe to tracks automatically or manually.
-     * @type {string}
-     * @memberof ComponentOptionsRecording
-     */
-    'subscribeMode'?: ComponentOptionsRecordingSubscribeModeEnum;
-}
-
-export const ComponentOptionsRecordingSubscribeModeEnum = {
-    Auto: 'auto',
-    Manual: 'manual'
-} as const;
-
-export type ComponentOptionsRecordingSubscribeModeEnum = typeof ComponentOptionsRecordingSubscribeModeEnum[keyof typeof ComponentOptionsRecordingSubscribeModeEnum];
-
-/**
- * Options specific to the SIP component
- * @export
- * @interface ComponentOptionsSIP
- */
-export interface ComponentOptionsSIP {
-    /**
-     * 
-     * @type {SIPCredentials1}
-     * @memberof ComponentOptionsSIP
-     */
-    'registrarCredentials': SIPCredentials1;
-}
-/**
- * Properties specific to the File component
- * @export
- * @interface ComponentPropertiesFile
- */
-export interface ComponentPropertiesFile {
-    /**
-     * Relative path to track file. Must be either opus encapsulated in Ogg or raw h264
-     * @type {string}
-     * @memberof ComponentPropertiesFile
-     */
-    'filePath': string;
-    /**
-     * Framerate of video in a file. It is only valid for video track
-     * @type {number}
-     * @memberof ComponentPropertiesFile
-     */
-    'framerate': number | null;
-}
-/**
- * Properties specific to the HLS component
- * @export
- * @interface ComponentPropertiesHLS
- */
-export interface ComponentPropertiesHLS {
-    /**
-     * Whether the component uses LL-HLS
-     * @type {boolean}
-     * @memberof ComponentPropertiesHLS
-     */
-    'lowLatency': boolean;
-    /**
-     * Whether the video is stored after end of stream
-     * @type {boolean}
-     * @memberof ComponentPropertiesHLS
-     */
-    'persistent': boolean;
-    /**
-     * Whether the generated HLS playlist is playable
-     * @type {boolean}
-     * @memberof ComponentPropertiesHLS
-     */
-    'playable': boolean;
-    /**
-     * Whether the HLS component should subscribe to tracks automatically or manually
-     * @type {string}
-     * @memberof ComponentPropertiesHLS
-     */
-    'subscribeMode': ComponentPropertiesHLSSubscribeModeEnum;
-    /**
-     * Duration of stream available for viewer
-     * @type {number}
-     * @memberof ComponentPropertiesHLS
-     */
-    'targetWindowDuration': number | null;
-}
-
-export const ComponentPropertiesHLSSubscribeModeEnum = {
-    Auto: 'auto',
-    Manual: 'manual'
-} as const;
-
-export type ComponentPropertiesHLSSubscribeModeEnum = typeof ComponentPropertiesHLSSubscribeModeEnum[keyof typeof ComponentPropertiesHLSSubscribeModeEnum];
-
-/**
- * Properties specific to the RTSP component
- * @export
- * @interface ComponentPropertiesRTSP
- */
-export interface ComponentPropertiesRTSP {
-    /**
-     * Interval (in ms) in which keep-alive RTSP messages will be sent to the remote stream source
-     * @type {number}
-     * @memberof ComponentPropertiesRTSP
-     */
-    'keepAliveInterval': number;
-    /**
-     * Whether to attempt to create client-side NAT binding by sending an empty datagram from client to source, after the completion of RTSP setup
-     * @type {boolean}
-     * @memberof ComponentPropertiesRTSP
-     */
-    'pierceNat': boolean;
-    /**
-     * Delay (in ms) between successive reconnect attempts
-     * @type {number}
-     * @memberof ComponentPropertiesRTSP
-     */
-    'reconnectDelay': number;
-    /**
-     * Local port RTP stream will be received at
-     * @type {number}
-     * @memberof ComponentPropertiesRTSP
-     */
-    'rtpPort': number;
-    /**
-     * URI of RTSP source stream
-     * @type {string}
-     * @memberof ComponentPropertiesRTSP
-     */
-    'sourceUri': string;
-}
-/**
- * Properties specific to the Recording component
- * @export
- * @interface ComponentPropertiesRecording
- */
-export interface ComponentPropertiesRecording {
-    /**
-     * Whether the Recording component should subscribe to tracks automatically or manually
-     * @type {string}
-     * @memberof ComponentPropertiesRecording
-     */
-    'subscribeMode': ComponentPropertiesRecordingSubscribeModeEnum;
-}
-
-export const ComponentPropertiesRecordingSubscribeModeEnum = {
-    Auto: 'auto',
-    Manual: 'manual'
-} as const;
-
-export type ComponentPropertiesRecordingSubscribeModeEnum = typeof ComponentPropertiesRecordingSubscribeModeEnum[keyof typeof ComponentPropertiesRecordingSubscribeModeEnum];
-
-/**
- * Properties specific to the SIP component
- * @export
- * @interface ComponentPropertiesSIP
- */
-export interface ComponentPropertiesSIP {
-    /**
-     * 
-     * @type {SIPCredentials1}
-     * @memberof ComponentPropertiesSIP
-     */
-    'registrarCredentials': SIPCredentials1;
-}
-/**
- * Describes the RTSP component
- * @export
- * @interface ComponentRTSP
- */
-export interface ComponentRTSP {
-    /**
-     * Assigned component ID
-     * @type {string}
-     * @memberof ComponentRTSP
-     */
-    'id': string;
-    /**
-     * 
-     * @type {ComponentPropertiesRTSP}
-     * @memberof ComponentRTSP
-     */
-    'properties': ComponentPropertiesRTSP;
-    /**
-     * List of all component\'s tracks
-     * @type {Array<Track>}
-     * @memberof ComponentRTSP
-     */
-    'tracks': Array<Track>;
-    /**
-     * Component type
-     * @type {string}
-     * @memberof ComponentRTSP
-     */
-    'type': string;
-}
-/**
- * Describes the Recording component
- * @export
- * @interface ComponentRecording
- */
-export interface ComponentRecording {
-    /**
-     * Assigned component ID
-     * @type {string}
-     * @memberof ComponentRecording
-     */
-    'id': string;
-    /**
-     * 
-     * @type {ComponentPropertiesRecording}
-     * @memberof ComponentRecording
-     */
-    'properties': ComponentPropertiesRecording;
-    /**
-     * List of all component\'s tracks
-     * @type {Array<Track>}
-     * @memberof ComponentRecording
-     */
-    'tracks': Array<Track>;
-    /**
-     * Component type
-     * @type {string}
-     * @memberof ComponentRecording
-     */
-    'type': string;
-}
-/**
- * Describes the SIP component
- * @export
- * @interface ComponentSIP
- */
-export interface ComponentSIP {
-    /**
-     * Assigned component ID
-     * @type {string}
-     * @memberof ComponentSIP
-     */
-    'id': string;
-    /**
-     * 
-     * @type {ComponentPropertiesSIP}
-     * @memberof ComponentSIP
-     */
-    'properties': ComponentPropertiesSIP;
-    /**
-     * List of all component\'s tracks
-     * @type {Array<Track>}
-     * @memberof ComponentSIP
-     */
-    'tracks': Array<Track>;
-    /**
-     * Component type
-     * @type {string}
-     * @memberof ComponentSIP
-     */
-    'type': string;
-}
-/**
- * Dial config
- * @export
- * @interface DialConfig
- */
-export interface DialConfig {
-    /**
-     * Phone number on which SIP Component will call
-     * @type {string}
-     * @memberof DialConfig
-     */
-    'phoneNumber'?: string;
-}
-/**
- * Describes overall Fishjam health
- * @export
- * @interface HealthReport
- */
-export interface HealthReport {
-    /**
-     * Cluster distribution enabled/disabled
-     * @type {boolean}
-     * @memberof HealthReport
-     */
-    'distributionEnabled': boolean;
-    /**
-     * 
-     * @type {NodeStatus}
-     * @memberof HealthReport
-     */
-    'localStatus': NodeStatus;
-    /**
-     * Number of nodes in cluster
-     * @type {number}
-     * @memberof HealthReport
-     */
-    'nodesInCluster': number;
-    /**
-     * Status of each node in cluster
-     * @type {Array<NodeStatus>}
-     * @memberof HealthReport
-     */
-    'nodesStatus': Array<NodeStatus>;
-}
-/**
- * Response containing health report of Fishjam
- * @export
- * @interface HealthcheckResponse
- */
-export interface HealthcheckResponse {
-    /**
-     * 
-     * @type {HealthReport}
-     * @memberof HealthcheckResponse
-     */
-    'data': HealthReport;
-}
-/**
  * Error message
  * @export
  * @interface ModelError
@@ -627,51 +89,6 @@ export interface ModelError {
      */
     'errors': string;
 }
-/**
- * Informs about the status of node
- * @export
- * @interface NodeStatus
- */
-export interface NodeStatus {
-    /**
-     * Commit hash of the build
-     * @type {string}
-     * @memberof NodeStatus
-     */
-    'gitCommit': string;
-    /**
-     * Name of the node
-     * @type {string}
-     * @memberof NodeStatus
-     */
-    'nodeName': string;
-    /**
-     * Informs about the status of Fishjam or a specific service
-     * @type {string}
-     * @memberof NodeStatus
-     */
-    'status': NodeStatusStatusEnum;
-    /**
-     * Uptime of Fishjam (in seconds)
-     * @type {number}
-     * @memberof NodeStatus
-     */
-    'uptime': number;
-    /**
-     * Version of Fishjam
-     * @type {string}
-     * @memberof NodeStatus
-     */
-    'version': string;
-}
-
-export const NodeStatusStatusEnum = {
-    Up: 'UP',
-    Down: 'DOWN'
-} as const;
-
-export type NodeStatusStatusEnum = typeof NodeStatusStatusEnum[keyof typeof NodeStatusStatusEnum];
-
 /**
  * Describes peer status
  * @export
@@ -703,11 +120,11 @@ export interface Peer {
      */
     'tracks': Array<Track>;
     /**
-     * Peer type
-     * @type {string}
+     * 
+     * @type {PeerType}
      * @memberof Peer
      */
-    'type': string;
+    'type': PeerType;
 }
 
 
@@ -774,7 +191,45 @@ export interface PeerOptionsWebRTC {
      * @memberof PeerOptionsWebRTC
      */
     'metadata'?: { [key: string]: any; };
+    /**
+     * 
+     * @type {PeerOptionsWebRTCSubscribe}
+     * @memberof PeerOptionsWebRTC
+     */
+    'subscribe'?: PeerOptionsWebRTCSubscribe | null;
 }
+/**
+ * Configure server-side subscriptions to the peer\'s tracks
+ * @export
+ * @interface PeerOptionsWebRTCSubscribe
+ */
+export interface PeerOptionsWebRTCSubscribe {
+    /**
+     * The format to use for the output audio
+     * @type {string}
+     * @memberof PeerOptionsWebRTCSubscribe
+     */
+    'audioFormat'?: PeerOptionsWebRTCSubscribeAudioFormatEnum;
+    /**
+     * The sample rate to use for the output audio
+     * @type {number}
+     * @memberof PeerOptionsWebRTCSubscribe
+     */
+    'audioSampleRate'?: PeerOptionsWebRTCSubscribeAudioSampleRateEnum;
+}
+
+export const PeerOptionsWebRTCSubscribeAudioFormatEnum = {
+    Pcm16: 'pcm16'
+} as const;
+
+export type PeerOptionsWebRTCSubscribeAudioFormatEnum = typeof PeerOptionsWebRTCSubscribeAudioFormatEnum[keyof typeof PeerOptionsWebRTCSubscribeAudioFormatEnum];
+export const PeerOptionsWebRTCSubscribeAudioSampleRateEnum = {
+    NUMBER_16000: 16000,
+    NUMBER_24000: 24000
+} as const;
+
+export type PeerOptionsWebRTCSubscribeAudioSampleRateEnum = typeof PeerOptionsWebRTCSubscribeAudioSampleRateEnum[keyof typeof PeerOptionsWebRTCSubscribeAudioSampleRateEnum];
+
 /**
  * Response containing new peer token
  * @export
@@ -816,30 +271,24 @@ export type PeerStatus = typeof PeerStatus[keyof typeof PeerStatus];
 
 
 /**
- * Response containing list of all recording
+ * Peer type
  * @export
- * @interface RecordingListResponse
+ * @enum {string}
  */
-export interface RecordingListResponse {
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof RecordingListResponse
-     */
-    'data': Array<string>;
-}
+
+export const PeerType = {
+    Webrtc: 'webrtc'
+} as const;
+
+export type PeerType = typeof PeerType[keyof typeof PeerType];
+
+
 /**
  * Description of the room state
  * @export
  * @interface Room
  */
 export interface Room {
-    /**
-     * List of all components
-     * @type {Array<Component>}
-     * @memberof Room
-     */
-    'components': Array<Component>;
     /**
      * 
      * @type {RoomConfig}
@@ -972,144 +421,6 @@ export interface RoomsListingResponse {
     'data': Array<Room>;
 }
 /**
- * An AWS S3 credential that will be used to send HLS stream. The stream will only be uploaded if credentials are provided
- * @export
- * @interface S3Credentials
- */
-export interface S3Credentials {
-    /**
-     * An AWS access key identifier, linked to your AWS account.
-     * @type {string}
-     * @memberof S3Credentials
-     */
-    'accessKeyId': string;
-    /**
-     * The name of the S3 bucket where your data will be stored.
-     * @type {string}
-     * @memberof S3Credentials
-     */
-    'bucket': string;
-    /**
-     * The AWS region where your bucket is located.
-     * @type {string}
-     * @memberof S3Credentials
-     */
-    'region': string;
-    /**
-     * The secret key that is linked to the Access Key ID.
-     * @type {string}
-     * @memberof S3Credentials
-     */
-    'secretAccessKey': string;
-}
-/**
- * An AWS S3 credential that will be used to send HLS stream. The stream will only be uploaded if credentials are provided
- * @export
- * @interface S3Credentials1
- */
-export interface S3Credentials1 {
-    /**
-     * An AWS access key identifier, linked to your AWS account.
-     * @type {string}
-     * @memberof S3Credentials1
-     */
-    'accessKeyId': string;
-    /**
-     * The name of the S3 bucket where your data will be stored.
-     * @type {string}
-     * @memberof S3Credentials1
-     */
-    'bucket': string;
-    /**
-     * The AWS region where your bucket is located.
-     * @type {string}
-     * @memberof S3Credentials1
-     */
-    'region': string;
-    /**
-     * The secret key that is linked to the Access Key ID.
-     * @type {string}
-     * @memberof S3Credentials1
-     */
-    'secretAccessKey': string;
-}
-/**
- * Credentials used to authorize in SIP Provider service
- * @export
- * @interface SIPCredentials
- */
-export interface SIPCredentials {
-    /**
-     * SIP provider address. Can be in the form of FQDN (my-sip-registrar.net) or IPv4 (1.2.3.4). Port can be specified e.g: 5.6.7.8:9999. If not given, the default SIP port `5060` will be assumed
-     * @type {string}
-     * @memberof SIPCredentials
-     */
-    'address': string;
-    /**
-     * Password in SIP service provider
-     * @type {string}
-     * @memberof SIPCredentials
-     */
-    'password': string;
-    /**
-     * Username in SIP service provider
-     * @type {string}
-     * @memberof SIPCredentials
-     */
-    'username': string;
-}
-/**
- * Credentials used to authorize in SIP Provider service
- * @export
- * @interface SIPCredentials1
- */
-export interface SIPCredentials1 {
-    /**
-     * SIP provider address. Can be in the form of FQDN (my-sip-registrar.net) or IPv4 (1.2.3.4). Port can be specified e.g: 5.6.7.8:9999. If not given, the default SIP port `5060` will be assumed
-     * @type {string}
-     * @memberof SIPCredentials1
-     */
-    'address': string;
-    /**
-     * Password in SIP service provider
-     * @type {string}
-     * @memberof SIPCredentials1
-     */
-    'password': string;
-    /**
-     * Username in SIP service provider
-     * @type {string}
-     * @memberof SIPCredentials1
-     */
-    'username': string;
-}
-/**
- * Returns status information for the shutdown process of Fishjam.
- * @export
- * @interface ShutdownStatus
- */
-export interface ShutdownStatus {
-    /**
-     * Informs if node is busy and cannot be shutdown
-     * @type {boolean}
-     * @memberof ShutdownStatus
-     */
-    'node_busy': boolean;
-}
-/**
- * Returns status information for the shutdown process of Fishjam
- * @export
- * @interface ShutdownStatusResponse
- */
-export interface ShutdownStatusResponse {
-    /**
-     * 
-     * @type {ShutdownStatus}
-     * @memberof ShutdownStatusResponse
-     */
-    'data': ShutdownStatus;
-}
-/**
  * Token for authorizing broadcaster streamer connection
  * @export
  * @interface StreamerToken
@@ -1121,19 +432,6 @@ export interface StreamerToken {
      * @memberof StreamerToken
      */
     'token': string;
-}
-/**
- * Subscription config
- * @export
- * @interface SubscriptionConfig
- */
-export interface SubscriptionConfig {
-    /**
-     * List of peers and components ids whose tracks the HLS endpoint will subscribe to
-     * @type {Array<string>}
-     * @memberof SubscriptionConfig
-     */
-    'origins'?: Array<string>;
 }
 /**
  * Describes media track of a Peer or Component
@@ -1168,38 +466,6 @@ export const TrackTypeEnum = {
 
 export type TrackTypeEnum = typeof TrackTypeEnum[keyof typeof TrackTypeEnum];
 
-/**
- * Description of the user state
- * @export
- * @interface User
- */
-export interface User {
-    /**
-     * User token, has to be in UUID format
-     * @type {string}
-     * @memberof User
-     */
-    'token': string;
-    /**
-     * User ID
-     * @type {string}
-     * @memberof User
-     */
-    'user_id': string;
-}
-/**
- * Response containing list of all users
- * @export
- * @interface UserListingResponse
- */
-export interface UserListingResponse {
-    /**
-     * 
-     * @type {Array<User>}
-     * @memberof UserListingResponse
-     */
-    'data': Array<User>;
-}
 /**
  * Token for authorizing broadcaster viewer connection
  * @export
@@ -1330,40 +596,6 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
     return {
         /**
          * 
-         * @summary Marks node as draining, making it the last in the load balancing order.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        drainNode: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/admin/shutdown/drain`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication authorization required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
          * @summary Handle notification from broadcaster
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1392,40 +624,6 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 options: localVarRequestOptions,
             };
         },
-        /**
-         * 
-         * @summary Returns status information for the shutdown process of Fishjam.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        shutdownStatus: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/admin/shutdown/status`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication authorization required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
     }
 };
 
@@ -1438,18 +636,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @summary Marks node as draining, making it the last in the load balancing order.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async drainNode(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.drainNode(options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.drainNode']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
          * @summary Handle notification from broadcaster
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1458,18 +644,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.notification(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.notification']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @summary Returns status information for the shutdown process of Fishjam.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async shutdownStatus(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ShutdownStatusResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.shutdownStatus(options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.shutdownStatus']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -1484,30 +658,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
     return {
         /**
          * 
-         * @summary Marks node as draining, making it the last in the load balancing order.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        drainNode(options?: any): AxiosPromise<void> {
-            return localVarFp.drainNode(options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
          * @summary Handle notification from broadcaster
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         notification(options?: any): AxiosPromise<void> {
             return localVarFp.notification(options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @summary Returns status information for the shutdown process of Fishjam.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        shutdownStatus(options?: any): AxiosPromise<ShutdownStatusResponse> {
-            return localVarFp.shutdownStatus(options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1521,17 +677,6 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
 export class DefaultApi extends BaseAPI {
     /**
      * 
-     * @summary Marks node as draining, making it the last in the load balancing order.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public drainNode(options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).drainNode(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
      * @summary Handle notification from broadcaster
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -1539,523 +684,6 @@ export class DefaultApi extends BaseAPI {
      */
     public notification(options?: RawAxiosRequestConfig) {
         return DefaultApiFp(this.configuration).notification(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @summary Returns status information for the shutdown process of Fishjam.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public shutdownStatus(options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).shutdownStatus(options).then((request) => request(this.axios, this.basePath));
-    }
-}
-
-
-
-/**
- * HealthApi - axios parameter creator
- * @export
- */
-export const HealthApiAxiosParamCreator = function (configuration?: Configuration) {
-    return {
-        /**
-         * 
-         * @summary Describes the health of Fishjam
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        healthcheck: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/admin/health`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication authorization required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-    }
-};
-
-/**
- * HealthApi - functional programming interface
- * @export
- */
-export const HealthApiFp = function(configuration?: Configuration) {
-    const localVarAxiosParamCreator = HealthApiAxiosParamCreator(configuration)
-    return {
-        /**
-         * 
-         * @summary Describes the health of Fishjam
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async healthcheck(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<HealthcheckResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.healthcheck(options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['HealthApi.healthcheck']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-    }
-};
-
-/**
- * HealthApi - factory interface
- * @export
- */
-export const HealthApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = HealthApiFp(configuration)
-    return {
-        /**
-         * 
-         * @summary Describes the health of Fishjam
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        healthcheck(options?: any): AxiosPromise<HealthcheckResponse> {
-            return localVarFp.healthcheck(options).then((request) => request(axios, basePath));
-        },
-    };
-};
-
-/**
- * HealthApi - object-oriented interface
- * @export
- * @class HealthApi
- * @extends {BaseAPI}
- */
-export class HealthApi extends BaseAPI {
-    /**
-     * 
-     * @summary Describes the health of Fishjam
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof HealthApi
-     */
-    public healthcheck(options?: RawAxiosRequestConfig) {
-        return HealthApiFp(this.configuration).healthcheck(options).then((request) => request(this.axios, this.basePath));
-    }
-}
-
-
-
-/**
- * HlsApi - axios parameter creator
- * @export
- */
-export const HlsApiAxiosParamCreator = function (configuration?: Configuration) {
-    return {
-        /**
-         * 
-         * @summary Retrieve HLS Content
-         * @param {string} roomId Room id
-         * @param {string} filename Name of the file
-         * @param {string} [range] Byte range of partial segment
-         * @param {number | null} [hLSMsn] Segment sequence number
-         * @param {number | null} [hLSPart] Partial segment sequence number
-         * @param {string | null} [hLSSkip] Is delta manifest requested
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getHlsContent: async (roomId: string, filename: string, range?: string, hLSMsn?: number | null, hLSPart?: number | null, hLSSkip?: string | null, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'roomId' is not null or undefined
-            assertParamExists('getHlsContent', 'roomId', roomId)
-            // verify required parameter 'filename' is not null or undefined
-            assertParamExists('getHlsContent', 'filename', filename)
-            const localVarPath = `/hls/{room_id}/{filename}`
-                .replace(`{${"room_id"}}`, encodeURIComponent(String(roomId)))
-                .replace(`{${"filename"}}`, encodeURIComponent(String(filename)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            if (hLSMsn !== undefined) {
-                localVarQueryParameter['_HLS_msn'] = hLSMsn;
-            }
-
-            if (hLSPart !== undefined) {
-                localVarQueryParameter['_HLS_part'] = hLSPart;
-            }
-
-            if (hLSSkip !== undefined) {
-                localVarQueryParameter['_HLS_skip'] = hLSSkip;
-            }
-
-            if (range != null) {
-                localVarHeaderParameter['range'] = String(range);
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-    }
-};
-
-/**
- * HlsApi - functional programming interface
- * @export
- */
-export const HlsApiFp = function(configuration?: Configuration) {
-    const localVarAxiosParamCreator = HlsApiAxiosParamCreator(configuration)
-    return {
-        /**
-         * 
-         * @summary Retrieve HLS Content
-         * @param {string} roomId Room id
-         * @param {string} filename Name of the file
-         * @param {string} [range] Byte range of partial segment
-         * @param {number | null} [hLSMsn] Segment sequence number
-         * @param {number | null} [hLSPart] Partial segment sequence number
-         * @param {string | null} [hLSSkip] Is delta manifest requested
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async getHlsContent(roomId: string, filename: string, range?: string, hLSMsn?: number | null, hLSPart?: number | null, hLSSkip?: string | null, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getHlsContent(roomId, filename, range, hLSMsn, hLSPart, hLSSkip, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['HlsApi.getHlsContent']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-    }
-};
-
-/**
- * HlsApi - factory interface
- * @export
- */
-export const HlsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = HlsApiFp(configuration)
-    return {
-        /**
-         * 
-         * @summary Retrieve HLS Content
-         * @param {string} roomId Room id
-         * @param {string} filename Name of the file
-         * @param {string} [range] Byte range of partial segment
-         * @param {number | null} [hLSMsn] Segment sequence number
-         * @param {number | null} [hLSPart] Partial segment sequence number
-         * @param {string | null} [hLSSkip] Is delta manifest requested
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getHlsContent(roomId: string, filename: string, range?: string, hLSMsn?: number | null, hLSPart?: number | null, hLSSkip?: string | null, options?: any): AxiosPromise<string> {
-            return localVarFp.getHlsContent(roomId, filename, range, hLSMsn, hLSPart, hLSSkip, options).then((request) => request(axios, basePath));
-        },
-    };
-};
-
-/**
- * HlsApi - object-oriented interface
- * @export
- * @class HlsApi
- * @extends {BaseAPI}
- */
-export class HlsApi extends BaseAPI {
-    /**
-     * 
-     * @summary Retrieve HLS Content
-     * @param {string} roomId Room id
-     * @param {string} filename Name of the file
-     * @param {string} [range] Byte range of partial segment
-     * @param {number | null} [hLSMsn] Segment sequence number
-     * @param {number | null} [hLSPart] Partial segment sequence number
-     * @param {string | null} [hLSSkip] Is delta manifest requested
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof HlsApi
-     */
-    public getHlsContent(roomId: string, filename: string, range?: string, hLSMsn?: number | null, hLSPart?: number | null, hLSSkip?: string | null, options?: RawAxiosRequestConfig) {
-        return HlsApiFp(this.configuration).getHlsContent(roomId, filename, range, hLSMsn, hLSPart, hLSSkip, options).then((request) => request(this.axios, this.basePath));
-    }
-}
-
-
-
-/**
- * RecordingApi - axios parameter creator
- * @export
- */
-export const RecordingApiAxiosParamCreator = function (configuration?: Configuration) {
-    return {
-        /**
-         * 
-         * @summary Deletes the recording
-         * @param {string} recordingId Recording id
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        deleteRecording: async (recordingId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'recordingId' is not null or undefined
-            assertParamExists('deleteRecording', 'recordingId', recordingId)
-            const localVarPath = `/recording/{recording_id}`
-                .replace(`{${"recording_id"}}`, encodeURIComponent(String(recordingId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication authorization required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @summary Retrieve Recording (HLS) Content
-         * @param {string} recordingId Recording id
-         * @param {string} filename Name of the file
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getRecordingContent: async (recordingId: string, filename: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'recordingId' is not null or undefined
-            assertParamExists('getRecordingContent', 'recordingId', recordingId)
-            // verify required parameter 'filename' is not null or undefined
-            assertParamExists('getRecordingContent', 'filename', filename)
-            const localVarPath = `/recording/{recording_id}/{filename}`
-                .replace(`{${"recording_id"}}`, encodeURIComponent(String(recordingId)))
-                .replace(`{${"filename"}}`, encodeURIComponent(String(filename)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @summary Lists all available recordings
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getRecordings: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/recording`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication authorization required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-    }
-};
-
-/**
- * RecordingApi - functional programming interface
- * @export
- */
-export const RecordingApiFp = function(configuration?: Configuration) {
-    const localVarAxiosParamCreator = RecordingApiAxiosParamCreator(configuration)
-    return {
-        /**
-         * 
-         * @summary Deletes the recording
-         * @param {string} recordingId Recording id
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async deleteRecording(recordingId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteRecording(recordingId, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['RecordingApi.deleteRecording']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @summary Retrieve Recording (HLS) Content
-         * @param {string} recordingId Recording id
-         * @param {string} filename Name of the file
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async getRecordingContent(recordingId: string, filename: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getRecordingContent(recordingId, filename, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['RecordingApi.getRecordingContent']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @summary Lists all available recordings
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async getRecordings(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RecordingListResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getRecordings(options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['RecordingApi.getRecordings']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-    }
-};
-
-/**
- * RecordingApi - factory interface
- * @export
- */
-export const RecordingApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = RecordingApiFp(configuration)
-    return {
-        /**
-         * 
-         * @summary Deletes the recording
-         * @param {string} recordingId Recording id
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        deleteRecording(recordingId: string, options?: any): AxiosPromise<void> {
-            return localVarFp.deleteRecording(recordingId, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @summary Retrieve Recording (HLS) Content
-         * @param {string} recordingId Recording id
-         * @param {string} filename Name of the file
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getRecordingContent(recordingId: string, filename: string, options?: any): AxiosPromise<string> {
-            return localVarFp.getRecordingContent(recordingId, filename, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @summary Lists all available recordings
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getRecordings(options?: any): AxiosPromise<RecordingListResponse> {
-            return localVarFp.getRecordings(options).then((request) => request(axios, basePath));
-        },
-    };
-};
-
-/**
- * RecordingApi - object-oriented interface
- * @export
- * @class RecordingApi
- * @extends {BaseAPI}
- */
-export class RecordingApi extends BaseAPI {
-    /**
-     * 
-     * @summary Deletes the recording
-     * @param {string} recordingId Recording id
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof RecordingApi
-     */
-    public deleteRecording(recordingId: string, options?: RawAxiosRequestConfig) {
-        return RecordingApiFp(this.configuration).deleteRecording(recordingId, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @summary Retrieve Recording (HLS) Content
-     * @param {string} recordingId Recording id
-     * @param {string} filename Name of the file
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof RecordingApi
-     */
-    public getRecordingContent(recordingId: string, filename: string, options?: RawAxiosRequestConfig) {
-        return RecordingApiFp(this.configuration).getRecordingContent(recordingId, filename, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @summary Lists all available recordings
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof RecordingApi
-     */
-    public getRecordings(options?: RawAxiosRequestConfig) {
-        return RecordingApiFp(this.configuration).getRecordings(options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -2067,48 +695,6 @@ export class RecordingApi extends BaseAPI {
  */
 export const RoomApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
-        /**
-         * 
-         * @summary Creates the component and adds it to the room
-         * @param {string} roomId Room ID
-         * @param {AddComponentRequest} [addComponentRequest] Component config
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        addComponent: async (roomId: string, addComponentRequest?: AddComponentRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'roomId' is not null or undefined
-            assertParamExists('addComponent', 'roomId', roomId)
-            const localVarPath = `/room/{room_id}/component`
-                .replace(`{${"room_id"}}`, encodeURIComponent(String(roomId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication authorization required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(addComponentRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
         /**
          * 
          * @summary Create peer
@@ -2183,48 +769,6 @@ export const RoomApiAxiosParamCreator = function (configuration?: Configuration)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(roomConfig, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @summary Delete the component from the room
-         * @param {string} roomId Room ID
-         * @param {string} id Component ID
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        deleteComponent: async (roomId: string, id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'roomId' is not null or undefined
-            assertParamExists('deleteComponent', 'roomId', roomId)
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('deleteComponent', 'id', id)
-            const localVarPath = `/room/{room_id}/component/{id}`
-                .replace(`{${"room_id"}}`, encodeURIComponent(String(roomId)))
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication authorization required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -2425,52 +969,6 @@ export const RoomApiAxiosParamCreator = function (configuration?: Configuration)
                 options: localVarRequestOptions,
             };
         },
-        /**
-         * 
-         * @summary Subscribe component to the tracks of peers or components
-         * @param {string} roomId Room ID
-         * @param {string} componentId Component ID
-         * @param {SubscriptionConfig} [subscriptionConfig] Subscribe configuration
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        subscribeTo: async (roomId: string, componentId: string, subscriptionConfig?: SubscriptionConfig, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'roomId' is not null or undefined
-            assertParamExists('subscribeTo', 'roomId', roomId)
-            // verify required parameter 'componentId' is not null or undefined
-            assertParamExists('subscribeTo', 'componentId', componentId)
-            const localVarPath = `/room/{room_id}/component/{component_id}/subscribe`
-                .replace(`{${"room_id"}}`, encodeURIComponent(String(roomId)))
-                .replace(`{${"component_id"}}`, encodeURIComponent(String(componentId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication authorization required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(subscriptionConfig, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
     }
 };
 
@@ -2481,20 +979,6 @@ export const RoomApiAxiosParamCreator = function (configuration?: Configuration)
 export const RoomApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = RoomApiAxiosParamCreator(configuration)
     return {
-        /**
-         * 
-         * @summary Creates the component and adds it to the room
-         * @param {string} roomId Room ID
-         * @param {AddComponentRequest} [addComponentRequest] Component config
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async addComponent(roomId: string, addComponentRequest?: AddComponentRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ComponentDetailsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.addComponent(roomId, addComponentRequest, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['RoomApi.addComponent']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
         /**
          * 
          * @summary Create peer
@@ -2520,20 +1004,6 @@ export const RoomApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.createRoom(roomConfig, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['RoomApi.createRoom']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @summary Delete the component from the room
-         * @param {string} roomId Room ID
-         * @param {string} id Component ID
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async deleteComponent(roomId: string, id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteComponent(roomId, id, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['RoomApi.deleteComponent']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -2602,21 +1072,6 @@ export const RoomApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['RoomApi.refreshToken']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
-        /**
-         * 
-         * @summary Subscribe component to the tracks of peers or components
-         * @param {string} roomId Room ID
-         * @param {string} componentId Component ID
-         * @param {SubscriptionConfig} [subscriptionConfig] Subscribe configuration
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async subscribeTo(roomId: string, componentId: string, subscriptionConfig?: SubscriptionConfig, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.subscribeTo(roomId, componentId, subscriptionConfig, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['RoomApi.subscribeTo']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
     }
 };
 
@@ -2627,17 +1082,6 @@ export const RoomApiFp = function(configuration?: Configuration) {
 export const RoomApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = RoomApiFp(configuration)
     return {
-        /**
-         * 
-         * @summary Creates the component and adds it to the room
-         * @param {string} roomId Room ID
-         * @param {AddComponentRequest} [addComponentRequest] Component config
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        addComponent(roomId: string, addComponentRequest?: AddComponentRequest, options?: any): AxiosPromise<ComponentDetailsResponse> {
-            return localVarFp.addComponent(roomId, addComponentRequest, options).then((request) => request(axios, basePath));
-        },
         /**
          * 
          * @summary Create peer
@@ -2658,17 +1102,6 @@ export const RoomApiFactory = function (configuration?: Configuration, basePath?
          */
         createRoom(roomConfig?: RoomConfig, options?: any): AxiosPromise<RoomCreateDetailsResponse> {
             return localVarFp.createRoom(roomConfig, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @summary Delete the component from the room
-         * @param {string} roomId Room ID
-         * @param {string} id Component ID
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        deleteComponent(roomId: string, id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.deleteComponent(roomId, id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -2721,18 +1154,6 @@ export const RoomApiFactory = function (configuration?: Configuration, basePath?
         refreshToken(roomId: string, id: string, options?: any): AxiosPromise<PeerRefreshTokenResponse> {
             return localVarFp.refreshToken(roomId, id, options).then((request) => request(axios, basePath));
         },
-        /**
-         * 
-         * @summary Subscribe component to the tracks of peers or components
-         * @param {string} roomId Room ID
-         * @param {string} componentId Component ID
-         * @param {SubscriptionConfig} [subscriptionConfig] Subscribe configuration
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        subscribeTo(roomId: string, componentId: string, subscriptionConfig?: SubscriptionConfig, options?: any): AxiosPromise<void> {
-            return localVarFp.subscribeTo(roomId, componentId, subscriptionConfig, options).then((request) => request(axios, basePath));
-        },
     };
 };
 
@@ -2743,19 +1164,6 @@ export const RoomApiFactory = function (configuration?: Configuration, basePath?
  * @extends {BaseAPI}
  */
 export class RoomApi extends BaseAPI {
-    /**
-     * 
-     * @summary Creates the component and adds it to the room
-     * @param {string} roomId Room ID
-     * @param {AddComponentRequest} [addComponentRequest] Component config
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof RoomApi
-     */
-    public addComponent(roomId: string, addComponentRequest?: AddComponentRequest, options?: RawAxiosRequestConfig) {
-        return RoomApiFp(this.configuration).addComponent(roomId, addComponentRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
     /**
      * 
      * @summary Create peer
@@ -2779,19 +1187,6 @@ export class RoomApi extends BaseAPI {
      */
     public createRoom(roomConfig?: RoomConfig, options?: RawAxiosRequestConfig) {
         return RoomApiFp(this.configuration).createRoom(roomConfig, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @summary Delete the component from the room
-     * @param {string} roomId Room ID
-     * @param {string} id Component ID
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof RoomApi
-     */
-    public deleteComponent(roomId: string, id: string, options?: RawAxiosRequestConfig) {
-        return RoomApiFp(this.configuration).deleteComponent(roomId, id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2853,226 +1248,6 @@ export class RoomApi extends BaseAPI {
      */
     public refreshToken(roomId: string, id: string, options?: RawAxiosRequestConfig) {
         return RoomApiFp(this.configuration).refreshToken(roomId, id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @summary Subscribe component to the tracks of peers or components
-     * @param {string} roomId Room ID
-     * @param {string} componentId Component ID
-     * @param {SubscriptionConfig} [subscriptionConfig] Subscribe configuration
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof RoomApi
-     */
-    public subscribeTo(roomId: string, componentId: string, subscriptionConfig?: SubscriptionConfig, options?: RawAxiosRequestConfig) {
-        return RoomApiFp(this.configuration).subscribeTo(roomId, componentId, subscriptionConfig, options).then((request) => request(this.axios, this.basePath));
-    }
-}
-
-
-
-/**
- * SipApi - axios parameter creator
- * @export
- */
-export const SipApiAxiosParamCreator = function (configuration?: Configuration) {
-    return {
-        /**
-         * 
-         * @summary Make a call from the SIP component to the provided phone number
-         * @param {string} roomId Room ID
-         * @param {string} componentId SIP Component ID
-         * @param {DialConfig} [dialConfig] Phone Number configuration
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        dial: async (roomId: string, componentId: string, dialConfig?: DialConfig, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'roomId' is not null or undefined
-            assertParamExists('dial', 'roomId', roomId)
-            // verify required parameter 'componentId' is not null or undefined
-            assertParamExists('dial', 'componentId', componentId)
-            const localVarPath = `/sip/{room_id}/{component_id}/call`
-                .replace(`{${"room_id"}}`, encodeURIComponent(String(roomId)))
-                .replace(`{${"component_id"}}`, encodeURIComponent(String(componentId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication authorization required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(dialConfig, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @summary Finish call made by SIP component
-         * @param {string} roomId Room ID
-         * @param {string} componentId SIP Component ID
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        endCall: async (roomId: string, componentId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'roomId' is not null or undefined
-            assertParamExists('endCall', 'roomId', roomId)
-            // verify required parameter 'componentId' is not null or undefined
-            assertParamExists('endCall', 'componentId', componentId)
-            const localVarPath = `/sip/{room_id}/{component_id}/call`
-                .replace(`{${"room_id"}}`, encodeURIComponent(String(roomId)))
-                .replace(`{${"component_id"}}`, encodeURIComponent(String(componentId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication authorization required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-    }
-};
-
-/**
- * SipApi - functional programming interface
- * @export
- */
-export const SipApiFp = function(configuration?: Configuration) {
-    const localVarAxiosParamCreator = SipApiAxiosParamCreator(configuration)
-    return {
-        /**
-         * 
-         * @summary Make a call from the SIP component to the provided phone number
-         * @param {string} roomId Room ID
-         * @param {string} componentId SIP Component ID
-         * @param {DialConfig} [dialConfig] Phone Number configuration
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async dial(roomId: string, componentId: string, dialConfig?: DialConfig, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.dial(roomId, componentId, dialConfig, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['SipApi.dial']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @summary Finish call made by SIP component
-         * @param {string} roomId Room ID
-         * @param {string} componentId SIP Component ID
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async endCall(roomId: string, componentId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.endCall(roomId, componentId, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['SipApi.endCall']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-    }
-};
-
-/**
- * SipApi - factory interface
- * @export
- */
-export const SipApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = SipApiFp(configuration)
-    return {
-        /**
-         * 
-         * @summary Make a call from the SIP component to the provided phone number
-         * @param {string} roomId Room ID
-         * @param {string} componentId SIP Component ID
-         * @param {DialConfig} [dialConfig] Phone Number configuration
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        dial(roomId: string, componentId: string, dialConfig?: DialConfig, options?: any): AxiosPromise<void> {
-            return localVarFp.dial(roomId, componentId, dialConfig, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @summary Finish call made by SIP component
-         * @param {string} roomId Room ID
-         * @param {string} componentId SIP Component ID
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        endCall(roomId: string, componentId: string, options?: any): AxiosPromise<void> {
-            return localVarFp.endCall(roomId, componentId, options).then((request) => request(axios, basePath));
-        },
-    };
-};
-
-/**
- * SipApi - object-oriented interface
- * @export
- * @class SipApi
- * @extends {BaseAPI}
- */
-export class SipApi extends BaseAPI {
-    /**
-     * 
-     * @summary Make a call from the SIP component to the provided phone number
-     * @param {string} roomId Room ID
-     * @param {string} componentId SIP Component ID
-     * @param {DialConfig} [dialConfig] Phone Number configuration
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof SipApi
-     */
-    public dial(roomId: string, componentId: string, dialConfig?: DialConfig, options?: RawAxiosRequestConfig) {
-        return SipApiFp(this.configuration).dial(roomId, componentId, dialConfig, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @summary Finish call made by SIP component
-     * @param {string} roomId Room ID
-     * @param {string} componentId SIP Component ID
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof SipApi
-     */
-    public endCall(roomId: string, componentId: string, options?: RawAxiosRequestConfig) {
-        return SipApiFp(this.configuration).endCall(roomId, componentId, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -3181,264 +1356,6 @@ export class StreamerApi extends BaseAPI {
      */
     public generateStreamerToken(roomId: string, options?: RawAxiosRequestConfig) {
         return StreamerApiFp(this.configuration).generateStreamerToken(roomId, options).then((request) => request(this.axios, this.basePath));
-    }
-}
-
-
-
-/**
- * UserApi - axios parameter creator
- * @export
- */
-export const UserApiAxiosParamCreator = function (configuration?: Configuration) {
-    return {
-        /**
-         * 
-         * @summary Creates user with provided user id and token
-         * @param {string} id User id
-         * @param {string} token User token
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        createUser: async (id: string, token: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('createUser', 'id', id)
-            // verify required parameter 'token' is not null or undefined
-            assertParamExists('createUser', 'token', token)
-            const localVarPath = `/admin/user`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)))
-                .replace(`{${"token"}}`, encodeURIComponent(String(token)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication authorization required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @summary Removes user with provided user id
-         * @param {string} id User id
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        deleteUser: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('deleteUser', 'id', id)
-            const localVarPath = `/admin/user/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication authorization required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @summary Show information about all users
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getAllUsers: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/admin/user`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication authorization required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-    }
-};
-
-/**
- * UserApi - functional programming interface
- * @export
- */
-export const UserApiFp = function(configuration?: Configuration) {
-    const localVarAxiosParamCreator = UserApiAxiosParamCreator(configuration)
-    return {
-        /**
-         * 
-         * @summary Creates user with provided user id and token
-         * @param {string} id User id
-         * @param {string} token User token
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async createUser(id: string, token: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.createUser(id, token, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UserApi.createUser']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @summary Removes user with provided user id
-         * @param {string} id User id
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async deleteUser(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteUser(id, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UserApi.deleteUser']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @summary Show information about all users
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async getAllUsers(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserListingResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllUsers(options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UserApi.getAllUsers']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-    }
-};
-
-/**
- * UserApi - factory interface
- * @export
- */
-export const UserApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = UserApiFp(configuration)
-    return {
-        /**
-         * 
-         * @summary Creates user with provided user id and token
-         * @param {string} id User id
-         * @param {string} token User token
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        createUser(id: string, token: string, options?: any): AxiosPromise<void> {
-            return localVarFp.createUser(id, token, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @summary Removes user with provided user id
-         * @param {string} id User id
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        deleteUser(id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.deleteUser(id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @summary Show information about all users
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getAllUsers(options?: any): AxiosPromise<UserListingResponse> {
-            return localVarFp.getAllUsers(options).then((request) => request(axios, basePath));
-        },
-    };
-};
-
-/**
- * UserApi - object-oriented interface
- * @export
- * @class UserApi
- * @extends {BaseAPI}
- */
-export class UserApi extends BaseAPI {
-    /**
-     * 
-     * @summary Creates user with provided user id and token
-     * @param {string} id User id
-     * @param {string} token User token
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof UserApi
-     */
-    public createUser(id: string, token: string, options?: RawAxiosRequestConfig) {
-        return UserApiFp(this.configuration).createUser(id, token, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @summary Removes user with provided user id
-     * @param {string} id User id
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof UserApi
-     */
-    public deleteUser(id: string, options?: RawAxiosRequestConfig) {
-        return UserApiFp(this.configuration).deleteUser(id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @summary Show information about all users
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof UserApi
-     */
-    public getAllUsers(options?: RawAxiosRequestConfig) {
-        return UserApiFp(this.configuration).getAllUsers(options).then((request) => request(this.axios, this.basePath));
     }
 }
 
