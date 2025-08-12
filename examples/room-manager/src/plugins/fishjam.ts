@@ -11,7 +11,6 @@ import {
   type RoomConfigVideoCodecEnum,
   type ViewerToken,
 } from '@fishjam-cloud/js-server-sdk';
-import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import { RoomManagerError } from '../errors';
 import { LivestreamData, PeerAccessData } from '../schema';
 
@@ -24,7 +23,6 @@ declare module 'fastify' {
         roomType?: RoomConfigRoomTypeEnum,
         isPublic?: boolean
       ) => Promise<PeerAccessData>;
-      handleFishjamMessage: (notification: ServerMessage) => Promise<void>;
       getLivestreamViewerToken: (roomName: string) => Promise<ViewerToken>;
       getLivestreamStreamerToken: (roomName: string, isPublic: boolean) => Promise<LivestreamData>;
     };
@@ -83,51 +81,6 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
     fastify.log.info({ name: 'Peer and room exist', peerName, roomName });
 
     return peerAccess;
-  }
-
-  async function handleFishjamMessage(notification: ServerMessage): Promise<void> {
-    Object.entries(notification)
-      .filter(([_, value]) => value)
-      .forEach(([name, value]) => {
-        fastify.log.info({ [name]: value });
-      });
-
-    const peerToBeRemoved = notification.peerCrashed ?? notification.peerDeleted;
-
-    if (peerToBeRemoved) {
-      const { roomId, peerId } = peerToBeRemoved;
-
-      const userAccess = [...peerNameToAccessMap.values()].find(
-        ({ room, peer }) => room.id === roomId && peer.id === peerId
-      );
-
-      if (!userAccess) {
-        fastify.log.info({ name: 'User not found in cache', userAccess });
-        return;
-      }
-
-      peerNameToAccessMap.delete(userAccess.peer.name);
-
-      fastify.log.info({ name: 'Peer deleted from cache', roomId, peerId: peerId });
-    }
-
-    const roomToBeRemovedId = (notification.roomDeleted ?? notification.roomCrashed)?.roomId;
-
-    if (roomToBeRemovedId) {
-      const roomName = roomNameToRoomIdMap.get(roomToBeRemovedId);
-      if (roomName) roomNameToRoomIdMap.delete(roomName);
-
-      const usersToRemove = [...peerNameToAccessMap.values()].filter((user) => user.room.id === roomToBeRemovedId);
-
-      usersToRemove.forEach(({ peer }) => {
-        peerNameToAccessMap.delete(peer.name);
-      });
-
-      fastify.log.info({
-        name: 'Room and users deleted from cache',
-        roomId: roomToBeRemovedId,
-      });
-    }
   }
 
   async function createPeer(roomName: string, peerName: string): Promise<PeerAccessData> {
@@ -210,7 +163,6 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
 
   fastify.decorate('fishjam', {
     getPeerAccess,
-    handleFishjamMessage,
     getLivestreamViewerToken,
     getLivestreamStreamerToken,
   });
