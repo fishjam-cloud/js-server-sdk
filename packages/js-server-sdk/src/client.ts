@@ -48,9 +48,7 @@ export class FishjamClient {
 
       const {
         data: {
-          data: {
-            room: { components: _, ...room },
-          },
+          data: { room },
         },
       } = response;
 
@@ -77,7 +75,7 @@ export class FishjamClient {
   async getAllRooms(): Promise<Room[]> {
     try {
       const getAllRoomsResponse = await this.roomApi.getAllRooms();
-      return getAllRoomsResponse.data.data.map(({ components: _, ...room }) => room as Room) ?? [];
+      return (getAllRoomsResponse.data.data as Room[]) ?? [];
     } catch (error) {
       throw mapException(error);
     }
@@ -109,8 +107,7 @@ export class FishjamClient {
   async getRoom(roomId: RoomId): Promise<Room> {
     try {
       const getRoomResponse = await this.roomApi.getRoom(roomId);
-      const { components: _, ...room } = getRoomResponse.data.data;
-      return room as Room;
+      return getRoomResponse.data.data as Room;
     } catch (error) {
       throw mapException(error, 'room');
     }

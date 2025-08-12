@@ -2,8 +2,8 @@ import Fastify, { FastifyRequest } from 'fastify';
 import cors from '@fastify/cors';
 import fastifyEnv from '@fastify/env';
 import fastifySwagger from '@fastify/swagger';
-import { ServerMessage } from '@fishjam-cloud/js-server-sdk/proto';
 import healthcheck from 'fastify-healthcheck';
+import { ServerMessage } from '@fishjam-cloud/js-server-sdk';
 
 import { configSchema } from './config';
 import { rooms } from './routes';
