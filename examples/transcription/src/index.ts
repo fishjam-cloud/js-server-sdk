@@ -7,7 +7,11 @@ if (!process.env.FISHJAM_ID || !process.env.FISHJAM_TOKEN || !process.env.GEMINI
   throw Error('Environment variables FISHJAM_ID, FISHJAM_TOKEN and GEMINI_API_KEY are required.');
 }
 
-const fishjamConfig = { fishjamId: process.env.FISHJAM_ID, managementToken: process.env.FISHJAM_TOKEN };
+const fishjamConfig = {
+  fishjamUrl: 'http://localhost:5002',
+  fishjamId: process.env.FISHJAM_ID,
+  managementToken: process.env.FISHJAM_TOKEN,
+};
 const fishjam = new FishjamService(fishjamConfig);
 
 new TranscriptionService(fishjamConfig, process.env.GEMINI_API_KEY);

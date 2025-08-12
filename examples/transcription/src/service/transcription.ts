@@ -8,11 +8,9 @@ import {
 } from '@fishjam-cloud/js-server-sdk';
 import { GoogleGenAI, LiveServerMessage, Modality, Session } from '@google/genai';
 import { TRANSCRIPTION_MODEL } from '../const';
-import { FileSink } from 'bun';
 
 export class TranscriptionService {
   peerSessions: Map<PeerId, Session> = new Map();
-  peerFiles: Map<PeerId, FileSink> = new Map();
   ai: GoogleGenAI;
 
   constructor(fishjamConfig: FishjamConfig, geminiKey: string) {
@@ -50,7 +48,6 @@ export class TranscriptionService {
       },
     });
     this.peerSessions.set(peerId, session);
-    this.peerFiles.set(peerId, Bun.file(`./peer-audio/${peerId}.pcm`).writer());
   }
 
   handlePeerDisconnected(message: PeerDisconnected) {
@@ -60,10 +57,7 @@ export class TranscriptionService {
     const session = this.peerSessions.get(peerId);
     session?.close();
 
-    this.peerFiles.get(peerId)?.end();
-
     this.peerSessions.delete(peerId);
-    this.peerFiles.delete(peerId);
   }
 
   handleTrackData(message: TrackData) {
