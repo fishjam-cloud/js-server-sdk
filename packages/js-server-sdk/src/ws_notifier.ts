@@ -1,6 +1,6 @@
 import TypedEmitter from 'typed-emitter';
 import { EventEmitter } from 'events';
-import { CloseEventHandler, ErrorEventHandler, FishjamConfig, RoomId } from './types';
+import { CloseEventHandler, ErrorEventHandler, FishjamConfig } from './types';
 import { getFishjamUrl, httpToWebsocket } from './utils';
 import { ServerMessage, ServerMessage_EventType } from '@fishjam-cloud/fishjam-proto';
 

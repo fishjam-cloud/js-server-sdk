@@ -4,9 +4,6 @@ import { v4 as uuid4 } from 'uuid';
 
 import {
   AgentRequest,
-  AgentRequest_AddTrack,
-  AgentRequest_AddTrack_CodecParameters,
-  AgentRequest_RemoveTrack,
   AgentRequest_TrackData,
   AgentResponse,
   AgentResponse_TrackData,
@@ -22,13 +19,6 @@ export type ExpectedAgentEvents = 'authenticated' | 'trackData';
 
 const expectedEventsList: ReadonlyArray<ExpectedAgentEvents> = ['authenticated', 'trackData'] as const;
 
-export {
-  AgentRequest_AddTrack,
-  AgentRequest_AddTrack_CodecParameters,
-  AgentRequest_RemoveTrack,
-  AgentRequest_TrackData,
-};
-
 export type IncomingTrackData = AgentResponse_TrackData;
 export type OutgoingTrackData = AgentRequest_TrackData;
 export type AgentTrack = ProtoTrack;
@@ -38,9 +28,6 @@ export type AudioCodecParameters = {
   sampleRate: 16000 | 24000 | 48000;
   channels: 1;
 };
-/**
- * ID of the media track.
- */
 export type TrackId = Brand<string, 'TrackId'>;
 
 export type AgentEvents = { [K in ExpectedAgentEvents]: (message: NonNullable<AgentResponse[K]>) => void };

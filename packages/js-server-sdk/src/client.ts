@@ -86,7 +86,7 @@ export class FishjamClient {
    */
   async createPeer(
     roomId: RoomId,
-    type: PeerType,
+    type: PeerType = 'webrtc',
     options: PeerOptions = {}
   ): Promise<{ peer: Peer; peerToken: string }> {
     try {
