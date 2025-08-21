@@ -88,7 +88,7 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
 
     if (!roomId) throw new RoomManagerError('Room not found', 404);
 
-    const { peer, peerToken } = await fishjamClient.createPeer(roomId, "webrtc", {
+    const { peer, peerToken } = await fishjamClient.createPeer(roomId, 'webrtc', {
       enableSimulcast: fastify.config.ENABLE_SIMULCAST,
       metadata: { username: peerName },
     });

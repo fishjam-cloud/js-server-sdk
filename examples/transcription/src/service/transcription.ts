@@ -40,7 +40,10 @@ export class TranscriptionService {
     console.log('Peer connected: %O', message);
     const peerId = message.peerId as PeerId;
 
-    const { peer: { id: agentId }, peerToken: agentToken } = await this.fishjamClient.createPeer(message.roomId as RoomId, "agent");
+    const {
+      peer: { id: agentId },
+      peerToken: agentToken,
+    } = await this.fishjamClient.createPeer(message.roomId as RoomId, 'agent');
 
     const agent = new FishjamAgent(
       this.fishjamConfig,
