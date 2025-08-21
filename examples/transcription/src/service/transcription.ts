@@ -14,6 +14,7 @@ import { TRANSCRIPTION_MODEL } from '../const';
 
 export class TranscriptionService {
   peerSessions: Map<PeerId, Session> = new Map();
+  agents: Map<RoomId, PeerId> = new Map();
   ai: GoogleGenAI;
   fishjamConfig: FishjamConfig;
   fishjamClient: FishjamClient;
@@ -38,23 +39,30 @@ export class TranscriptionService {
 
   async handlePeerConnected(message: PeerConnected) {
     console.log('Peer connected: %O', message);
-    const peerId = message.peerId as PeerId;
 
-    const {
-      peer: { id: agentId },
-      peerToken: agentToken,
-    } = await this.fishjamClient.createPeer(message.roomId as RoomId, 'agent');
+    const peerId = message.peerId;
+    const agentId = this.agents.get(message.roomId);
 
-    const agent = new FishjamAgent(
-      this.fishjamConfig,
-      agentToken,
-      (error) => console.error('Fishjam agent websocket error: %O', error),
-      (code, reason) => console.log(`Fishjam agent websocket closed. code: ${code}, reason: ${reason}`)
-    );
+    if (agentId == peerId) return;
 
-    console.log(`Agent ${agentId} created`);
+    if (agentId == undefined) {
+      const {
+        peer: { id: newAgentId },
+        peerToken: agentToken,
+      } = await this.fishjamClient.createPeer(message.roomId, 'agent');
 
-    agent.on('trackData', (msg) => this.handleTrackData(msg));
+      const agent = new FishjamAgent(
+        this.fishjamConfig,
+        agentToken,
+        (error) => console.error('Fishjam agent websocket error: %O', error),
+        (code, reason) => console.log(`Fishjam agent websocket closed. code: ${code}, reason: ${reason}`)
+      );
+
+      this.agents.set(message.roomId, newAgentId);
+
+      agent.on('trackData', (msg) => this.handleTrackData(msg));
+      console.log(`Agent ${newAgentId} created`);
+    }
 
     const session = await this.ai.live.connect({
       model: TRANSCRIPTION_MODEL,
@@ -73,20 +81,41 @@ export class TranscriptionService {
     this.peerSessions.set(peerId, session);
   }
 
-  handlePeerDisconnected(message: PeerDisconnected) {
-    console.log('Peer disconnected: %O', message);
-    const peerId = message.peerId as PeerId;
+  async handlePeerDisconnected(message: PeerDisconnected) {
+    const isAgent = this.agents.get(message.roomId) == message.peerId;
+    if (isAgent) return this.handleAgentDisconnected(message);
 
+    this.handleWebrtcPeerDisconnected(message);
+  }
+
+  async handleAgentDisconnected(message: PeerDisconnected) {
+    console.log(`Agent ${message.peerId} disconnected, removing room`);
+
+    await this.fishjamClient.deleteRoom(message.roomId);
+    this.agents.delete(message.roomId);
+  }
+
+  async handleWebrtcPeerDisconnected(message: PeerDisconnected) {
+    if (message.peerId) console.log('Peer disconnected: %O', message);
+
+    const peerId = message.peerId;
     const session = this.peerSessions.get(peerId);
     session?.close();
 
     this.peerSessions.delete(peerId);
+
+    const room = await this.fishjamClient.getRoom(message.roomId);
+    const activePeers = room.peers.filter((peer) => peer.status == 'connected');
+    if (activePeers.length == 1) {
+      console.log('Last peer left room, removing agent');
+      await this.fishjamClient.deletePeer(message.roomId, activePeers[0].id);
+    }
   }
 
   handleTrackData(message: IncomingTrackData) {
     const { data, peerId } = message;
 
-    const session = this.peerSessions.get(peerId as PeerId);
+    const session = this.peerSessions.get(peerId);
     session?.sendRealtimeInput({
       audio: {
         data: data.toBase64(),

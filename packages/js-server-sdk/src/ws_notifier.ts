@@ -1,6 +1,6 @@
 import TypedEmitter from 'typed-emitter';
 import { EventEmitter } from 'events';
-import { CloseEventHandler, ErrorEventHandler, FishjamConfig } from './types';
+import { CloseEventHandler, ErrorEventHandler, FishjamConfig, PeerId, RoomId } from './types';
 import { getFishjamUrl, httpToWebsocket } from './utils';
 import { ServerMessage, ServerMessage_EventType } from '@fishjam-cloud/fishjam-proto';
 
@@ -22,7 +22,20 @@ export type ExpectedEvents =
   | 'trackRemoved'
   | 'trackMetadataUpdated';
 
-type Notifications = { [K in ExpectedEvents]: NonNullable<ServerMessage[K]> };
+type WithRoomId<T> = {
+  [P in keyof T]: NonNullable<T[P]> extends { roomId: string }
+    ? Omit<NonNullable<T[P]>, 'roomId'> & { roomId: RoomId }
+    : T[P];
+};
+
+type WithPeerId<T> = {
+  [P in keyof T]: NonNullable<T[P]> extends { peerId: string }
+    ? Omit<NonNullable<T[P]>, 'peerId'> & { peerId: PeerId }
+    : T[P];
+};
+
+type MessageWithIds = WithPeerId<WithRoomId<ServerMessage>>;
+type Notifications = { [K in ExpectedEvents]: NonNullable<MessageWithIds[K]> };
 
 export type RoomCreated = Notifications['roomCreated'];
 export type RoomDeleted = Notifications['roomDeleted'];
@@ -60,7 +73,7 @@ const expectedEventsList: ReadonlyArray<ExpectedEvents> = [
   'trackMetadataUpdated',
 ] as const;
 
-export type NotificationEvents = { [K in ExpectedEvents]: (message: NonNullable<ServerMessage[K]>) => void };
+export type NotificationEvents = { [K in ExpectedEvents]: (message: NonNullable<MessageWithIds[K]>) => void };
 
 /**
  * Notifier object that can be used to get notified about various events related to the Fishjam App.
@@ -86,15 +99,13 @@ export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<N
   private dispatchNotification(message: MessageEvent) {
     try {
       const decodedMessage = ServerMessage.decode(message.data);
-      const [[notification, msg]] = Object.entries(decodedMessage).filter(([_k, v]) => v != null);
+      const [notification, msg] = Object.entries(decodedMessage).find(([_k, v]) => v)!;
 
       if (!this.isExpectedEvent(notification)) return;
 
       this.emit(notification, msg);
     } catch (e) {
-      console.error("Couldn't decode websocket server message.");
-      console.error(e);
-      console.error(message);
+      console.error("Couldn't decode websocket server message", e, message);
     }
   }
 

@@ -11,16 +11,15 @@ import {
   TrackType as ProtoTrackType,
   TrackEncoding,
 } from '@fishjam-cloud/fishjam-proto';
-import { Brand, FishjamConfig } from './types';
+import { Brand, FishjamConfig, PeerId } from './types';
 import { getFishjamUrl, httpToWebsocket } from './utils';
 import { CloseEventHandler, ErrorEventHandler } from './types';
 
-export type ExpectedAgentEvents = 'authenticated' | 'trackData';
+const expectedEventsList = ['authenticated', 'trackData'] as const;
+export type ExpectedAgentEvents = (typeof expectedEventsList)[number];
 
-const expectedEventsList: ReadonlyArray<ExpectedAgentEvents> = ['authenticated', 'trackData'] as const;
-
-export type IncomingTrackData = AgentResponse_TrackData;
-export type OutgoingTrackData = AgentRequest_TrackData;
+export type IncomingTrackData = Omit<NonNullable<AgentResponse_TrackData>, 'peerId'> & { peerId: PeerId };
+export type OutgoingTrackData = Omit<NonNullable<AgentRequest_TrackData>, 'peerId'> & { peerId: PeerId };
 export type AgentTrack = ProtoTrack;
 export type TrackType = 'audio' | 'video';
 export type AudioCodecParameters = {
@@ -89,15 +88,13 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
   private dispatchNotification(message: MessageEvent) {
     try {
       const decodedMessage = AgentResponse.decode(message.data);
-      const [[notification, msg]] = Object.entries(decodedMessage).filter(([_k, v]) => v != null);
+      const [notification, msg] = Object.entries(decodedMessage).find(([_k, v]) => v)!;
 
       if (!this.isExpectedEvent(notification)) return;
 
       this.emit(notification, msg);
     } catch (e) {
-      console.error("Couldn't decode websocket agent message.");
-      console.error(e);
-      console.error(message);
+      console.error("Couldn't decode websocket agent message", e, message);
     }
   }
 
