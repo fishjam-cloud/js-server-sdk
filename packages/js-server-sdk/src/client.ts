@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { RoomApi, PeerOptions, ViewerApi, RoomConfig, StreamerApi } from '@fishjam-cloud/fishjam-openapi';
+import { RoomApi, PeerOptions, ViewerApi, RoomConfig, StreamerApi, PeerType } from '@fishjam-cloud/fishjam-openapi';
 import { FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
 import { mapException } from './exceptions/mapper';
 import { getFishjamUrl } from './utils';
@@ -84,10 +84,14 @@ export class FishjamClient {
   /**
    * Create a new peer assigned to a room.
    */
-  async createPeer(roomId: RoomId, options: PeerOptions = {}): Promise<{ peer: Peer; peerToken: string }> {
+  async createPeer(
+    roomId: RoomId,
+    type: PeerType,
+    options: PeerOptions = {}
+  ): Promise<{ peer: Peer; peerToken: string }> {
     try {
       const response = await this.roomApi.addPeer(roomId, {
-        type: 'webrtc',
+        type: type,
         options,
       });
 

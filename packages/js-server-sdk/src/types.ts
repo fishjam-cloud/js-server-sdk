@@ -42,3 +42,7 @@ export type FishjamConfig = {
    */
   managementToken: string;
 };
+
+// Websocket event handlers
+export type ErrorEventHandler = (msg: Event) => void;
+export type CloseEventHandler = (code: number, reason: string) => void;

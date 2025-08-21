@@ -10,6 +10,8 @@ export {
 export { ServerMessage } from '@fishjam-cloud/fishjam-proto';
 export { FishjamWSNotifier } from './ws_notifier';
 export type * from './ws_notifier';
+export { FishjamAgent } from './agent';
+export type * from './agent';
 export { FishjamClient } from './client';
 export * from './exceptions';
 export type * from './types';

@@ -20,6 +20,18 @@ export class FishjamService {
     }
   }
 
+  async createAgent() {
+    try {
+      return await this.makePeer();
+    } catch (e) {
+      if (e instanceof RoomNotFoundException) {
+        await this.makeRoom();
+        return this.makePeer();
+      }
+      throw e;
+    }
+  }
+
   private async makeRoom() {
     const { id: roomId } = await this.fishjam.createRoom();
     this.roomId = roomId;
@@ -27,6 +39,6 @@ export class FishjamService {
 
   private async makePeer() {
     if (!this.roomId) await this.makeRoom();
-    return this.fishjam.createPeer(this.roomId!, { subscribe: { audioSampleRate: 16000 } });
+    return this.fishjam.createPeer(this.roomId!, 'webrtc', { subscribe: { audioSampleRate: 16000 } });
   }
 }
