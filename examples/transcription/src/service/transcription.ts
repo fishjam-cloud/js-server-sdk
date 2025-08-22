@@ -43,7 +43,7 @@ export class TranscriptionService {
     const peerId = message.peerId;
     const agentId = this.agents.get(message.roomId);
 
-    if (agentId == peerId) return;
+    if (agentId === peerId) return;
 
     if (agentId == undefined) {
       const {
@@ -80,7 +80,7 @@ export class TranscriptionService {
   }
 
   async handlePeerDisconnected(message: PeerDisconnected) {
-    const isAgent = this.agents.get(message.roomId) == message.peerId;
+    const isAgent = this.agents.get(message.roomId) === message.peerId;
     if (isAgent) return this.handleAgentDisconnected(message);
 
     this.handleWebrtcPeerDisconnected(message);
@@ -103,8 +103,8 @@ export class TranscriptionService {
     this.peerSessions.delete(peerId);
 
     const room = await this.fishjamClient.getRoom(message.roomId);
-    const activePeers = room.peers.filter((peer) => peer.status == 'connected');
-    if (activePeers.length == 1) {
+    const activePeers = room.peers.filter((peer) => peer.status === 'connected');
+    if (activePeers.length === 1) {
       console.log('Last peer left room, removing agent');
       await this.fishjamClient.deletePeer(message.roomId, activePeers[0].id);
     }

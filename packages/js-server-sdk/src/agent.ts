@@ -15,7 +15,7 @@ import { Brand, FishjamConfig, PeerId } from './types';
 import { getFishjamUrl, httpToWebsocket, WithPeerId } from './utils';
 import { CloseEventHandler, ErrorEventHandler } from './types';
 
-const expectedEventsList = ['authenticated', 'trackData'] as const;
+const expectedEventsList = ['trackData'] as const;
 export type ExpectedAgentEvents = (typeof expectedEventsList)[number];
 
 export type IncomingTrackData = Omit<NonNullable<AgentResponse_TrackData>, 'peerId'> & { peerId: PeerId };

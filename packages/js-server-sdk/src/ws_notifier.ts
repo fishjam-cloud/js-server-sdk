@@ -1,7 +1,7 @@
 import TypedEmitter from 'typed-emitter';
 import { EventEmitter } from 'events';
-import { CloseEventHandler, ErrorEventHandler, FishjamConfig, RoomId } from './types';
-import { getFishjamUrl, httpToWebsocket, WithPeerId } from './utils';
+import { CloseEventHandler, ErrorEventHandler, FishjamConfig } from './types';
+import { getFishjamUrl, httpToWebsocket, WithPeerId, WithRoomId } from './utils';
 import { ServerMessage, ServerMessage_EventType } from '@fishjam-cloud/fishjam-proto';
 
 export type ExpectedEvents =
@@ -21,12 +21,6 @@ export type ExpectedEvents =
   | 'trackAdded'
   | 'trackRemoved'
   | 'trackMetadataUpdated';
-
-type WithRoomId<T> = {
-  [P in keyof T]: NonNullable<T[P]> extends { roomId: string }
-    ? Omit<NonNullable<T[P]>, 'roomId'> & { roomId: RoomId }
-    : T[P];
-};
 
 type MessageWithIds = WithPeerId<WithRoomId<ServerMessage>>;
 type Notifications = { [K in ExpectedEvents]: NonNullable<MessageWithIds[K]> };
