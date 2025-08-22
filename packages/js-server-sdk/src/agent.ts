@@ -12,7 +12,7 @@ import {
   TrackEncoding,
 } from '@fishjam-cloud/fishjam-proto';
 import { Brand, FishjamConfig, PeerId } from './types';
-import { getFishjamUrl, httpToWebsocket } from './utils';
+import { getFishjamUrl, httpToWebsocket, WithPeerId } from './utils';
 import { CloseEventHandler, ErrorEventHandler } from './types';
 
 const expectedEventsList = ['authenticated', 'trackData'] as const;
@@ -29,7 +29,8 @@ export type AudioCodecParameters = {
 };
 export type TrackId = Brand<string, 'TrackId'>;
 
-export type AgentEvents = { [K in ExpectedAgentEvents]: (message: NonNullable<AgentResponse[K]>) => void };
+type ResponseWithPeerId = WithPeerId<AgentResponse>;
+export type AgentEvents = { [K in ExpectedAgentEvents]: (message: NonNullable<ResponseWithPeerId[K]>) => void };
 
 export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentEvents>) {
   private readonly client: WebSocket;

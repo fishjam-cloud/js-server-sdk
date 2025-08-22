@@ -1,13 +1,8 @@
-import { FishjamClient, FishjamConfig, RoomId, RoomNotFoundException } from '@fishjam-cloud/js-server-sdk';
-
+import { FishjamClient, RoomNotFoundException } from '@fishjam-cloud/js-server-sdk';
 export class FishjamService {
-  roomId?: RoomId;
-  fishjam: FishjamClient;
-
-  constructor(config: FishjamConfig) {
+  constructor(config) {
     this.fishjam = new FishjamClient(config);
   }
-
   async createPeer() {
     try {
       return await this.makePeer();
@@ -19,7 +14,6 @@ export class FishjamService {
       throw e;
     }
   }
-
   async createAgent() {
     try {
       return await this.makePeer();
@@ -31,14 +25,12 @@ export class FishjamService {
       throw e;
     }
   }
-
-  private async makeRoom() {
+  async makeRoom() {
     const { id: roomId } = await this.fishjam.createRoom();
     this.roomId = roomId;
   }
-
-  private async makePeer() {
+  async makePeer() {
     if (!this.roomId) await this.makeRoom();
-    return this.fishjam.createPeer(this.roomId!, { subscribe: { audioSampleRate: 16000 } });
+    return this.fishjam.createPeer(this.roomId, { subscribe: { audioSampleRate: 16000 } });
   }
 }

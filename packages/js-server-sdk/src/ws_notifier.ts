@@ -1,7 +1,7 @@
 import TypedEmitter from 'typed-emitter';
 import { EventEmitter } from 'events';
-import { CloseEventHandler, ErrorEventHandler, FishjamConfig, PeerId, RoomId } from './types';
-import { getFishjamUrl, httpToWebsocket } from './utils';
+import { CloseEventHandler, ErrorEventHandler, FishjamConfig, RoomId } from './types';
+import { getFishjamUrl, httpToWebsocket, WithPeerId } from './utils';
 import { ServerMessage, ServerMessage_EventType } from '@fishjam-cloud/fishjam-proto';
 
 export type ExpectedEvents =
@@ -25,12 +25,6 @@ export type ExpectedEvents =
 type WithRoomId<T> = {
   [P in keyof T]: NonNullable<T[P]> extends { roomId: string }
     ? Omit<NonNullable<T[P]>, 'roomId'> & { roomId: RoomId }
-    : T[P];
-};
-
-type WithPeerId<T> = {
-  [P in keyof T]: NonNullable<T[P]> extends { peerId: string }
-    ? Omit<NonNullable<T[P]>, 'peerId'> & { peerId: PeerId }
     : T[P];
 };
 
