@@ -10,7 +10,7 @@ paths:
       responses:
         "200":
           description: Default Response
-  /room-manager:
+  /api/rooms:
     get:
       operationId: getPeerToken
       tags:
@@ -100,7 +100,7 @@ paths:
                     type: string
                 required:
                   - error
-  /room-manager/{roomName}/broadcast-viewer-token:
+  /api/rooms/{roomName}/broadcast-viewer-token:
     get:
       operationId: getLivestreamViewerToken
       tags: &a1
@@ -136,7 +136,7 @@ paths:
                     type: string
                 required:
                   - error
-  /room-manager/{roomName}/livestream-viewer-token:
+  /api/rooms/{roomName}/livestream-viewer-token:
     get:
       operationId: getLivestreamViewerToken
       tags: *a1
@@ -171,7 +171,7 @@ paths:
                     type: string
                 required:
                   - error
-  /room-manager/livestream:
+  /api/rooms/livestream:
     get:
       operationId: getLivestreamStreamerToken
       tags:
