@@ -1655,21 +1655,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"app@workspace:examples/transcription":
-  version: 0.0.0-use.local
-  resolution: "app@workspace:examples/transcription"
-  dependencies:
-    "@fishjam-cloud/js-server-sdk": "workspace:*"
-    "@google/genai": "npm:^1.13.0"
-    "@grotto/logysia": "npm:^0.1.6"
-    "@types/bun": "npm:^1"
-    bun: "npm:^1.2.20"
-    bun-types: "npm:latest"
-    elysia: "npm:latest"
-    prettier: "npm:^3.6.2"
-  languageName: unknown
-  linkType: soft
-
 "argparse@npm:^2.0.1":
   version: 2.0.1
   resolution: "argparse@npm:2.0.1"
@@ -5273,6 +5258,21 @@ __metadata:
   checksum: 10c0/047cb209a6b60c742f05c9d3ace8fa510bff609995c129a37ace03476a9b12db4dbf975e74600830ef0796e18882b2381fb5fb1f6b4f96b832c374de3ab91a11
   languageName: node
   linkType: hard
+
+"transcription-demo@workspace:examples/transcription":
+  version: 0.0.0-use.local
+  resolution: "transcription-demo@workspace:examples/transcription"
+  dependencies:
+    "@fishjam-cloud/js-server-sdk": "workspace:*"
+    "@google/genai": "npm:^1.13.0"
+    "@grotto/logysia": "npm:^0.1.6"
+    "@types/bun": "npm:^1"
+    bun: "npm:^1.2.20"
+    bun-types: "npm:latest"
+    elysia: "npm:latest"
+    prettier: "npm:^3.6.2"
+  languageName: unknown
+  linkType: soft
 
 "tree-kill@npm:^1.2.2":
   version: 1.2.2
