@@ -49,3 +49,6 @@ jobs:
             echo "OpenAPI spec is out of date. Please run 'yarn gen:openapi' and commit the changes."
             exit 1
           fi
+
+      - name: Check TypeDoc generation
+        run: yarn docs --emit none
