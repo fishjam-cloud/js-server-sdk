@@ -87,9 +87,8 @@ export class TranscriptionService {
   }
 
   async handleAgentDisconnected(message: PeerDisconnected) {
-    console.log(`Agent ${message.peerId} disconnected, removing room`);
+    console.log(`Agent ${message.peerId} disconnected`);
 
-    await this.fishjamClient.deleteRoom(message.roomId);
     this.agents.delete(message.roomId);
   }
 
