@@ -16,6 +16,9 @@ import { getFishjamUrl, httpToWebsocket, WithPeerId } from './utils';
 import { CloseEventHandler, ErrorEventHandler } from './types';
 
 const expectedEventsList = ['trackData'] as const;
+/**
+ * @useDeclaredType
+ */
 export type ExpectedAgentEvents = (typeof expectedEventsList)[number];
 
 export type IncomingTrackData = Omit<NonNullable<AgentResponse_TrackData>, 'peerId'> & { peerId: PeerId };
@@ -29,6 +32,9 @@ export type AudioCodecParameters = {
 };
 export type TrackId = Brand<string, 'TrackId'>;
 
+/**
+ * @inline
+ */
 type ResponseWithPeerId = WithPeerId<AgentResponse>;
 export type AgentEvents = { [K in ExpectedAgentEvents]: (message: NonNullable<ResponseWithPeerId[K]>) => void };
 
