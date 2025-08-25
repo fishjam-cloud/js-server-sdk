@@ -22,7 +22,13 @@ export type ExpectedEvents =
   | 'trackRemoved'
   | 'trackMetadataUpdated';
 
+/**
+ * @inline
+ */
 type MessageWithIds = WithPeerId<WithRoomId<ServerMessage>>;
+/**
+ * @inline
+ */
 type Notifications = { [K in ExpectedEvents]: NonNullable<MessageWithIds[K]> };
 
 export type RoomCreated = Notifications['roomCreated'];
