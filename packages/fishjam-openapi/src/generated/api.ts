@@ -171,7 +171,7 @@ export interface PeerDetailsResponseData {
  * Peer-specific options
  * @export
  */
-export type PeerOptions = PeerOptionsWebRTC;
+export type PeerOptions = PeerOptionsWebRTC | object;
 
 /**
  * Options specific to the WebRTC peer
@@ -277,7 +277,8 @@ export type PeerStatus = typeof PeerStatus[keyof typeof PeerStatus];
  */
 
 export const PeerType = {
-    Webrtc: 'webrtc'
+    Webrtc: 'webrtc',
+    Agent: 'agent'
 } as const;
 
 export type PeerType = typeof PeerType[keyof typeof PeerType];
@@ -778,7 +779,7 @@ export const RoomApiAxiosParamCreator = function (configuration?: Configuration)
         /**
          * 
          * @summary Delete peer
-         * @param {string} roomId Room ID
+         * @param {string} roomId Room id
          * @param {string} id Peer id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -930,7 +931,7 @@ export const RoomApiAxiosParamCreator = function (configuration?: Configuration)
         /**
          * 
          * @summary Refresh peer token
-         * @param {string} roomId Room ID
+         * @param {string} roomId Room id
          * @param {string} id Peer id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1009,7 +1010,7 @@ export const RoomApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Delete peer
-         * @param {string} roomId Room ID
+         * @param {string} roomId Room id
          * @param {string} id Peer id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1061,7 +1062,7 @@ export const RoomApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Refresh peer token
-         * @param {string} roomId Room ID
+         * @param {string} roomId Room id
          * @param {string} id Peer id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1106,7 +1107,7 @@ export const RoomApiFactory = function (configuration?: Configuration, basePath?
         /**
          * 
          * @summary Delete peer
-         * @param {string} roomId Room ID
+         * @param {string} roomId Room id
          * @param {string} id Peer id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1146,7 +1147,7 @@ export const RoomApiFactory = function (configuration?: Configuration, basePath?
         /**
          * 
          * @summary Refresh peer token
-         * @param {string} roomId Room ID
+         * @param {string} roomId Room id
          * @param {string} id Peer id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1192,7 +1193,7 @@ export class RoomApi extends BaseAPI {
     /**
      * 
      * @summary Delete peer
-     * @param {string} roomId Room ID
+     * @param {string} roomId Room id
      * @param {string} id Peer id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -1240,7 +1241,7 @@ export class RoomApi extends BaseAPI {
     /**
      * 
      * @summary Refresh peer token
-     * @param {string} roomId Room ID
+     * @param {string} roomId Room id
      * @param {string} id Peer id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}

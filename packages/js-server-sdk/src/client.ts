@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { RoomApi, PeerOptions, ViewerApi, RoomConfig, StreamerApi } from '@fishjam-cloud/fishjam-openapi';
-import { FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
+import { FishjamConfig, PeerId, Room, RoomId, Peer, ErrorEventHandler, CloseEventHandler } from './types';
 import { mapException } from './exceptions/mapper';
 import { getFishjamUrl } from './utils';
+import { FishjamAgent } from './agent';
 
 /**
  * Client class that allows to manage Rooms and Peers for a Fishjam App.
@@ -13,6 +14,7 @@ export class FishjamClient {
   private readonly roomApi: RoomApi;
   private readonly viewerApi: ViewerApi;
   private readonly streamerApi: StreamerApi;
+  private readonly fishjamConfig: FishjamConfig;
 
   /**
    * Create new instance of Fishjam Client.
@@ -37,6 +39,7 @@ export class FishjamClient {
     this.roomApi = new RoomApi(undefined, fishjamUrl, client);
     this.viewerApi = new ViewerApi(undefined, fishjamUrl, client);
     this.streamerApi = new StreamerApi(undefined, fishjamUrl, client);
+    this.fishjamConfig = config;
   }
 
   /**
@@ -96,6 +99,32 @@ export class FishjamClient {
       } = response;
 
       return { peer: data.peer as Peer, peerToken: data.token };
+    } catch (error) {
+      throw mapException(error);
+    }
+  }
+
+  /**
+   * Create a new agent assigned to a room.
+   */
+  async createAgent(
+    roomId: RoomId,
+    options: PeerOptions = {},
+    onError: ErrorEventHandler,
+    onClose: CloseEventHandler
+  ): Promise<{ agent: FishjamAgent; peer: Peer }> {
+    try {
+      const response = await this.roomApi.addPeer(roomId, {
+        type: 'agent',
+        options,
+      });
+
+      const {
+        data: { data },
+      } = response;
+      const agent = new FishjamAgent(this.fishjamConfig, data.token, onError, onClose);
+
+      return { agent: agent, peer: data.peer as Peer };
     } catch (error) {
       throw mapException(error);
     }

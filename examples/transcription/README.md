@@ -8,6 +8,7 @@ It makes use of the peer subscriptions feature in Fishjam.
 To start the development server you must first copy `.env.example` to `.env`.
 
 Then you need to set the following variables:
+
 - `FISHJAM_ID`: your Fishjam ID, which you can get at <https://fishjam.io>
 - `FISHJAM_TOKEN`: your Fishjam management token, which you can get at <https://fishjam.io>
 - `GEMINI_API_TOKEN`: your Gemini API token, which you can get at <https://aistudio.google.com/app/apikey>

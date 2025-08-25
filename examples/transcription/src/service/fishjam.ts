@@ -20,6 +20,18 @@ export class FishjamService {
     }
   }
 
+  async createAgent() {
+    try {
+      return await this.makePeer();
+    } catch (e) {
+      if (e instanceof RoomNotFoundException) {
+        await this.makeRoom();
+        return this.makePeer();
+      }
+      throw e;
+    }
+  }
+
   private async makeRoom() {
     const { id: roomId } = await this.fishjam.createRoom();
     this.roomId = roomId;

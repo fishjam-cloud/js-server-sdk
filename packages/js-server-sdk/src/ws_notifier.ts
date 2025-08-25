@@ -1,7 +1,7 @@
 import TypedEmitter from 'typed-emitter';
 import { EventEmitter } from 'events';
-import { FishjamConfig } from './types';
-import { getFishjamUrl, httpToWebsocket } from './utils';
+import { CloseEventHandler, ErrorEventHandler, FishjamConfig } from './types';
+import { getFishjamUrl, httpToWebsocket, WithPeerId, WithRoomId } from './utils';
 import { ServerMessage, ServerMessage_EventType } from '@fishjam-cloud/fishjam-proto';
 
 export type ExpectedEvents =
@@ -20,10 +20,10 @@ export type ExpectedEvents =
   | 'viewerDisconnected'
   | 'trackAdded'
   | 'trackRemoved'
-  | 'trackMetadataUpdated'
-  | 'trackData';
+  | 'trackMetadataUpdated';
 
-type Notifications = { [K in ExpectedEvents]: NonNullable<ServerMessage[K]> };
+type MessageWithIds = WithPeerId<WithRoomId<ServerMessage>>;
+type Notifications = { [K in ExpectedEvents]: NonNullable<MessageWithIds[K]> };
 
 export type RoomCreated = Notifications['roomCreated'];
 export type RoomDeleted = Notifications['roomDeleted'];
@@ -41,7 +41,6 @@ export type ViewerDisconnected = Notifications['viewerDisconnected'];
 export type TrackAdded = Notifications['trackAdded'];
 export type TrackRemoved = Notifications['trackRemoved'];
 export type TrackMetadataUpdated = Notifications['trackMetadataUpdated'];
-export type TrackData = Notifications['trackData'];
 
 const expectedEventsList: ReadonlyArray<ExpectedEvents> = [
   'roomCreated',
@@ -60,12 +59,9 @@ const expectedEventsList: ReadonlyArray<ExpectedEvents> = [
   'trackAdded',
   'trackRemoved',
   'trackMetadataUpdated',
-  'trackData',
 ] as const;
 
-export type ErrorEventHandler = (msg: Event) => void;
-export type CloseEventHandler = (code: number, reason: string) => void;
-export type NotificationEvents = { [K in ExpectedEvents]: (message: NonNullable<ServerMessage[K]>) => void };
+export type NotificationEvents = { [K in ExpectedEvents]: (message: NonNullable<MessageWithIds[K]>) => void };
 
 /**
  * Notifier object that can be used to get notified about various events related to the Fishjam App.
@@ -91,15 +87,13 @@ export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<N
   private dispatchNotification(message: MessageEvent) {
     try {
       const decodedMessage = ServerMessage.decode(message.data);
-      const [[notification, msg]] = Object.entries(decodedMessage).filter(([_k, v]) => v != null);
+      const [notification, msg] = Object.entries(decodedMessage).find(([_k, v]) => v)!;
 
       if (!this.isExpectedEvent(notification)) return;
 
       this.emit(notification, msg);
     } catch (e) {
-      console.error("Couldn't decode websocket server message.");
-      console.error(e);
-      console.error(message);
+      console.error("Couldn't decode websocket server message", e, message);
     }
   }
 
