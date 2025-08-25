@@ -40,7 +40,7 @@ jobs:
         run: yarn typecheck
 
       - name: Generate OpenAPI reference 📸
-        run: FISHJAM_ID="openapi" yarn gen:openapi ref.yaml
+        run: FISHJAM_ID="openapi" FISHJAM_MANAGEMENT_TOKEN="foo" yarn gen:openapi ref.yaml
 
       - name: Compare OpenAPI reference 🔦
         run: |
