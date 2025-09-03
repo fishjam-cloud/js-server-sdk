@@ -49,6 +49,7 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
 
     this.client = new WebSocket(websocketUrl);
 
+    this.client.binaryType = 'arraybuffer';
     this.client.onerror = (message) => onError(message);
     this.client.onclose = (message) => onClose(message.code, message.reason);
     this.client.onmessage = (message) => this.dispatchNotification(message);
@@ -94,7 +95,8 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
 
   private dispatchNotification(message: MessageEvent) {
     try {
-      const decodedMessage = AgentResponse.decode(message.data);
+      const data = new Uint8Array(message.data);
+      const decodedMessage = AgentResponse.decode(data);
       const [notification, msg] = Object.entries(decodedMessage).find(([_k, v]) => v)!;
 
       if (!this.isExpectedEvent(notification)) return;
