@@ -4921,6 +4921,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"selective-subscription-demo@workspace:examples/selective-subscription":
+  version: 0.0.0-use.local
+  resolution: "selective-subscription-demo@workspace:examples/selective-subscription"
+  dependencies:
+    "@fishjam-cloud/js-server-sdk": "workspace:*"
+    "@grotto/logysia": "npm:^0.1.6"
+    "@types/bun": "npm:^1"
+    bun: "npm:^1.2.20"
+    bun-types: "npm:latest"
+    elysia: "npm:latest"
+    prettier: "npm:^3.6.2"
+  languageName: unknown
+  linkType: soft
+
 "semver@npm:^7.3.5, semver@npm:^7.6.0":
   version: 7.6.3
   resolution: "semver@npm:7.6.3"

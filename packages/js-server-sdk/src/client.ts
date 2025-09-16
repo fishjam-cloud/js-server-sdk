@@ -3,7 +3,7 @@ import { RoomApi, PeerOptions, ViewerApi, RoomConfig, StreamerApi } from '@fishj
 import { FishjamConfig, PeerId, Room, RoomId, Peer, ErrorEventHandler, CloseEventHandler } from './types';
 import { mapException } from './exceptions/mapper';
 import { getFishjamUrl } from './utils';
-import { FishjamAgent } from './agent';
+import { FishjamAgent, TrackId } from './agent';
 
 /**
  * Client class that allows to manage Rooms and Peers for a Fishjam App.
@@ -148,6 +148,28 @@ export class FishjamClient {
   async deletePeer(roomId: RoomId, peerId: PeerId): Promise<void> {
     try {
       await this.roomApi.deletePeer(roomId, peerId);
+    } catch (error) {
+      throw mapException(error, 'peer');
+    }
+  }
+
+  /**
+   * Subscribe a peer to another peer - this will make all tracks from the publisher available to the subscriber.
+   */
+  async subscribePeer(roomId: RoomId, subscriberPeerId: PeerId, publisherPeerId: PeerId): Promise<void> {
+    try {
+      await this.roomApi.subscribePeer(roomId, subscriberPeerId, publisherPeerId);
+    } catch (error) {
+      throw mapException(error, 'peer');
+    }
+  }
+
+  /**
+   * Subscribe a peer to specific tracks from another peer - this will make only the specified tracks from the publisher available to the subscriber.
+   */
+  async subscribeTracks(roomId: RoomId, subscriberPeerId: PeerId, tracks: TrackId[]): Promise<void> {
+    try {
+      await this.roomApi.subscribeTracks(roomId, subscriberPeerId, { track_ids: tracks });
     } catch (error) {
       throw mapException(error, 'peer');
     }

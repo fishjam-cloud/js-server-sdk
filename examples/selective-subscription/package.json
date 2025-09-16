@@ -1,0 +1,21 @@
+{
+  "name": "selective-subscription-demo",
+  "version": "0.21.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write .",
+    "dev": "bun run --watch src/index.ts"
+  },
+  "dependencies": {
+    "@fishjam-cloud/js-server-sdk": "workspace:*",
+    "@grotto/logysia": "^0.1.6",
+    "bun": "^1.2.20",
+    "elysia": "latest"
+  },
+  "devDependencies": {
+    "@types/bun": "^1",
+    "bun-types": "latest",
+    "prettier": "^3.6.2"
+  },
+  "module": "src/index.js"
+}
