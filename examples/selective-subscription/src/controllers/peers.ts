@@ -11,7 +11,7 @@ export const peerController = (fishjam: FishjamService) =>
       },
     )
     .post(
-      '/subscribe-peer',
+      '/subscribe_peer',
       async ({ query: { subId, prodId } }) => {
         await fishjam.subscribePeer(subId, prodId);
         return { status: 'ok' };
@@ -24,7 +24,7 @@ export const peerController = (fishjam: FishjamService) =>
       },
     )
     .post(
-      '/subscribe-tracks',
+      '/subscribe_tracks',
       async ({ query: { subId, tracks } }) => {
         await fishjam.subscribeTracks(subId, tracks.split(','));
         return { status: 'ok' };
