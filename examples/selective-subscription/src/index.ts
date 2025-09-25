@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia';
-import { peerController } from './controllers/peer';
-import { FishjamService } from './fishjam';
+import { peerController } from './controllers/peers';
+import { FishjamService } from './service/fishjam';
 
 if (!(process.env.FISHJAM_ID || process.env.FISHJAM_URL) || !process.env.FISHJAM_TOKEN) {
   throw Error('Environment variables FISHJAM_ID, FISHJAM_TOKEN are required.');

@@ -39,6 +39,6 @@ export class FishjamService {
 
   private async makePeer() {
     if (!this.roomId) await this.makeRoom();
-    return this.fishjam.createPeer(this.roomId!, { subscribe: { audioSampleRate: 16000 } });
+    return this.fishjam.createPeer(this.roomId!);
   }
 }

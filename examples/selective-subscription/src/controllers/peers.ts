@@ -3,15 +3,15 @@ import { FishjamService } from '../fishjam';
 
 export const peerController = (fishjam: FishjamService) =>
   new Elysia()
-    .post(
+    .get(
       '/peers',
       async () => {
         const { peer, peerToken } = await fishjam.createPeer();
-        return { peerId: peer.id, peerToken };
+        return { token: peerToken };
       },
     )
     .post(
-      '/subscribe_peer',
+      '/subscribe-peer',
       async ({ query: { subId, prodId } }) => {
         await fishjam.subscribePeer(subId, prodId);
         return { status: 'ok' };
