@@ -1,5 +1,5 @@
 import { Elysia, t } from 'elysia';
-import { FishjamService } from '../fishjam';
+import { FishjamService } from '../service/fishjam';
 
 export const peerController = (fishjam: FishjamService) =>
   new Elysia()
