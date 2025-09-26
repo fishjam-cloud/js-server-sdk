@@ -32,7 +32,7 @@ API
   - Create a new peer in a room configured for manual subscription.
   - Example:
      ```bash
-     curl -X POST http://localhost:3000/peers
+     curl http://localhost:3000/peers
      ```
   - Response: JSON containing the created peer ID and a peer token.
 

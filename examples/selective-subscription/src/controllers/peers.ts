@@ -7,7 +7,7 @@ export const peerController = (fishjam: FishjamService) =>
       '/peers',
       async () => {
         const { peer, peerToken } = await fishjam.createPeer();
-        return { token: peerToken };
+        return { peerId: peer.id, token: peerToken };
       },
     )
     .post(

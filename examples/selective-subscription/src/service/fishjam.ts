@@ -77,13 +77,6 @@ export class FishjamService {
     return peer;
   }
 
-  private async makeAgent() {
-    if (!this.roomId) await this.makeRoom();
-    const { agent, peer } = await this.fishjam.createAgent(this.roomId!);
-    console.log('Agent created', { peerId: peer.id });
-    return { agent, peer };
-  }
-
   private handlePeerConnected(message: any) {
     const {roomId, peerId, peerType} = message
     console.log('Peer connected', {peerId: peerId});
