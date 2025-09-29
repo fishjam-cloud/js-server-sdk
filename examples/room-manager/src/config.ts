@@ -29,7 +29,6 @@ export const configSchema = {
     },
     FISHJAM_ID: {
       type: 'string',
-      required: true,
     },
     FISHJAM_MANAGEMENT_TOKEN: {
       type: 'string',
