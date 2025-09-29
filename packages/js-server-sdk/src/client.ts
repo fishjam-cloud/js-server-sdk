@@ -155,6 +155,7 @@ export class FishjamClient {
 
   /**
    * Subscribe a peer to another peer - this will make all tracks from the publisher available to the subscriber.
+   * Using this function only makes sense if subscribeMode is set to manual
    */
   async subscribePeer(roomId: RoomId, subscriberPeerId: PeerId, publisherPeerId: PeerId): Promise<void> {
     try {
@@ -166,6 +167,7 @@ export class FishjamClient {
 
   /**
    * Subscribe a peer to specific tracks from another peer - this will make only the specified tracks from the publisher available to the subscriber.
+   * Using this function only makes sense if subscribeMode is set to manual
    */
   async subscribeTracks(roomId: RoomId, subscriberPeerId: PeerId, tracks: TrackId[]): Promise<void> {
     try {
