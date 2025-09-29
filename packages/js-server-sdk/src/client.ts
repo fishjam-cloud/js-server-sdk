@@ -22,7 +22,7 @@ export class FishjamClient {
    * Example usage:
    * ```
    * const fishjamClient = new FishjamClient({
-   *   fishjamUrl: fastify.config.FISHJAM_URL,
+   *   fishjamId: fastify.config.FISHJAM_ID,
    *   managementToken: fastify.config.FISHJAM_MANAGEMENT_TOKEN,
    * });
    * ```

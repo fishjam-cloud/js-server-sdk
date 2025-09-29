@@ -30,11 +30,7 @@ export type FishjamConfig = {
    * Fishjam ID is a unique identifier for your account and environment.
    * Visit https://fishjam.io/app/ to get your Fishjam ID.
    */
-  fishjamId?: string;
-  /*
-   * @deprecated
-   */
-  fishjamUrl?: string;
+  fishjamId: string;
   /*
    * Management token is a secret token authorizing to perform actions on your account.
    * Never share this token with anyone.
