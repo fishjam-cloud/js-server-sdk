@@ -33,7 +33,6 @@ export const configSchema = {
     },
     FISHJAM_MANAGEMENT_TOKEN: {
       type: 'string',
-      default: undefined,
     },
     ROOM_VIDEO_CODEC: {
       type: 'string',
