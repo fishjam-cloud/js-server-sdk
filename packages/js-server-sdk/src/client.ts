@@ -7,7 +7,7 @@ import { FishjamAgent, TrackId } from './agent';
 
 /**
  * Client class that allows to manage Rooms and Peers for a Fishjam App.
- * It requires the Fishjam URL and management token that can be retrieved from the Fishjam Dashboard.
+ * It requires the Fishjam ID and management token that can be retrieved from the Fishjam Dashboard.
  * @category Client
  */
 export class FishjamClient {
