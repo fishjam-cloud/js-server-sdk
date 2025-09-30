@@ -4,12 +4,18 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write .",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:both": "concurrently \"yarn dev\" \"cd frontend && npm run dev\"",
+    "build:frontend": "cd frontend && npm run build",
+    "install:frontend": "cd frontend && npm install"
   },
   "dependencies": {
+    "@elysiajs/cors": "^1.4.0",
     "@fishjam-cloud/js-server-sdk": "workspace:*",
     "@grotto/logysia": "^0.1.6",
     "bun": "^1.2.20",
+    "concurrently": "^9.2.1",
     "elysia": "latest"
   },
   "devDependencies": {

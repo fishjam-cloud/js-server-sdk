@@ -3,36 +3,19 @@ import { FishjamService } from '../service/fishjam';
 
 export const peerController = (fishjam: FishjamService) =>
   new Elysia()
-    .get(
-      '/peers',
-      async () => {
-        const { peer, peerToken } = await fishjam.createPeer();
-        return { peerId: peer.id, token: peerToken };
-      },
-    )
-    .post(
-      '/subscribe_peer',
-      async ({ query: { subId, prodId } }) => {
-        await fishjam.subscribePeer(subId, prodId);
-        return { status: 'ok' };
-      },
-      {
-        query: t.Object({
-          subId: t.String(),
-          prodId: t.String(),
-        }),
-      },
-    )
-    .post(
-      '/subscribe_tracks',
-      async ({ query: { subId, tracks } }) => {
-        await fishjam.subscribeTracks(subId, tracks.split(','));
-        return { status: 'ok' };
-      },
-      {
-        query: t.Object({
-          subId: t.String(),
-          tracks: t.String(),
-        }),
-      },
-    );
+    .get('/peers', async () => {
+      const { peer, peerToken } = await fishjam.createPeer();
+      return { peerId: peer.id, token: peerToken };
+    })
+    .post('/subscribe_peer', async ({ query: { subId, prodId } }) => {
+      await fishjam.subscribePeer(subId, prodId);
+      return { status: 'ok' };
+    }, {
+      query: t.Object({ subId: t.String(), prodId: t.String() })
+    })
+    .post('/subscribe_tracks', async ({ query: { subId, tracks } }) => {
+      await fishjam.subscribeTracks(subId, tracks.split(','));
+      return { status: 'ok' };
+    }, {
+      query: t.Object({ subId: t.String(), tracks: t.String() })
+    });

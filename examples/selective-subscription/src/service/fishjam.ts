@@ -1,23 +1,19 @@
 
 import { FishjamClient, FishjamConfig, FishjamWSNotifier, RoomId, PeerId, TrackId, RoomNotFoundException } from '@fishjam-cloud/js-server-sdk';
 
-export class FishjamService {
+export class FishjamService extends EventTarget {
   roomId?: RoomId;
   fishjam: FishjamClient;
 
   constructor(config: FishjamConfig) {
+    super();
     this.fishjam = new FishjamClient(config);
-    const notifier = new FishjamWSNotifier(
-      config,
-      (error) => console.log('WebSocket error', { error }),
-      (code, reason) => console.log('WebSocket closed', { code, reason })
-    );
+    const notifier = new FishjamWSNotifier(config, () => {}, () => {});
 
-    notifier.on('peerConnected', (msg) => this.handlePeerConnected(msg));
-    notifier.on('peerDisconnected', (msg) => this.handlePeerDisconnected(msg));
-
-    notifier.on('trackAdded', (msg) => this.handleTrackAdded(msg));
-    notifier.on('trackRemoved', (msg) => this.handleTrackRemoved(msg));
+    notifier.on('peerConnected', (msg) => this.emit('peerConnected', msg));
+    notifier.on('peerDisconnected', (msg) => this.emit('peerDisconnected', msg));
+    notifier.on('trackAdded', (msg) => this.emit('trackAdded', msg));
+    notifier.on('trackRemoved', (msg) => this.emit('trackRemoved', msg));
   }
 
   async createPeer() {
@@ -32,68 +28,28 @@ export class FishjamService {
     }
   }
 
-  async createAgent() {
-    try {
-      return await this.makePeer();
-    } catch (e) {
-      if (e instanceof RoomNotFoundException) {
-        await this.makeRoom();
-        return this.makePeer();
-      }
-      throw e;
-    }
-  }
-
   async subscribePeer(subscriberId: string, producerId: string) {
-    try {
-      console.log('Subscribe peer', { subscriberId, producerId });
-      return await this.fishjam.subscribePeer(this.roomId!, subscriberId as PeerId, producerId as PeerId);
-    } catch (e) {
-      console.log('Subscribe peer error', { error: e });
-      throw e;
-    }
+    return await this.fishjam.subscribePeer(this.roomId!, subscriberId as PeerId, producerId as PeerId);
   }
 
   async subscribeTracks(subscriberId: string, tracks: string[]) {
-    try {
-      console.log('Subscribe tracks', { subscriberId, tracks });
-      return await this.fishjam.subscribeTracks(this.roomId!, subscriberId as PeerId, tracks as TrackId[]);
-    } catch (e) {
-      console.log('Subscribe tracks error', { error: e });
-      throw e;
-    }
+    return await this.fishjam.subscribeTracks(this.roomId!, subscriberId as PeerId, tracks as TrackId[]);
   }
 
   private async makeRoom() {
     const { id: roomId } = await this.fishjam.createRoom();
     this.roomId = roomId;
-    console.log('Room created', { roomId });
   }
 
   private async makePeer() {
     if (!this.roomId) await this.makeRoom();
-    const peer = await this.fishjam.createPeer(this.roomId!, { subscribeMode: "manual"});
-    console.log('Peer created', { peerId: peer.peer.id });
-    return peer;
+    return await this.fishjam.createPeer(this.roomId!, { subscribeMode: "manual" });
   }
 
-  private handlePeerConnected(message: any) {
-    const {roomId, peerId, peerType} = message
-    console.log('Peer connected', {peerId: peerId});
-  }
-
-  private handlePeerDisconnected(message: any) {
-    const {roomId, peerId, peerType} = message
-    console.log('Peer disconnected', {peerId: peerId});
-  }
-
-  private handleTrackAdded(message: any) {
-    const {roomId, peerId, componentId, track} = message
-    console.log('Track added', {trackId: track.id, metadata: track.metadata});
-  }
-
-  private handleTrackRemoved(message: any) {
-    const {roomId, peerId, componentId, track} = message
-    console.log('Track removed', {trackId: track.id, metadata: track.metadata});
+  private emit(type: string, data: any) {
+    const event = new CustomEvent('notification', {
+      detail: { type, data, timestamp: new Date().toISOString() }
+    });
+    this.dispatchEvent(event);
   }
 }

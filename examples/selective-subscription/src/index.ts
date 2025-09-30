@@ -1,19 +1,19 @@
 import { Elysia } from 'elysia';
+import { cors } from '@elysiajs/cors';
 import { peerController } from './controllers/peers';
+import { notificationsController } from './controllers/notifications';
 import { FishjamService } from './service/fishjam';
 
-if (!(process.env.FISHJAM_ID || process.env.FISHJAM_URL) || !process.env.FISHJAM_TOKEN) {
-  throw Error('Environment variables FISHJAM_ID, FISHJAM_TOKEN are required.');
-}
+const fishjam = new FishjamService({
+  fishjamUrl: process.env.FISHJAM_URL!,
+  fishjamId: process.env.FISHJAM_ID!,
+  managementToken: process.env.FISHJAM_TOKEN!,
+});
 
-const fishjamConfig = {
-  fishjamUrl: process.env.FISHJAM_URL,
-  fishjamId: process.env.FISHJAM_ID,
-  managementToken: process.env.FISHJAM_TOKEN,
-};
+new Elysia()
+  .use(cors())
+  .use(peerController(fishjam))
+  .use(notificationsController(fishjam))
+  .listen({ port: 3000, idleTimeout: 60 });
 
-const fishjam = new FishjamService(fishjamConfig);
-
-const app = new Elysia().use(peerController(fishjam)).listen(3000);
-
-console.log(`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`);
+console.log('🦊 Elysia is running at localhost:3000');

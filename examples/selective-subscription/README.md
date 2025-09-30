@@ -1,15 +1,20 @@
 # Selective subscription with Fishjam
 
-A minimal example demonstrating Fishjam's selective subscription flow. The example runs a small server that creates peers (manual subscription mode) and lets you subscribe one peer to another peer’s tracks — either all tracks or only specific tracks.
+A complete example demonstrating Fishjam's selective subscription flow with both a backend API and a React frontend dashboard. The example includes a server that creates peers (manual subscription mode) and lets you subscribe one peer to another peer's tracks — either all tracks or only specific tracks.
 
-Setup
+## Setup
 
 1. Install dependencies:
     ```bash
     yarn
     ```
 
-2. Copy and configure the environment:
+2. Install frontend dependencies:
+    ```bash
+    yarn install:frontend
+    ```
+
+3. Copy and configure the environment:
     ```bash
     cp .env.example .env
     ```
@@ -19,14 +24,33 @@ Setup
     FISHJAM_TOKEN=your_fishjam_management_token
     ```
 
-3. Start the dev server:
-    ```bash
-    yarn dev
-    ```
+### Start both backend and frontend:
+```bash
+yarn dev:both
+```
 
-The server logs Fishjam notifications (peer IDs and track IDs) — use those values with the API endpoints below.
+### Or run them separately:
 
-API
+**Backend only:**
+```bash
+yarn dev
+```
+
+**Frontend only:**
+```bash
+yarn dev:frontend
+```
+
+### Access:
+Open `http://localhost:5173` (or the displayed port) in your browser after running `yarn dev:both`
+
+## Client integration
+- You can connect peers using the fishjam minimal-react example:
+  https://github.com/fishjam-cloud/web-client-sdk/tree/main/examples/react-client
+- Pass the peer token returned when creating a peer as the peer's token in the client.
+
+
+BACKEND API
 
 - POST /peers
   - Create a new peer in a room configured for manual subscription.
@@ -57,7 +81,3 @@ Notes
 - Replace SUBSCRIBER_ID, PRODUCER_ID, and TRACK_ID with values emitted in the server logs (Fishjam notifications).
 - Endpoints return JSON with status and errors. Check server logs for detailed Fishjam request/response traces.
 
-Client integration
-- You can connect peers using the fishjam minimal-react example:
-  https://github.com/fishjam-cloud/web-client-sdk/tree/main/examples/react-client
-- Pass the peer token returned when creating a peer as the peer's token in the client.
