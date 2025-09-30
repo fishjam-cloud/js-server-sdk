@@ -83,10 +83,16 @@ export interface Peer {
     'status': PeerStatus;
     /**
      * 
-     * @type {SubscribeOptions}
+     * @type {SubscribeMode}
      * @memberof Peer
      */
-    'subscribe': SubscribeOptions | null;
+    'subscribeMode': SubscribeMode;
+    /**
+     * Describes peer\'s subscriptions in manual mode
+     * @type {Array<string>}
+     * @memberof Peer
+     */
+    'subscriptions': Array<string>;
     /**
      * List of all peer\'s tracks
      * @type {Array<Track>}
@@ -145,7 +151,66 @@ export interface PeerDetailsResponseData {
  * Peer-specific options
  * @export
  */
-export type PeerOptions = PeerOptionsWebRTC | object;
+export type PeerOptions = PeerOptionsAgent | PeerOptionsWebRTC;
+
+/**
+ * Options specific to the Agent peer
+ * @export
+ * @interface PeerOptionsAgent
+ */
+export interface PeerOptionsAgent {
+    /**
+     * 
+     * @type {PeerOptionsAgentOutput}
+     * @memberof PeerOptionsAgent
+     */
+    'output'?: PeerOptionsAgentOutput;
+    /**
+     * Configuration of peer\'s subscribing policy
+     * @type {string}
+     * @memberof PeerOptionsAgent
+     */
+    'subscribeMode'?: PeerOptionsAgentSubscribeModeEnum;
+}
+
+export const PeerOptionsAgentSubscribeModeEnum = {
+    Auto: 'auto',
+    Manual: 'manual'
+} as const;
+
+export type PeerOptionsAgentSubscribeModeEnum = typeof PeerOptionsAgentSubscribeModeEnum[keyof typeof PeerOptionsAgentSubscribeModeEnum];
+
+/**
+ * Output audio options
+ * @export
+ * @interface PeerOptionsAgentOutput
+ */
+export interface PeerOptionsAgentOutput {
+    /**
+     * The format of the output audio
+     * @type {string}
+     * @memberof PeerOptionsAgentOutput
+     */
+    'audioFormat'?: PeerOptionsAgentOutputAudioFormatEnum;
+    /**
+     * The sample rate of the output audio
+     * @type {number}
+     * @memberof PeerOptionsAgentOutput
+     */
+    'audioSampleRate'?: PeerOptionsAgentOutputAudioSampleRateEnum;
+}
+
+export const PeerOptionsAgentOutputAudioFormatEnum = {
+    Pcm16: 'pcm16'
+} as const;
+
+export type PeerOptionsAgentOutputAudioFormatEnum = typeof PeerOptionsAgentOutputAudioFormatEnum[keyof typeof PeerOptionsAgentOutputAudioFormatEnum];
+export const PeerOptionsAgentOutputAudioSampleRateEnum = {
+    NUMBER_16000: 16000,
+    NUMBER_24000: 24000
+} as const;
+
+export type PeerOptionsAgentOutputAudioSampleRateEnum = typeof PeerOptionsAgentOutputAudioSampleRateEnum[keyof typeof PeerOptionsAgentOutputAudioSampleRateEnum];
 
 /**
  * Options specific to the WebRTC peer
@@ -166,12 +231,20 @@ export interface PeerOptionsWebRTC {
      */
     'metadata'?: { [key: string]: any; };
     /**
-     * 
-     * @type {SubscribeOptions1}
+     * Configuration of peer\'s subscribing policy
+     * @type {string}
      * @memberof PeerOptionsWebRTC
      */
-    'subscribe'?: SubscribeOptions1 | null;
+    'subscribeMode'?: PeerOptionsWebRTCSubscribeModeEnum;
 }
+
+export const PeerOptionsWebRTCSubscribeModeEnum = {
+    Auto: 'auto',
+    Manual: 'manual'
+} as const;
+
+export type PeerOptionsWebRTCSubscribeModeEnum = typeof PeerOptionsWebRTCSubscribeModeEnum[keyof typeof PeerOptionsWebRTCSubscribeModeEnum];
+
 /**
  * Response containing new peer token
  * @export
@@ -364,6 +437,95 @@ export interface RoomsListingResponse {
     'data': Array<Room>;
 }
 /**
+ * Describes stream status
+ * @export
+ * @interface Stream
+ */
+export interface Stream {
+    /**
+     * True if stream is restricted to audio only
+     * @type {boolean}
+     * @memberof Stream
+     */
+    'audioOnly'?: boolean;
+    /**
+     * Assigned stream id
+     * @type {string}
+     * @memberof Stream
+     */
+    'id': string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Stream
+     */
+    'public': boolean;
+    /**
+     * List of all streamers
+     * @type {Array<Streamer>}
+     * @memberof Stream
+     */
+    'streamers': Array<Streamer>;
+    /**
+     * List of all viewers
+     * @type {Array<Viewer>}
+     * @memberof Stream
+     */
+    'viewers': Array<Viewer>;
+}
+/**
+ * Stream configuration
+ * @export
+ * @interface StreamConfig
+ */
+export interface StreamConfig {
+    /**
+     * Restrics stream to audio only
+     * @type {boolean}
+     * @memberof StreamConfig
+     */
+    'audioOnly'?: boolean | null;
+    /**
+     * True if livestream viewers can omit specifying a token.
+     * @type {boolean}
+     * @memberof StreamConfig
+     */
+    'public'?: boolean;
+}
+/**
+ * Describes streamer status
+ * @export
+ * @interface Streamer
+ */
+export interface Streamer {
+    /**
+     * Assigned streamer id
+     * @type {string}
+     * @memberof Streamer
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Streamer
+     */
+    'status': StreamerStatusEnum;
+    /**
+     * 
+     * @type {StreamerToken}
+     * @memberof Streamer
+     */
+    'token': StreamerToken;
+}
+
+export const StreamerStatusEnum = {
+    Connected: 'connected',
+    Disconnected: 'disconnected'
+} as const;
+
+export type StreamerStatusEnum = typeof StreamerStatusEnum[keyof typeof StreamerStatusEnum];
+
+/**
  * Token for authorizing broadcaster streamer connection
  * @export
  * @interface StreamerToken
@@ -377,77 +539,53 @@ export interface StreamerToken {
     'token': string;
 }
 /**
- * Configuration of server-side subscriptions to the peer\'s tracks
+ * Response containing list of all streams
  * @export
- * @interface SubscribeOptions
+ * @interface StreamsListingResponse
  */
-export interface SubscribeOptions {
+export interface StreamsListingResponse {
     /**
-     * The format of the output audio
-     * @type {string}
-     * @memberof SubscribeOptions
+     * 
+     * @type {Array<Stream>}
+     * @memberof StreamsListingResponse
      */
-    'audioFormat'?: SubscribeOptionsAudioFormatEnum;
-    /**
-     * The sample rate of the output audio
-     * @type {number}
-     * @memberof SubscribeOptions
-     */
-    'audioSampleRate'?: SubscribeOptionsAudioSampleRateEnum;
+    'data': Array<Stream>;
 }
+/**
+ * Configuration of peer\'s subscribing policy
+ * @export
+ * @enum {string}
+ */
 
-export const SubscribeOptionsAudioFormatEnum = {
-    Pcm16: 'pcm16'
+export const SubscribeMode = {
+    Auto: 'auto',
+    Manual: 'manual'
 } as const;
 
-export type SubscribeOptionsAudioFormatEnum = typeof SubscribeOptionsAudioFormatEnum[keyof typeof SubscribeOptionsAudioFormatEnum];
-export const SubscribeOptionsAudioSampleRateEnum = {
-    NUMBER_16000: 16000,
-    NUMBER_24000: 24000
-} as const;
+export type SubscribeMode = typeof SubscribeMode[keyof typeof SubscribeMode];
 
-export type SubscribeOptionsAudioSampleRateEnum = typeof SubscribeOptionsAudioSampleRateEnum[keyof typeof SubscribeOptionsAudioSampleRateEnum];
 
 /**
- * Configuration of server-side subscriptions to the peer\'s tracks
+ * 
  * @export
- * @interface SubscribeOptions1
+ * @interface SubscribeTracksRequest
  */
-export interface SubscribeOptions1 {
+export interface SubscribeTracksRequest {
     /**
-     * The format of the output audio
-     * @type {string}
-     * @memberof SubscribeOptions1
+     * List of track IDs to subscribe to
+     * @type {Array<string>}
+     * @memberof SubscribeTracksRequest
      */
-    'audioFormat'?: SubscribeOptions1AudioFormatEnum;
-    /**
-     * The sample rate of the output audio
-     * @type {number}
-     * @memberof SubscribeOptions1
-     */
-    'audioSampleRate'?: SubscribeOptions1AudioSampleRateEnum;
+    'track_ids': Array<string>;
 }
-
-export const SubscribeOptions1AudioFormatEnum = {
-    Pcm16: 'pcm16'
-} as const;
-
-export type SubscribeOptions1AudioFormatEnum = typeof SubscribeOptions1AudioFormatEnum[keyof typeof SubscribeOptions1AudioFormatEnum];
-export const SubscribeOptions1AudioSampleRateEnum = {
-    NUMBER_16000: 16000,
-    NUMBER_24000: 24000
-} as const;
-
-export type SubscribeOptions1AudioSampleRateEnum = typeof SubscribeOptions1AudioSampleRateEnum[keyof typeof SubscribeOptions1AudioSampleRateEnum];
-
 /**
- * Describes media track of a Peer or Component
+ * Describes media track of a Peer
  * @export
  * @interface Track
  */
 export interface Track {
     /**
-     * 
+     * Assigned track id
      * @type {string}
      * @memberof Track
      */
@@ -472,6 +610,39 @@ export const TrackTypeEnum = {
 } as const;
 
 export type TrackTypeEnum = typeof TrackTypeEnum[keyof typeof TrackTypeEnum];
+
+/**
+ * Describes viewer status
+ * @export
+ * @interface Viewer
+ */
+export interface Viewer {
+    /**
+     * Assigned viewer id
+     * @type {string}
+     * @memberof Viewer
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Viewer
+     */
+    'status': ViewerStatusEnum;
+    /**
+     * 
+     * @type {ViewerToken}
+     * @memberof Viewer
+     */
+    'token': ViewerToken;
+}
+
+export const ViewerStatusEnum = {
+    Connected: 'connected',
+    Disconnected: 'disconnected'
+} as const;
+
+export type ViewerStatusEnum = typeof ViewerStatusEnum[keyof typeof ViewerStatusEnum];
 
 /**
  * Token for authorizing broadcaster viewer connection
@@ -767,6 +938,99 @@ export const RoomApiAxiosParamCreator = function (configuration?: Configuration)
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary Subscribe peer to another peer\'s tracks
+         * @param {string} roomId Room id
+         * @param {string} id Peer id
+         * @param {string} [peerId] ID of the peer that produces the track
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        subscribePeer: async (roomId: string, id: string, peerId?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'roomId' is not null or undefined
+            assertParamExists('subscribePeer', 'roomId', roomId)
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('subscribePeer', 'id', id)
+            const localVarPath = `/room/{room_id}/peer/{id}/subscribe_peer`
+                .replace(`{${"room_id"}}`, encodeURIComponent(String(roomId)))
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication authorization required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (peerId !== undefined) {
+                localVarQueryParameter['peer_id'] = peerId;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Subscribe peer to specific tracks
+         * @param {string} roomId Room id
+         * @param {string} id Peer id
+         * @param {SubscribeTracksRequest} [subscribeTracksRequest] Track IDs
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        subscribeTracks: async (roomId: string, id: string, subscribeTracksRequest?: SubscribeTracksRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'roomId' is not null or undefined
+            assertParamExists('subscribeTracks', 'roomId', roomId)
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('subscribeTracks', 'id', id)
+            const localVarPath = `/room/{room_id}/peer/{id}/subscribe_tracks`
+                .replace(`{${"room_id"}}`, encodeURIComponent(String(roomId)))
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication authorization required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(subscribeTracksRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -870,6 +1134,36 @@ export const RoomApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['RoomApi.refreshToken']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @summary Subscribe peer to another peer\'s tracks
+         * @param {string} roomId Room id
+         * @param {string} id Peer id
+         * @param {string} [peerId] ID of the peer that produces the track
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async subscribePeer(roomId: string, id: string, peerId?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.subscribePeer(roomId, id, peerId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['RoomApi.subscribePeer']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Subscribe peer to specific tracks
+         * @param {string} roomId Room id
+         * @param {string} id Peer id
+         * @param {SubscribeTracksRequest} [subscribeTracksRequest] Track IDs
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async subscribeTracks(roomId: string, id: string, subscribeTracksRequest?: SubscribeTracksRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.subscribeTracks(roomId, id, subscribeTracksRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['RoomApi.subscribeTracks']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -951,6 +1245,30 @@ export const RoomApiFactory = function (configuration?: Configuration, basePath?
          */
         refreshToken(roomId: string, id: string, options?: any): AxiosPromise<PeerRefreshTokenResponse> {
             return localVarFp.refreshToken(roomId, id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Subscribe peer to another peer\'s tracks
+         * @param {string} roomId Room id
+         * @param {string} id Peer id
+         * @param {string} [peerId] ID of the peer that produces the track
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        subscribePeer(roomId: string, id: string, peerId?: string, options?: any): AxiosPromise<void> {
+            return localVarFp.subscribePeer(roomId, id, peerId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Subscribe peer to specific tracks
+         * @param {string} roomId Room id
+         * @param {string} id Peer id
+         * @param {SubscribeTracksRequest} [subscribeTracksRequest] Track IDs
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        subscribeTracks(roomId: string, id: string, subscribeTracksRequest?: SubscribeTracksRequest, options?: any): AxiosPromise<void> {
+            return localVarFp.subscribeTracks(roomId, id, subscribeTracksRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1047,6 +1365,358 @@ export class RoomApi extends BaseAPI {
     public refreshToken(roomId: string, id: string, options?: RawAxiosRequestConfig) {
         return RoomApiFp(this.configuration).refreshToken(roomId, id, options).then((request) => request(this.axios, this.basePath));
     }
+
+    /**
+     * 
+     * @summary Subscribe peer to another peer\'s tracks
+     * @param {string} roomId Room id
+     * @param {string} id Peer id
+     * @param {string} [peerId] ID of the peer that produces the track
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RoomApi
+     */
+    public subscribePeer(roomId: string, id: string, peerId?: string, options?: RawAxiosRequestConfig) {
+        return RoomApiFp(this.configuration).subscribePeer(roomId, id, peerId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Subscribe peer to specific tracks
+     * @param {string} roomId Room id
+     * @param {string} id Peer id
+     * @param {SubscribeTracksRequest} [subscribeTracksRequest] Track IDs
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RoomApi
+     */
+    public subscribeTracks(roomId: string, id: string, subscribeTracksRequest?: SubscribeTracksRequest, options?: RawAxiosRequestConfig) {
+        return RoomApiFp(this.configuration).subscribeTracks(roomId, id, subscribeTracksRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * StreamApi - axios parameter creator
+ * @export
+ */
+export const StreamApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Creates stream
+         * @param {StreamConfig} [streamConfig] Stream configuration
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createStream: async (streamConfig?: StreamConfig, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/livestream`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication authorization required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(streamConfig, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Deletes stream
+         * @param {string} streamId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteStream: async (streamId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'streamId' is not null or undefined
+            assertParamExists('deleteStream', 'streamId', streamId)
+            const localVarPath = `/livestream/{stream_id}`
+                .replace(`{${"stream_id"}}`, encodeURIComponent(String(streamId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication authorization required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Show information about all streams
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllStreams: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/livestream`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication authorization required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Shows information about the stream
+         * @param {string} streamId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getStream: async (streamId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'streamId' is not null or undefined
+            assertParamExists('getStream', 'streamId', streamId)
+            const localVarPath = `/livestream/{stream_id}`
+                .replace(`{${"stream_id"}}`, encodeURIComponent(String(streamId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication authorization required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * StreamApi - functional programming interface
+ * @export
+ */
+export const StreamApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = StreamApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Creates stream
+         * @param {StreamConfig} [streamConfig] Stream configuration
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createStream(streamConfig?: StreamConfig, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Stream>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createStream(streamConfig, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['StreamApi.createStream']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Deletes stream
+         * @param {string} streamId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteStream(streamId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteStream(streamId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['StreamApi.deleteStream']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Show information about all streams
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAllStreams(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StreamsListingResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllStreams(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['StreamApi.getAllStreams']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Shows information about the stream
+         * @param {string} streamId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getStream(streamId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Stream>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getStream(streamId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['StreamApi.getStream']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * StreamApi - factory interface
+ * @export
+ */
+export const StreamApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = StreamApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Creates stream
+         * @param {StreamConfig} [streamConfig] Stream configuration
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createStream(streamConfig?: StreamConfig, options?: any): AxiosPromise<Stream> {
+            return localVarFp.createStream(streamConfig, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Deletes stream
+         * @param {string} streamId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteStream(streamId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteStream(streamId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Show information about all streams
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllStreams(options?: any): AxiosPromise<StreamsListingResponse> {
+            return localVarFp.getAllStreams(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Shows information about the stream
+         * @param {string} streamId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getStream(streamId: string, options?: any): AxiosPromise<Stream> {
+            return localVarFp.getStream(streamId, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * StreamApi - object-oriented interface
+ * @export
+ * @class StreamApi
+ * @extends {BaseAPI}
+ */
+export class StreamApi extends BaseAPI {
+    /**
+     * 
+     * @summary Creates stream
+     * @param {StreamConfig} [streamConfig] Stream configuration
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StreamApi
+     */
+    public createStream(streamConfig?: StreamConfig, options?: RawAxiosRequestConfig) {
+        return StreamApiFp(this.configuration).createStream(streamConfig, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Deletes stream
+     * @param {string} streamId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StreamApi
+     */
+    public deleteStream(streamId: string, options?: RawAxiosRequestConfig) {
+        return StreamApiFp(this.configuration).deleteStream(streamId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Show information about all streams
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StreamApi
+     */
+    public getAllStreams(options?: RawAxiosRequestConfig) {
+        return StreamApiFp(this.configuration).getAllStreams(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Shows information about the stream
+     * @param {string} streamId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StreamApi
+     */
+    public getStream(streamId: string, options?: RawAxiosRequestConfig) {
+        return StreamApiFp(this.configuration).getStream(streamId, options).then((request) => request(this.axios, this.basePath));
+    }
 }
 
 
@@ -1057,6 +1727,86 @@ export class RoomApi extends BaseAPI {
  */
 export const StreamerApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * 
+         * @summary Creates streamer
+         * @param {string} streamId Stream id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createStreamer: async (streamId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'streamId' is not null or undefined
+            assertParamExists('createStreamer', 'streamId', streamId)
+            const localVarPath = `/livestream/{stream_id}/streamer`
+                .replace(`{${"stream_id"}}`, encodeURIComponent(String(streamId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication authorization required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Deletes streamer
+         * @param {string} streamId Stream id
+         * @param {string} streamerId Streamer id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteStreamer: async (streamId: string, streamerId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'streamId' is not null or undefined
+            assertParamExists('deleteStreamer', 'streamId', streamId)
+            // verify required parameter 'streamerId' is not null or undefined
+            assertParamExists('deleteStreamer', 'streamerId', streamerId)
+            const localVarPath = `/livestream/{stream_id}/streamer/{streamer_id}`
+                .replace(`{${"stream_id"}}`, encodeURIComponent(String(streamId)))
+                .replace(`{${"streamer_id"}}`, encodeURIComponent(String(streamerId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication authorization required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * 
          * @summary Generate a token that can be used by a streamer to start streaming
@@ -1080,6 +1830,10 @@ export const StreamerApiAxiosParamCreator = function (configuration?: Configurat
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication authorization required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -1101,6 +1855,33 @@ export const StreamerApiAxiosParamCreator = function (configuration?: Configurat
 export const StreamerApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = StreamerApiAxiosParamCreator(configuration)
     return {
+        /**
+         * 
+         * @summary Creates streamer
+         * @param {string} streamId Stream id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createStreamer(streamId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Streamer>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createStreamer(streamId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['StreamerApi.createStreamer']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Deletes streamer
+         * @param {string} streamId Stream id
+         * @param {string} streamerId Streamer id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteStreamer(streamId: string, streamerId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteStreamer(streamId, streamerId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['StreamerApi.deleteStreamer']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
         /**
          * 
          * @summary Generate a token that can be used by a streamer to start streaming
@@ -1126,6 +1907,27 @@ export const StreamerApiFactory = function (configuration?: Configuration, baseP
     return {
         /**
          * 
+         * @summary Creates streamer
+         * @param {string} streamId Stream id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createStreamer(streamId: string, options?: any): AxiosPromise<Streamer> {
+            return localVarFp.createStreamer(streamId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Deletes streamer
+         * @param {string} streamId Stream id
+         * @param {string} streamerId Streamer id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteStreamer(streamId: string, streamerId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteStreamer(streamId, streamerId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Generate a token that can be used by a streamer to start streaming
          * @param {string} roomId ID of the stream.
          * @param {*} [options] Override http request option.
@@ -1144,6 +1946,31 @@ export const StreamerApiFactory = function (configuration?: Configuration, baseP
  * @extends {BaseAPI}
  */
 export class StreamerApi extends BaseAPI {
+    /**
+     * 
+     * @summary Creates streamer
+     * @param {string} streamId Stream id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StreamerApi
+     */
+    public createStreamer(streamId: string, options?: RawAxiosRequestConfig) {
+        return StreamerApiFp(this.configuration).createStreamer(streamId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Deletes streamer
+     * @param {string} streamId Stream id
+     * @param {string} streamerId Streamer id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StreamerApi
+     */
+    public deleteStreamer(streamId: string, streamerId: string, options?: RawAxiosRequestConfig) {
+        return StreamerApiFp(this.configuration).deleteStreamer(streamId, streamerId, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @summary Generate a token that can be used by a streamer to start streaming
@@ -1167,6 +1994,86 @@ export const ViewerApiAxiosParamCreator = function (configuration?: Configuratio
     return {
         /**
          * 
+         * @summary Creates viewer
+         * @param {string} streamId Stream id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createViewer: async (streamId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'streamId' is not null or undefined
+            assertParamExists('createViewer', 'streamId', streamId)
+            const localVarPath = `/livestream/{stream_id}/viewer`
+                .replace(`{${"stream_id"}}`, encodeURIComponent(String(streamId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication authorization required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Deletes viewer
+         * @param {string} streamId Stream id
+         * @param {string} viewerId Viewer id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteViewer: async (streamId: string, viewerId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'streamId' is not null or undefined
+            assertParamExists('deleteViewer', 'streamId', streamId)
+            // verify required parameter 'viewerId' is not null or undefined
+            assertParamExists('deleteViewer', 'viewerId', viewerId)
+            const localVarPath = `/livestream/{stream_id}/viewer/{viewer_id}`
+                .replace(`{${"stream_id"}}`, encodeURIComponent(String(streamId)))
+                .replace(`{${"viewer_id"}}`, encodeURIComponent(String(viewerId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication authorization required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Generates token that a viewer can use to watch a livestream
          * @param {string} roomId ID of the stream.
          * @param {*} [options] Override http request option.
@@ -1187,6 +2094,10 @@ export const ViewerApiAxiosParamCreator = function (configuration?: Configuratio
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication authorization required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -1209,6 +2120,33 @@ export const ViewerApiAxiosParamCreator = function (configuration?: Configuratio
 export const ViewerApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = ViewerApiAxiosParamCreator(configuration)
     return {
+        /**
+         * 
+         * @summary Creates viewer
+         * @param {string} streamId Stream id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createViewer(streamId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Viewer>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createViewer(streamId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ViewerApi.createViewer']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Deletes viewer
+         * @param {string} streamId Stream id
+         * @param {string} viewerId Viewer id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteViewer(streamId: string, viewerId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteViewer(streamId, viewerId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ViewerApi.deleteViewer']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
         /**
          * 
          * @summary Generates token that a viewer can use to watch a livestream
@@ -1234,6 +2172,27 @@ export const ViewerApiFactory = function (configuration?: Configuration, basePat
     return {
         /**
          * 
+         * @summary Creates viewer
+         * @param {string} streamId Stream id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createViewer(streamId: string, options?: any): AxiosPromise<Viewer> {
+            return localVarFp.createViewer(streamId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Deletes viewer
+         * @param {string} streamId Stream id
+         * @param {string} viewerId Viewer id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteViewer(streamId: string, viewerId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteViewer(streamId, viewerId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Generates token that a viewer can use to watch a livestream
          * @param {string} roomId ID of the stream.
          * @param {*} [options] Override http request option.
@@ -1252,6 +2211,31 @@ export const ViewerApiFactory = function (configuration?: Configuration, basePat
  * @extends {BaseAPI}
  */
 export class ViewerApi extends BaseAPI {
+    /**
+     * 
+     * @summary Creates viewer
+     * @param {string} streamId Stream id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ViewerApi
+     */
+    public createViewer(streamId: string, options?: RawAxiosRequestConfig) {
+        return ViewerApiFp(this.configuration).createViewer(streamId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Deletes viewer
+     * @param {string} streamId Stream id
+     * @param {string} viewerId Viewer id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ViewerApi
+     */
+    public deleteViewer(streamId: string, viewerId: string, options?: RawAxiosRequestConfig) {
+        return ViewerApiFp(this.configuration).deleteViewer(streamId, viewerId, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @summary Generates token that a viewer can use to watch a livestream
