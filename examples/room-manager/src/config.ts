@@ -4,8 +4,7 @@ declare module 'fastify' {
       PORT: number;
       ENABLE_SIMULCAST: boolean;
       MAX_PEERS?: number;
-      FISHJAM_ID?: string;
-      FISHJAM_URL?: string;
+      FISHJAM_ID: string;
       FISHJAM_MANAGEMENT_TOKEN: string;
       ROOM_VIDEO_CODEC: string;
     };
@@ -14,7 +13,7 @@ declare module 'fastify' {
 
 export const configSchema = {
   type: 'object',
-  required: ['PORT', 'ENABLE_SIMULCAST', 'FISHJAM_MANAGEMENT_TOKEN'],
+  required: ['PORT', 'ENABLE_SIMULCAST', 'FISHJAM_ID', 'FISHJAM_MANAGEMENT_TOKEN'],
   properties: {
     PORT: {
       type: 'string',
@@ -30,15 +29,9 @@ export const configSchema = {
     },
     FISHJAM_ID: {
       type: 'string',
-      default: undefined,
-    },
-    FISHJAM_URL: {
-      type: 'string',
-      default: undefined,
     },
     FISHJAM_MANAGEMENT_TOKEN: {
       type: 'string',
-      default: undefined,
     },
     ROOM_VIDEO_CODEC: {
       type: 'string',
