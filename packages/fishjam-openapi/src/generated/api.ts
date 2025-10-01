@@ -367,7 +367,8 @@ export const RoomConfigRoomTypeEnum = {
     AudioOnly: 'audio_only',
     Broadcaster: 'broadcaster',
     Livestream: 'livestream',
-    Conference: 'conference'
+    Conference: 'conference',
+    AudioOnlyLivestream: 'audio_only_livestream'
 } as const;
 
 export type RoomConfigRoomTypeEnum = typeof RoomConfigRoomTypeEnum[keyof typeof RoomConfigRoomTypeEnum];
