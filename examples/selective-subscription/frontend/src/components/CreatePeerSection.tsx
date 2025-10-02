@@ -31,13 +31,16 @@ export const CreatePeerSection: React.FC<CreatePeerSectionProps> = ({ peers, onP
       <button onClick={createPeer} disabled={isCreating}>
         {isCreating ? 'Creating...' : 'Create New Peer'}
       </button>
-      
+
       <div style={{ marginTop: '20px' }}>
         <h4>Created Peers ({peers.length})</h4>
         {peers.map((peer) => (
-          <div key={peer.id} style={{ margin: '10px 0', padding: '10px', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
+          <div
+            key={peer.id}
+            style={{ margin: '10px 0', padding: '10px', backgroundColor: '#f9f9f9', borderRadius: '4px' }}
+          >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-              <strong>ID:</strong> 
+              <strong>ID:</strong>
               <code style={{ flex: 1 }}>{peer.id}</code>
               <button onClick={() => navigator.clipboard.writeText(peer.id)}>Copy</button>
             </div>

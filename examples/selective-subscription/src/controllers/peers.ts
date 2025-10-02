@@ -7,15 +7,23 @@ export const peerController = (fishjam: FishjamService) =>
       const { peer, peerToken } = await fishjam.createPeer();
       return { peerId: peer.id, token: peerToken };
     })
-    .post('/subscribe_peer', async ({ query: { subId, prodId } }) => {
-      await fishjam.subscribePeer(subId, prodId);
-      return { status: 'ok' };
-    }, {
-      query: t.Object({ subId: t.String(), prodId: t.String() })
-    })
-    .post('/subscribe_tracks', async ({ query: { subId, tracks } }) => {
-      await fishjam.subscribeTracks(subId, tracks.split(','));
-      return { status: 'ok' };
-    }, {
-      query: t.Object({ subId: t.String(), tracks: t.String() })
-    });
+    .post(
+      '/subscribe_peer',
+      async ({ query: { subId, prodId } }) => {
+        await fishjam.subscribePeer(subId, prodId);
+        return { status: 'ok' };
+      },
+      {
+        query: t.Object({ subId: t.String(), prodId: t.String() }),
+      }
+    )
+    .post(
+      '/subscribe_tracks',
+      async ({ query: { subId, tracks } }) => {
+        await fishjam.subscribeTracks(subId, tracks.split(','));
+        return { status: 'ok' };
+      },
+      {
+        query: t.Object({ subId: t.String(), tracks: t.String() }),
+      }
+    );

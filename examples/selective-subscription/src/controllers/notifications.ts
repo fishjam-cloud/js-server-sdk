@@ -6,7 +6,7 @@ export const notificationsController = (fishjam: FishjamService) =>
     set.headers = {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
+      Connection: 'keep-alive',
       'Access-Control-Allow-Origin': '*',
     };
 
@@ -41,6 +41,6 @@ export const notificationsController = (fishjam: FishjamService) =>
           clearInterval(heartbeat);
           fishjam.removeEventListener('notification', handleNotification as EventListener);
         };
-      }
+      },
     });
   });

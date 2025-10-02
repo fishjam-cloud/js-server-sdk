@@ -22,12 +22,15 @@ export const NotificationsSection: React.FC<NotificationsSectionProps> = ({ loca
       try {
         const notification = JSON.parse(event.data);
         if (notification.type !== 'heartbeat') {
-          setServerNotifications(prev => [{
-            id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-            type: notification.type,
-            timestamp: new Date(notification.timestamp),
-            data: notification.data
-          }, ...prev.slice(0, 19)]);
+          setServerNotifications((prev) => [
+            {
+              id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+              type: notification.type,
+              timestamp: new Date(notification.timestamp),
+              data: notification.data,
+            },
+            ...prev.slice(0, 19),
+          ]);
         }
       } catch {}
     };
@@ -41,9 +44,14 @@ export const NotificationsSection: React.FC<NotificationsSectionProps> = ({ loca
 
   const getIcon = (type: string) => {
     const icons: Record<string, string> = {
-      peerCreated: '✅', peerConnected: '✅', peerSubscribed: '🔗',
-      tracksSubscribed: '🔗', peerDisconnected: '❌', trackAdded: '🎥',
-      trackRemoved: '🗑️', subscriptionError: '⚠️'
+      peerCreated: '✅',
+      peerConnected: '✅',
+      peerSubscribed: '🔗',
+      tracksSubscribed: '🔗',
+      peerDisconnected: '❌',
+      trackAdded: '🎥',
+      trackRemoved: '🗑️',
+      subscriptionError: '⚠️',
     };
     return icons[type] || '📢';
   };
@@ -59,13 +67,24 @@ export const NotificationsSection: React.FC<NotificationsSectionProps> = ({ loca
           <p>No notifications yet</p>
         ) : (
           allNotifications.map((notification) => (
-            <div key={notification.id} style={{ margin: '10px 0', padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
+            <div
+              key={notification.id}
+              style={{ margin: '10px 0', padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '4px' }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px', fontWeight: 'bold' }}>
                 <span style={{ marginRight: '8px' }}>{getIcon(notification.type)}</span>
                 <span style={{ flex: 1 }}>{notification.type}</span>
                 <span style={{ fontSize: '12px' }}>{notification.timestamp.toLocaleTimeString()}</span>
               </div>
-              <pre style={{ fontSize: '12px', margin: 0, backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '4px' }}>
+              <pre
+                style={{
+                  fontSize: '12px',
+                  margin: 0,
+                  backgroundColor: '#f0f0f0',
+                  padding: '10px',
+                  borderRadius: '4px',
+                }}
+              >
                 {JSON.stringify(notification.data, null, 2)}
               </pre>
             </div>
