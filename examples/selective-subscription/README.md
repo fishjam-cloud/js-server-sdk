@@ -6,30 +6,30 @@ A complete example demonstrating Fishjam's selective subscription flow with both
 
 1. Install dependencies:
 
-    ```bash
-    yarn
-    ```
+   ```bash
+   yarn
+   ```
 
 2. Install frontend dependencies:
 
-    ```bash
-    yarn install:frontend
-    ```
+   ```bash
+   yarn install:frontend
+   ```
 
 3. Copy and configure the environment:
 
-    ```bash
-    cp .env.example .env
-    ```
+   ```bash
+   cp .env.example .env
+   ```
 
-    Set the following in `.env`:
+   Set the following in `.env`:
 
-    ```
-    FISHJAM_ID=your_fishjam_id
-    FISHJAM_TOKEN=your_fishjam_management_token
-    ```
+   ```
+   FISHJAM_ID=your_fishjam_id
+   FISHJAM_TOKEN=your_fishjam_management_token
+   ```
 
-    fishjam_id and fishjam_management_token can be found at your <https://fishjam.io> dashboard
+   fishjam_id and fishjam_management_token can be found at your <https://fishjam.io> dashboard
 
 ### Start both backend and frontend
 
@@ -67,9 +67,9 @@ BACKEND API
   - Create a new peer in a room configured for manual subscription.
   - Example:
 
-     ```bash
-     curl http://localhost:3000/peers
-     ```
+    ```bash
+    curl http://localhost:3000/peers
+    ```
 
   - Response: JSON containing the created peer ID and a peer token.
 
@@ -77,9 +77,9 @@ BACKEND API
   - Subscribe the subscriber peer (subId) to all tracks published by the producer peer (prodId).
   - Example:
 
-     ```bash
-     curl -X POST "http://localhost:3000/subscribe_peer?subId=72457c2f-e4d2-46aa-9ff2-5a400f169df7&prodId=41ed79fb-6ce1-47b0-b5c8-1c33b78d95b4"
-     ```
+    ```bash
+    curl -X POST "http://localhost:3000/subscribe_peer?subId=72457c2f-e4d2-46aa-9ff2-5a400f169df7&prodId=41ed79fb-6ce1-47b0-b5c8-1c33b78d95b4"
+    ```
 
   - Response: JSON status and any error messages.
 
@@ -87,9 +87,9 @@ BACKEND API
   - Subscribe the subscriber peer (subId) to a comma-separated list of specific tracks.
   - Example (subscribe to one track):
 
-     ```bash
-     curl -X POST "http://localhost:3000/subscribe_tracks?subId=41ed79fb-6ce1-47b0-b5c8-1c33b78d95b4&tracks=72457c2f-e4d2-46aa-9ff2-5a400f169df7:3c7ccb28-542c-418d-aaa1-e25b4c067824"
-     ```
+    ```bash
+    curl -X POST "http://localhost:3000/subscribe_tracks?subId=41ed79fb-6ce1-47b0-b5c8-1c33b78d95b4&tracks=72457c2f-e4d2-46aa-9ff2-5a400f169df7:3c7ccb28-542c-418d-aaa1-e25b4c067824"
+    ```
 
   - Response: JSON status and any error messages.
 

@@ -1,5 +1,12 @@
-
-import { FishjamClient, FishjamConfig, FishjamWSNotifier, RoomId, PeerId, TrackId, RoomNotFoundException } from '@fishjam-cloud/js-server-sdk';
+import {
+  FishjamClient,
+  FishjamConfig,
+  FishjamWSNotifier,
+  RoomId,
+  PeerId,
+  TrackId,
+  RoomNotFoundException,
+} from '@fishjam-cloud/js-server-sdk';
 
 export class FishjamService extends EventTarget {
   roomId?: RoomId;
@@ -8,7 +15,11 @@ export class FishjamService extends EventTarget {
   constructor(config: FishjamConfig) {
     super();
     this.fishjam = new FishjamClient(config);
-    const notifier = new FishjamWSNotifier(config, () => {}, () => {});
+    const notifier = new FishjamWSNotifier(
+      config,
+      () => {},
+      () => {}
+    );
 
     notifier.on('peerConnected', (msg) => this.emit('peerConnected', msg));
     notifier.on('peerDisconnected', (msg) => this.emit('peerDisconnected', msg));
@@ -43,12 +54,12 @@ export class FishjamService extends EventTarget {
 
   private async makePeer() {
     if (!this.roomId) await this.makeRoom();
-    return await this.fishjam.createPeer(this.roomId!, { subscribeMode: "manual" });
+    return await this.fishjam.createPeer(this.roomId!, { subscribeMode: 'manual' });
   }
 
   private emit(type: string, data: any) {
     const event = new CustomEvent('notification', {
-      detail: { type, data, timestamp: new Date().toISOString() }
+      detail: { type, data, timestamp: new Date().toISOString() },
     });
     this.dispatchEvent(event);
   }
