@@ -74,6 +74,20 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
 
     return track;
   }
+  
+  /**
+   * Interrupt track.
+   *
+   * Any audio that has been sent, but not played
+   * will be cleared and be prevented from playing.
+   *
+   * Audio sent after the interrupt will be played normally.
+   */
+  public interruptTrack(trackId: TrackId): void {
+    const msg = AgentRequest.encode({ interruptTrack: { trackId: trackId } }).finish();
+
+    this.client.send(msg);
+  }
 
   /**
    * Deletes an outgoing audio track for the agent
