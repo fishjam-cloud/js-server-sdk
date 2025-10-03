@@ -74,7 +74,7 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
 
     return track;
   }
-  
+
   /**
    * Interrupt track.
    *
