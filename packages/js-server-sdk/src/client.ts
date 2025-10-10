@@ -1,15 +1,6 @@
 import axios from 'axios';
 import { RoomApi, PeerOptions, ViewerApi, RoomConfig, StreamerApi } from '@fishjam-cloud/fishjam-openapi';
-import {
-  AgentCallbacks,
-  FishjamConfig,
-  PeerId,
-  Room,
-  RoomId,
-  Peer,
-  ErrorEventHandler,
-  CloseEventHandler,
-} from './types';
+import type { AgentCallbacks, FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
 import { mapException } from './exceptions/mapper';
 import { getFishjamUrl } from './utils';
 import { FishjamAgent, TrackId } from './agent';
