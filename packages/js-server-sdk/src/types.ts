@@ -42,3 +42,8 @@ export type FishjamConfig = {
 // Websocket event handlers
 export type ErrorEventHandler = (msg: Event) => void;
 export type CloseEventHandler = (code: number, reason: string) => void;
+
+export type AgentCallbacks = {
+  onError?: ErrorEventHandler;
+  onClose?: CloseEventHandler;
+};

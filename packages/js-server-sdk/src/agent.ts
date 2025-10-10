@@ -11,9 +11,8 @@ import {
   TrackType as ProtoTrackType,
   TrackEncoding,
 } from '@fishjam-cloud/fishjam-proto';
-import { Brand, FishjamConfig, PeerId } from './types';
+import { AgentCallbacks, Brand, FishjamConfig, PeerId } from './types';
 import { getFishjamUrl, httpToWebsocket, WithPeerId } from './utils';
-import { CloseEventHandler, ErrorEventHandler } from './types';
 
 const expectedEventsList = ['trackData'] as const;
 /**
@@ -41,7 +40,7 @@ export type AgentEvents = { [K in ExpectedAgentEvents]: (message: NonNullable<Re
 export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentEvents>) {
   private readonly client: WebSocket;
 
-  constructor(config: FishjamConfig, agentToken: string, onError: ErrorEventHandler, onClose: CloseEventHandler) {
+  constructor(config: FishjamConfig, agentToken: string, callbacks?: AgentCallbacks) {
     super();
 
     const fishjamUrl = getFishjamUrl(config);
@@ -50,8 +49,17 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
     this.client = new WebSocket(websocketUrl);
 
     this.client.binaryType = 'arraybuffer';
-    this.client.onerror = (message) => onError(message);
-    this.client.onclose = (message) => onClose(message.code, message.reason);
+
+    const handleOnClose = callbacks?.onClose;
+    const handleOnError = callbacks?.onError;
+
+    if (handleOnClose) {
+      this.client.onclose = (message) => handleOnClose(message.code, message.reason);
+    }
+    if (handleOnError) {
+      this.client.onerror = (message) => handleOnError(message);
+    }
+
     this.client.onmessage = (message) => this.dispatchNotification(message);
     this.client.onopen = () => this.setupConnection(agentToken);
   }

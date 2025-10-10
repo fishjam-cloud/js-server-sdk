@@ -1,6 +1,15 @@
 import axios from 'axios';
 import { RoomApi, PeerOptions, ViewerApi, RoomConfig, StreamerApi } from '@fishjam-cloud/fishjam-openapi';
-import { FishjamConfig, PeerId, Room, RoomId, Peer, ErrorEventHandler, CloseEventHandler } from './types';
+import {
+  AgentCallbacks,
+  FishjamConfig,
+  PeerId,
+  Room,
+  RoomId,
+  Peer,
+  ErrorEventHandler,
+  CloseEventHandler,
+} from './types';
 import { mapException } from './exceptions/mapper';
 import { getFishjamUrl } from './utils';
 import { FishjamAgent, TrackId } from './agent';
@@ -110,8 +119,7 @@ export class FishjamClient {
   async createAgent(
     roomId: RoomId,
     options: PeerOptions = {},
-    onError: ErrorEventHandler,
-    onClose: CloseEventHandler
+    callbacks?: AgentCallbacks
   ): Promise<{ agent: FishjamAgent; peer: Peer }> {
     try {
       const response = await this.roomApi.addPeer(roomId, {
@@ -122,7 +130,7 @@ export class FishjamClient {
       const {
         data: { data },
       } = response;
-      const agent = new FishjamAgent(this.fishjamConfig, data.token, onError, onClose);
+      const agent = new FishjamAgent(this.fishjamConfig, data.token, callbacks);
 
       return { agent: agent, peer: data.peer as Peer };
     } catch (error) {
