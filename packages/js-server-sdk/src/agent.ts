@@ -50,15 +50,8 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
 
     this.client.binaryType = 'arraybuffer';
 
-    const handleOnClose = callbacks?.onClose;
-    const handleOnError = callbacks?.onError;
-
-    if (handleOnClose) {
-      this.client.onclose = (message) => handleOnClose(message.code, message.reason);
-    }
-    if (handleOnError) {
-      this.client.onerror = (message) => handleOnError(message);
-    }
+    this.client.onclose = (message) => callbacks?.onClose?.(message.code, message.reason);
+    this.client.onerror = (message) => callbacks?.onError?.(message);
 
     this.client.onmessage = (message) => this.dispatchNotification(message);
     this.client.onopen = () => this.setupConnection(agentToken);
