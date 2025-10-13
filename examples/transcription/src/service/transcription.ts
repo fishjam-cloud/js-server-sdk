@@ -52,8 +52,10 @@ export class TranscriptionService {
       } = await this.fishjamClient.createAgent(
         message.roomId,
         {},
-        (error) => console.error('Fishjam agent websocket error: %O', error),
-        (code, reason) => console.log(`Fishjam agent websocket closed. code: ${code}, reason: ${reason}`)
+        {
+          onClose: (code, reason) => console.log(`Fishjam agent websocket closed. code: ${code}, reason: ${reason}`),
+          onError: (error) => console.error('Fishjam agent websocket error: %O', error),
+        }
       );
 
       this.agents.set(message.roomId, newAgentId);

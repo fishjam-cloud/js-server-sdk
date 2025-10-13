@@ -5,7 +5,6 @@ import { notificationsController } from './controllers/notifications';
 import { FishjamService } from './service/fishjam';
 
 const fishjam = new FishjamService({
-  fishjamUrl: process.env.FISHJAM_URL!,
   fishjamId: process.env.FISHJAM_ID!,
   managementToken: process.env.FISHJAM_TOKEN!,
 });
