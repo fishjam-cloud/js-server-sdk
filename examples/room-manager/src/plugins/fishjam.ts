@@ -100,7 +100,7 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
 
     peerNameToAccessMap.set(peerName, peerAccess);
 
-    fastify.log.info('Created peer', { peerName, ...peerAccess });
+    fastify.log.info(`Created peer: ${peerName}`);
 
     return peerAccess;
   }

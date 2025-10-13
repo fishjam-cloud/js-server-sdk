@@ -1,15 +1,14 @@
 {
-  "name": "transcription-demo",
+  "name": "selective-subscription-backend",
   "version": "0.21.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --write .",
-    "typecheck": "tsc",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "build": "yarn typecheck && vite build",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@elysiajs/cors": "^1.4.0",
     "@fishjam-cloud/js-server-sdk": "workspace:*",
-    "@google/genai": "^1.13.0",
     "@grotto/logysia": "^0.1.6",
     "bun": "^1.2.20",
     "elysia": "latest"
@@ -17,7 +16,6 @@
   "devDependencies": {
     "@types/bun": "^1",
     "bun-types": "latest",
-    "prettier": "^3.6.2",
     "typescript": "^5.9.3"
   },
   "module": "src/index.js"

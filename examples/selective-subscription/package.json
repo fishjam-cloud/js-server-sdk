@@ -1,27 +1,20 @@
 {
   "name": "selective-subscription-demo",
   "version": "0.21.0",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write .",
-    "dev": "bun run --watch src/index.ts",
-    "dev:frontend": "cd frontend && npm run dev",
-    "dev:both": "concurrently \"yarn dev\" \"cd frontend && npm run dev\"",
-    "build:frontend": "cd frontend && npm run build",
-    "install:frontend": "cd frontend && npm install"
-  },
-  "dependencies": {
-    "@elysiajs/cors": "^1.4.0",
-    "@fishjam-cloud/js-server-sdk": "workspace:*",
-    "@grotto/logysia": "^0.1.6",
-    "bun": "^1.2.20",
-    "concurrently": "^9.2.1",
-    "elysia": "latest"
+    "typecheck": "bun run --filter '*' typecheck",
+    "dev": "concurrently \"bun run --filter '*' dev\"",
+    "build": "bun run --filter 'frontend' build"
   },
   "devDependencies": {
-    "@types/bun": "^1",
-    "bun-types": "latest",
-    "prettier": "^3.6.2"
-  },
-  "module": "src/index.js"
+    "concurrently": "^9.2.1",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3"
+  }
 }
