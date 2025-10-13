@@ -10,7 +10,7 @@
     "format": "prettier --write .",
     "typecheck": "bun run --filter '*' typecheck",
     "dev": "concurrently \"bun run --filter '*' dev\"",
-    "build": "bun run --filter 'frontend' build"
+    "build": "bun run --filter '*-frontend' build"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",

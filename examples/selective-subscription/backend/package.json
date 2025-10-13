@@ -3,7 +3,6 @@
   "version": "0.21.0",
   "scripts": {
     "dev": "bun run --watch src/index.ts",
-    "build": "yarn typecheck && vite build",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
