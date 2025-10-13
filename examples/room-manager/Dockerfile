@@ -9,6 +9,9 @@ RUN apk add g++ make python3
 
 RUN corepack enable
 
+# Install bun
+RUN npm install -g bun
+
 COPY . .
 
 RUN yarn --immutable
