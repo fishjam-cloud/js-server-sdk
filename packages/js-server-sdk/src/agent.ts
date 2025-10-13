@@ -76,10 +76,10 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
   }
 
   /**
-   * Interrupt track.
+   * Interrupt track indentified by `trackId`.
    *
-   * Any audio that has been sent, but not played
-   * will be cleared and be prevented from playing.
+   * Any audio that has been sent by the agent, but not played
+   * by Fishjam will be cleared and be prevented from playing.
    *
    * Audio sent after the interrupt will be played normally.
    */
