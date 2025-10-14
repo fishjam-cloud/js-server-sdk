@@ -84,7 +84,7 @@ export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<N
 
     this.client = new WebSocket(websocketUrl);
 
-    this.client.binaryType = "arraybuffer";
+    this.client.binaryType = 'arraybuffer';
 
     this.client.onerror = (message) => onError(message);
     this.client.onclose = (message) => onClose(message.code, message.reason);
