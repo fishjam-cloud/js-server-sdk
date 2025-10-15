@@ -9,8 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write .",
     "typecheck": "bun run --filter '*' typecheck",
-    "dev": "concurrently \"bun run --filter '*' dev\"",
-    "build": "bun run --filter '*-frontend' build"
+    "dev": "concurrently \"bun run --filter '*' dev\""
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
