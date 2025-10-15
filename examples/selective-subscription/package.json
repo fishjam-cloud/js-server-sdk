@@ -8,8 +8,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write .",
-    "typecheck": "bun run --filter '*' typecheck",
-    "dev": "concurrently \"bun run --filter '*' dev\""
+    "dev:frontend": "yarn workspace selective-subscription-frontend dev",
+    "dev:backend": "yarn workspace selective-subscription-backend dev",
+    "dev": "concurrently \"yarn dev:frontend\" \"yarn dev:backend\""
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
