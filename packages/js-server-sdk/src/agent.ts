@@ -22,7 +22,9 @@ export type ExpectedAgentEvents = (typeof expectedEventsList)[number];
 
 export type IncomingTrackData = Omit<NonNullable<AgentResponse_TrackData>, 'peerId'> & { peerId: PeerId };
 export type OutgoingTrackData = Omit<NonNullable<AgentRequest_TrackData>, 'peerId'> & { peerId: PeerId };
-export type AgentTrack = ProtoTrack;
+
+export type AgentTrack = Omit<ProtoTrack, 'id'> & { id: TrackId };
+
 export type TrackType = 'audio' | 'video';
 export type AudioCodecParameters = {
   encoding: 'opus' | 'pcm16';
@@ -63,7 +65,7 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
    */
   public createTrack(codecParameters: AudioCodecParameters, metadata: object = {}): AgentTrack {
     const track: AgentTrack = {
-      id: uuid4(),
+      id: uuid4() as TrackId,
       type: ProtoTrackType.TRACK_TYPE_AUDIO,
       metadata: JSON.stringify(metadata),
     };
