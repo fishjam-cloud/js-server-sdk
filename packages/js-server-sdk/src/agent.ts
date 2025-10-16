@@ -110,6 +110,10 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
     this.client.send(trackData);
   }
 
+  public close(): void {
+    this.client.close();
+  }
+
   private dispatchNotification(message: MessageEvent) {
     try {
       const data = new Uint8Array(message.data);
