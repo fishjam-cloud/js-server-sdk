@@ -110,7 +110,7 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
     this.client.send(trackData);
   }
 
-  public close(): void {
+  public disconnect(): void {
     this.client.close();
   }
 
