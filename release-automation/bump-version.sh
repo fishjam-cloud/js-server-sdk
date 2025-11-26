@@ -50,7 +50,7 @@ else
     exit 1
 fi
 
-corepack yarn workspaces foreach version "$VERSION"
+corepack yarn workspaces foreach -A version "$VERSION"
 
 
 # Run proto generation
