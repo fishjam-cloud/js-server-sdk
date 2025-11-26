@@ -27,7 +27,7 @@ if [ -f .tool-versions ]; then
             echo "asdf plugin $PLUGIN_NAME already added"
         fi
     done < .tool-versions
-
+    
     asdf install
 else
     echo ".tool-versions file not found!"
@@ -38,9 +38,6 @@ fi
 BRANCH_NAME="release-$VERSION"
 git checkout -b "$BRANCH_NAME"
 
-echo "Enabling corepack and installing dependencies..."
-corepack enable
-yarn install
 
 # Update root package.json
 if [ -f package.json ]; then
@@ -53,15 +50,7 @@ else
     exit 1
 fi
 
-# Update specific sub-packages
-corepack yarn workspace @fishjam-cloud/fishjam-openapi version "$VERSION"
-echo "Updated fishjam-openapi to $VERSION"
-
-corepack yarn workspace @fishjam-cloud/fishjam-proto version "$VERSION"
-echo "Updated fishjam-proto to $VERSION"
-
-corepack yarn workspace @fishjam-cloud/js-server-sdk version "$VERSION"
-echo "Updated js-server-sdk to $VERSION"
+corepack yarn workspaces foreach version "$VERSION"
 
 
 # Run proto generation
@@ -77,14 +66,14 @@ fi
 cd packages/fishjam-openapi
 
 curl -H "Authorization: token $GH_TOKEN" \
-    -H "Accept: application/vnd.github.v3.raw" \
-    -L "https://raw.githubusercontent.com/fishjam-cloud/fishjam/main/openapi.yaml" \
-     -o openapi.yaml
+-H "Accept: application/vnd.github.v3.raw" \
+-L "https://raw.githubusercontent.com/fishjam-cloud/fishjam/main/openapi.yaml" \
+-o openapi.yaml
 
 npx @openapitools/openapi-generator-cli generate \
-  -i ./openapi.yaml \
-  -g typescript-axios \
-  -o ./src/generated
+-i ./openapi.yaml \
+-g typescript-axios \
+-o ./src/generated
 
 rm openapi.yaml
 cd ../../
