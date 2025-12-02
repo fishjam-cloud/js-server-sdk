@@ -2,6 +2,8 @@ export {
   PeerStatus,
   RoomConfig,
   PeerOptions,
+  PeerOptionsWebRTC,
+  PeerOptionsAgent,
   RoomConfigVideoCodecEnum,
   RoomConfigRoomTypeEnum,
   ViewerToken,
