@@ -42,6 +42,9 @@ export type AgentEvents = { [K in ExpectedAgentEvents]: (message: NonNullable<Re
 export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentEvents>) {
   private readonly client: WebSocket;
 
+  private resolveReady: ((value: void | PromiseLike<void>) => void) | null = null;
+  private readonly isReady: Promise<void>;
+
   constructor(config: FishjamConfig, agentToken: string, callbacks?: AgentCallbacks) {
     super();
 
@@ -57,6 +60,17 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
 
     this.client.onmessage = (message) => this.dispatchNotification(message);
     this.client.onopen = () => this.setupConnection(agentToken);
+
+    this.isReady = new Promise<void>((resolve) => {
+      this.resolveReady = resolve;
+    });
+  }
+
+  /**
+   * Await Agent connection to Fishjam.
+   */
+  public async awaitConnected(): Promise<void> {
+    return this.isReady;
   }
 
   /**
@@ -132,6 +146,10 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
     const auth = AgentRequest.encode({ authRequest: { token: agentToken } }).finish();
 
     this.client.send(auth);
+
+    if (this.resolveReady) {
+      this.resolveReady();
+    }
   }
 
   private isExpectedEvent(notification: string): notification is ExpectedAgentEvents {

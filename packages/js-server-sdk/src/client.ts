@@ -129,6 +129,7 @@ export class FishjamClient {
         data: { data },
       } = response;
       const agent = new FishjamAgent(this.fishjamConfig, data.token, callbacks);
+      agent.awaitConnected();
 
       return { agent: agent, peer: data.peer as Peer };
     } catch (error) {
