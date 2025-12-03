@@ -149,6 +149,7 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
 
     if (this.resolveReady) {
       this.resolveReady();
+      this.resolveReady = null;
     }
   }
 
