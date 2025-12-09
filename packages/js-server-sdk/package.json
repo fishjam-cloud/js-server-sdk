@@ -24,7 +24,8 @@
     "dist"
   ],
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./gemini": "./dist/integrations/gemini.js"
   },
   "scripts": {
     "build": "tsup --dts-resolve",
@@ -53,6 +54,14 @@
   "dependencies": {
     "axios": "^1.7.9",
     "uuid": "^11.1.0"
+  },
+  "peerDependencies": {
+    "@google/genai": "^1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@google/genai": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@fishjam-cloud/fishjam-openapi": "workspace:*",
