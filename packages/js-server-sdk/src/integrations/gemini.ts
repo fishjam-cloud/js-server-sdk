@@ -16,7 +16,7 @@ export default {
    * @returns A GoogleGenerativeAI instance.
    */
   createClient: (options: GoogleGenAIOptions): GoogleGenAI => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { GoogleGenAI } = require('@google/genai');
     const trackingHeader = { 'X-Goog-Api-Client': `${SDK_NAME}/${fishjamSDK.version}` };
     const finalOptions = {
