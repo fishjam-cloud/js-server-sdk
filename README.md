@@ -43,6 +43,7 @@ yarn
 yarn build
 ```
 
+It is also advised to install [pre-commit](https://pre-commit.com/#installation).
 
 ## Submitting a Pull Request
 
