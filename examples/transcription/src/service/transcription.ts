@@ -1,6 +1,5 @@
 import {
   FishjamConfig,
-  FishjamAgent,
   FishjamWSNotifier,
   PeerConnected,
   PeerDisconnected,
@@ -9,6 +8,7 @@ import {
   FishjamClient,
   RoomId,
 } from '@fishjam-cloud/js-server-sdk';
+import GeminiIntegration from '@fishjam-cloud/js-server-sdk/gemini';
 import { GoogleGenAI, LiveServerMessage, Modality, Session } from '@google/genai';
 import { TRANSCRIPTION_MODEL } from '../const';
 
@@ -20,7 +20,7 @@ export class TranscriptionService {
   fishjamClient: FishjamClient;
 
   constructor(fishjamConfig: FishjamConfig, geminiKey: string) {
-    this.ai = new GoogleGenAI({ apiKey: geminiKey });
+    this.ai = GeminiIntegration.createClient({ apiKey: geminiKey });
     this.fishjamConfig = fishjamConfig;
     this.fishjamClient = new FishjamClient(fishjamConfig);
     this.initFishjam();
@@ -51,7 +51,7 @@ export class TranscriptionService {
         agent: agent,
       } = await this.fishjamClient.createAgent(
         message.roomId,
-        {},
+        { output: GeminiIntegration.geminiInputAudioSettings },
         {
           onClose: (code, reason) => console.log(`Fishjam agent websocket closed. code: ${code}, reason: ${reason}`),
           onError: (error) => console.error('Fishjam agent websocket error: %O', error),
@@ -67,7 +67,7 @@ export class TranscriptionService {
     const session = await this.ai.live.connect({
       model: TRANSCRIPTION_MODEL,
       config: {
-        responseModalities: [Modality.TEXT],
+        responseModalities: [Modality.AUDIO],
         inputAudioTranscription: {},
       },
       callbacks: {
@@ -115,10 +115,11 @@ export class TranscriptionService {
     const { data, peerId } = message;
 
     const session = this.peerSessions.get(peerId);
+
     session?.sendRealtimeInput({
       audio: {
         data: data.toBase64(),
-        mimeType: 'audio/pcm;rate=16000',
+        mimeType: GeminiIntegration.inputMimeType,
       },
     });
   }
