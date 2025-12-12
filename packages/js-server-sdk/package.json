@@ -38,6 +38,7 @@
   "tsup": {
     "entry": [
       "src/index.ts",
+      "src/integrations/gemini.ts",
       "src/proto.ts"
     ],
     "noExternal": [

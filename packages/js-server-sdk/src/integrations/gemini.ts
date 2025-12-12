@@ -1,4 +1,7 @@
-import { GoogleGenAI, type GoogleGenAIOptions } from '@google/genai';
+import type {
+  GoogleGenAI,
+  GoogleGenAIOptions,
+} from '@google/genai' with { 'resolution-mode': 'import' };
 import fishjamSDK from '../../package.json';
 import { AudioCodecParameters } from '../agent';
 
@@ -15,6 +18,7 @@ export default {
    * @returns A promise that resolves to a GoogleGenerativeAI instance.
    */
   createClient: async (options: GoogleGenAIOptions): Promise<GoogleGenAI> => {
+    const { GoogleGenAI } = await import('@google/genai');
     const { name, version } = fishjamSDK;
     const trackingHeader = { 'X-Goog-Api-Client': `${name}/${version}` };
     const finalOptions = {
