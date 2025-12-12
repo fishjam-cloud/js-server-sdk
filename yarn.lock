@@ -858,6 +858,11 @@ __metadata:
     tsup: "npm:^8.4.0"
     typed-emitter: "npm:^2.1.0"
     uuid: "npm:^11.1.0"
+  peerDependencies:
+    "@google/genai": ^1.0.0
+  peerDependenciesMeta:
+    "@google/genai":
+      optional: true
   languageName: unknown
   linkType: soft
 
