@@ -10,12 +10,12 @@ const SDK_NAME = 'fishjam-js-server-sdk';
  */
 export default {
   /**
-   * Creates a GoogleGenerativeAI client.
+   * Creates a GoogleGenAI client.
    * This function dynamically imports the "@google/genai" module,
    * so it will only be loaded when this function is called.
    *
-   * @param options Configuration for the GoogleGenerativeAI client.
-   * @returns A GoogleGenerativeAI instance.
+   * @param options Configuration for the GoogleGenAI client.
+   * @returns A GoogleGenAI instance.
    */
   createClient: (options: GoogleGenAIOptions): GoogleGenAI => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
