@@ -51,4 +51,7 @@ jobs:
           fi
 
       - name: Check TypeDoc generation
-        run: yarn docs --emit none
+        run: yarn docs
+
+      - name: Spellcheck
+        run: yarn spellcheck
