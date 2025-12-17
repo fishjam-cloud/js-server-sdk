@@ -2262,13 +2262,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:^0.34.33":
-  version: 0.34.38
-  resolution: "@sinclair/typebox@npm:0.34.38"
-  checksum: 10c0/c1b9a1547c64de01ff5c89351baf289d2d5f19cfef3ae30fe4748a103eb58d0842618318543cd3de964cb0370d5a859e24aba231ade9b43ee2ef4d0bb4db7084
-  languageName: node
-  linkType: hard
-
 "@tootallnate/quickjs-emscripten@npm:^0.23.0":
   version: 0.23.0
   resolution: "@tootallnate/quickjs-emscripten@npm:0.23.0"
@@ -3325,10 +3318,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "cookie@npm:1.0.2"
-  checksum: 10c0/fd25fe79e8fbcfcaf6aa61cd081c55d144eeeba755206c058682257cb38c4bd6795c6620de3f064c740695bb65b7949ebb1db7a95e4636efb8357a335ad3f54b
+"cookie@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "cookie@npm:1.1.1"
+  checksum: 10c0/79c4ddc0fcad9c4f045f826f42edf54bcc921a29586a4558b0898277fa89fb47be95bc384c2253f493af7b29500c830da28341274527328f18eba9f58afa112c
   languageName: node
   linkType: hard
 
@@ -3681,26 +3674,26 @@ __metadata:
   linkType: hard
 
 "elysia@npm:latest":
-  version: 1.3.8
-  resolution: "elysia@npm:1.3.8"
+  version: 1.4.19
+  resolution: "elysia@npm:1.4.19"
   dependencies:
-    "@sinclair/typebox": "npm:^0.34.33"
-    cookie: "npm:^1.0.2"
-    exact-mirror: "npm:0.1.3"
+    cookie: "npm:^1.1.1"
+    exact-mirror: "npm:0.2.5"
     fast-decode-uri-component: "npm:^1.0.1"
-    openapi-types: "npm:^12.1.3"
+    memoirist: "npm:^0.4.0"
   peerDependencies:
-    "@sinclair/typebox": ">= 0.34.0"
+    "@sinclair/typebox": ">= 0.34.0 < 1"
+    "@types/bun": ">= 1.2.0"
     exact-mirror: ">= 0.0.9"
     file-type: ">= 20.0.0"
     openapi-types: ">= 12.0.0"
     typescript: ">= 5.0.0"
-  dependenciesMeta:
-    "@sinclair/typebox":
+  peerDependenciesMeta:
+    "@types/bun":
       optional: true
-    openapi-types:
+    typescript:
       optional: true
-  checksum: 10c0/5e202b735572df4b357215b2087e26b8d5f9204d1ecf369077cb62ea14c04efe84a352f7d4337313da82d980a8ec1c0f4650c86da305ccfafffad7e47e5140c7
+  checksum: 10c0/18c554ae34265d5d494b5e53f062c404ff05d6537354ea1e3a679a2416ed1c7641558ab77e30be1d508c04fee53d34ce59c2259451148ed25bb9d59144f6e4b8
   languageName: node
   linkType: hard
 
@@ -4265,15 +4258,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"exact-mirror@npm:0.1.3":
-  version: 0.1.3
-  resolution: "exact-mirror@npm:0.1.3"
+"exact-mirror@npm:0.2.5":
+  version: 0.2.5
+  resolution: "exact-mirror@npm:0.2.5"
   peerDependencies:
     "@sinclair/typebox": ^0.34.15
   peerDependenciesMeta:
     "@sinclair/typebox":
       optional: true
-  checksum: 10c0/dca1e85ea2c6f9642217f3f4e85435e549ad01c57570567069c38d5a38bd955bc49434e9a7c0f1f72b83098332abb1614dc4a035a430426528e064c9aa0e2e08
+  checksum: 10c0/aa3a46eb6cc7f1d9ed9320ae0df7f129820941696d232e96c5463823d7c7a28d8a73ac0d05eacfc5be35a113233f637049caec68c206b69a3801bc821ae45942
   languageName: node
   linkType: hard
 
@@ -5519,6 +5512,13 @@ __metadata:
   version: 2.0.0
   resolution: "mdurl@npm:2.0.0"
   checksum: 10c0/633db522272f75ce4788440669137c77540d74a83e9015666a9557a152c02e245b192edc20bc90ae953bbab727503994a53b236b4d9c99bdaee594d0e7dd2ce0
+  languageName: node
+  linkType: hard
+
+"memoirist@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "memoirist@npm:0.4.0"
+  checksum: 10c0/986426c3474abe7018edeb6a88f11ef22409de652199096565a0c5479a9b91423cb0c8513411e017061b5b8df64cc5e15ccb6e7bac3e83d416753a9698aebe4f
   languageName: node
   linkType: hard
 
