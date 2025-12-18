@@ -4,8 +4,8 @@ export {
   PeerOptions,
   PeerOptionsWebRTC,
   PeerOptionsAgent,
-  RoomConfigVideoCodecEnum,
-  RoomConfigRoomTypeEnum,
+  VideoCodec,
+  RoomType,
   ViewerToken,
   StreamerToken,
 } from '@fishjam-cloud/fishjam-openapi';

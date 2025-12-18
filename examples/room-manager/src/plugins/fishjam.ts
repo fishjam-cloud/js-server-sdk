@@ -5,10 +5,10 @@ import {
   PeerId,
   Room,
   RoomConfig,
-  RoomConfigRoomTypeEnum,
+  RoomType,
   RoomId,
   RoomNotFoundException,
-  type RoomConfigVideoCodecEnum,
+  type VideoCodec,
   type ViewerToken,
 } from '@fishjam-cloud/js-server-sdk';
 import { RoomManagerError } from '../errors';
@@ -20,7 +20,7 @@ declare module 'fastify' {
       getPeerAccess: (
         roomName: string,
         peerName: string,
-        roomType?: RoomConfigRoomTypeEnum,
+        roomType?: RoomType,
         isPublic?: boolean
       ) => Promise<PeerAccessData>;
       getLivestreamViewerToken: (roomName: string) => Promise<ViewerToken>;
@@ -45,12 +45,12 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
   async function getPeerAccess(
     roomName: string,
     peerName: string,
-    roomType: RoomConfigRoomTypeEnum = 'conference',
+    roomType: RoomType = 'conference',
     isPublic: boolean = false
   ): Promise<PeerAccessData> {
     const config: RoomConfig = {
       maxPeers: fastify.config.MAX_PEERS,
-      videoCodec: fastify.config.ROOM_VIDEO_CODEC as RoomConfigVideoCodecEnum,
+      videoCodec: fastify.config.ROOM_VIDEO_CODEC as VideoCodec,
       roomType,
       public: isPublic,
     };
@@ -88,7 +88,6 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
     if (!roomId) throw new RoomManagerError('Room not found', 404);
 
     const { peer, peerToken } = await fishjamClient.createPeer(roomId, {
-      enableSimulcast: fastify.config.ENABLE_SIMULCAST,
       metadata: { username: peerName },
     });
 
