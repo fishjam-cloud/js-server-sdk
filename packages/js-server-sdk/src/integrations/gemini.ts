@@ -1,6 +1,6 @@
 import type { GoogleGenAI, GoogleGenAIOptions } from '@google/genai' with { 'resolution-mode': 'import' };
 import fishjamSDK from '../../package.json';
-import type { PeerOptionsAgentOutput } from '@fishjam-cloud/fishjam-openapi';
+import type { AgentOutput } from '@fishjam-cloud/fishjam-openapi';
 import type { AudioCodecParameters } from '../agent';
 
 const SDK_NAME = 'fishjam-js-server-sdk';
@@ -51,7 +51,7 @@ export default {
   geminiInputAudioSettings: {
     audioFormat: 'pcm16',
     audioSampleRate: 16000,
-  } as const satisfies PeerOptionsAgentOutput,
+  } as const satisfies AgentOutput,
 
   /**
    * The MIME type for the audio data sent to Gemini.

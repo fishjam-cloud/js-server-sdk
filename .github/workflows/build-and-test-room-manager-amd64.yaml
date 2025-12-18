@@ -41,9 +41,9 @@ jobs:
           --restart always \
           -e PORT=8080 \
           -e FISHJAM_ID=${{ vars.ROOM_MANAGER_FISHJAM_URL }} \
-          -e FISHJAM_MANAGEMENT_TOKEN=${{ vars.ROOM_MANAGER_FISHJAM_SERVER_TOKEN }} \
+          -e FISHJAM_MANAGEMENT_TOKEN=${{ secrets.ROOM_MANAGER_FISHJAM_SERVER_TOKEN }} \
           room-manager:${{ github.event.pull_request.head.sha }}
-      - name: Test Room Manager Healtcheck
+      - name: Test Room Manager Healthcheck
         run: |
           sleep 2
           curl -o tmp1.json -s -vvv http://127.0.0.1:8080/health
