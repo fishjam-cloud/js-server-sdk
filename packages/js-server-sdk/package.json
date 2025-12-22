@@ -74,5 +74,10 @@
     "prettier": "^3.6.2",
     "tsup": "^8.4.0",
     "typed-emitter": "^2.1.0"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx,mjs,cjs}": [
+      "eslint --fix --config packages/js-server-sdk/eslint.config.mjs"
+    ]
   }
 }
