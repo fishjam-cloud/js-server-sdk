@@ -1,7 +1,2 @@
 #!/bin/sh
-
-yarn lint
-yarn format
-git add .
-
-yarn typecheck
+npx lint-staged
