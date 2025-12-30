@@ -67,12 +67,12 @@
   "devDependencies": {
     "@fishjam-cloud/fishjam-openapi": "workspace:*",
     "@fishjam-cloud/fishjam-proto": "workspace:*",
-    "@openapitools/openapi-generator-cli": "^2.18.4",
-    "@types/node": "^22.13.16",
+    "@openapitools/openapi-generator-cli": "^2.26.0",
+    "@types/node": "^25.0.3",
     "@types/websocket": "^1.0.10",
-    "eslint": "^9.33.0",
-    "prettier": "^3.6.2",
-    "tsup": "^8.4.0",
+    "eslint": "^9.39.2",
+    "prettier": "^3.7.4",
+    "tsup": "^8.5.1",
     "typed-emitter": "^2.1.0"
   },
   "lint-staged": {
