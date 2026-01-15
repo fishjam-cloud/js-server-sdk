@@ -11,6 +11,7 @@ import type { AgentCallbacks, FishjamConfig, PeerId, Room, RoomId, Peer } from '
 import { mapException } from './exceptions/mapper';
 import { getFishjamUrl } from './utils';
 import { FishjamAgent, TrackId } from './agent';
+import packageJson from '../package.json';
 
 /**
  * Client class that allows to manage Rooms and Peers for a Fishjam App.
@@ -38,6 +39,7 @@ export class FishjamClient {
     const client = axios.create({
       headers: {
         Authorization: `Bearer ${config.managementToken}`,
+        'x-sdk-version': `js-${packageJson.version}`,
       },
     });
 
