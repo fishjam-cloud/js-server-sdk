@@ -39,7 +39,7 @@ export class FishjamClient {
     const client = axios.create({
       headers: {
         Authorization: `Bearer ${config.managementToken}`,
-        'x-fishjam-api-client': `js-server-${packageJson.version}`,
+        'x-fishjam-api-client': `js-server/${packageJson.version}`,
       },
     });
 
