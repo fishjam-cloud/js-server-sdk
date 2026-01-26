@@ -23,6 +23,7 @@ export class FishjamClient {
   private readonly viewerApi: ViewerApi;
   private readonly streamerApi: StreamerApi;
   private readonly fishjamConfig: FishjamConfig;
+  private deprecationWarningShown: boolean = false;
 
   /**
    * Create new instance of Fishjam Client.
@@ -43,12 +44,30 @@ export class FishjamClient {
       },
     });
 
+    client.interceptors.response.use((response) => {
+      this.handleDeprecationHeader(response.headers);
+      return response;
+    });
+
     const fishjamUrl = getFishjamUrl(config);
 
     this.roomApi = new RoomApi(undefined, fishjamUrl, client);
     this.viewerApi = new ViewerApi(undefined, fishjamUrl, client);
     this.streamerApi = new StreamerApi(undefined, fishjamUrl, client);
     this.fishjamConfig = config;
+  }
+
+  private handleDeprecationHeader(headers: any): void {
+    const deprecationHeader = headers['x-fishjam-api-deprecated'];
+    if (!deprecationHeader || this.deprecationWarningShown) return;
+    const deprecationStatus = JSON.parse(deprecationHeader);
+
+    if (deprecationStatus.status === 'unsupported') {
+      console.error(deprecationStatus.message);
+    } else if (deprecationStatus.status === 'deprecated') {
+      console.warn(deprecationStatus.message);
+    }
+    this.deprecationWarningShown = true;
   }
 
   /**
