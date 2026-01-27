@@ -1,4 +1,4 @@
-import axios, { RawAxiosRequestHeaders } from 'axios';
+import axios, { RawAxiosResponseHeaders } from 'axios';
 import {
   RoomApi,
   ViewerApi,
@@ -57,17 +57,21 @@ export class FishjamClient {
     this.fishjamConfig = config;
   }
 
-  private handleDeprecationHeader(headers: RawAxiosRequestHeaders): void {
-    const deprecationHeader = headers['x-fishjam-api-deprecated'];
-    if (!deprecationHeader || this.deprecationWarningShown) return;
-    const deprecationStatus = JSON.parse(deprecationHeader as string);
+  private handleDeprecationHeader(headers: RawAxiosResponseHeaders): void {
+    try {
+      const deprecationHeader = headers['x-fishjam-api-deprecated'];
+      if (!deprecationHeader || this.deprecationWarningShown) return;
+      const deprecationStatus = JSON.parse(deprecationHeader as string);
 
-    if (deprecationStatus.status === 'unsupported') {
-      console.error(deprecationStatus.message);
-    } else if (deprecationStatus.status === 'deprecated') {
-      console.warn(deprecationStatus.message);
+      if (deprecationStatus.status === 'unsupported') {
+        console.error(deprecationStatus.message);
+      } else if (deprecationStatus.status === 'deprecated') {
+        console.warn(deprecationStatus.message);
+      }
+      this.deprecationWarningShown = true;
+    } catch {
+      // ignore parsing errors
     }
-    this.deprecationWarningShown = true;
   }
 
   /**
