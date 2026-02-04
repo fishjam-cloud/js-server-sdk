@@ -1,3 +1,4 @@
 [submodule "packages/fishjam-proto/protos"]
 	path = packages/fishjam-proto/protos
 	url = https://github.com/fishjam-cloud/protos.git
+	branch = agent-capture-image

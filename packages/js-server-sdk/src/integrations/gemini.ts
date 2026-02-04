@@ -42,6 +42,7 @@ export default {
     encoding: 'pcm16',
     channels: 1,
     sampleRate: 24000,
+    metadata: { type: 'microphone' },
   } as const satisfies AudioCodecParameters,
 
   /**
