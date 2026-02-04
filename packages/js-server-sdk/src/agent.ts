@@ -7,6 +7,7 @@ import {
   AgentRequest_TrackData,
   AgentResponse,
   AgentResponse_TrackData,
+  AgentResponse_TrackImage,
   Track as ProtoTrack,
   TrackType as ProtoTrackType,
   TrackEncoding,
@@ -14,13 +15,14 @@ import {
 import { AgentCallbacks, Brand, FishjamConfig, PeerId } from './types';
 import { getFishjamUrl, httpToWebsocket, WithPeerId } from './utils';
 
-const expectedEventsList = ['trackData'] as const;
+const expectedEventsList = ['trackData', 'trackImage'] as const;
 /**
  * @useDeclaredType
  */
 export type ExpectedAgentEvents = (typeof expectedEventsList)[number];
 
 export type IncomingTrackData = Omit<NonNullable<AgentResponse_TrackData>, 'peerId'> & { peerId: PeerId };
+export type IncomingTrackImage = NonNullable<AgentResponse_TrackImage>;
 export type OutgoingTrackData = Omit<NonNullable<AgentRequest_TrackData>, 'peerId'> & { peerId: PeerId };
 
 export type AgentTrack = Omit<ProtoTrack, 'id'> & { id: TrackId };
@@ -30,6 +32,7 @@ export type AudioCodecParameters = {
   encoding: 'opus' | 'pcm16';
   sampleRate: 16000 | 24000 | 48000;
   channels: 1;
+  metadata?: object;
 };
 export type TrackId = Brand<string, 'TrackId'>;
 
@@ -78,10 +81,11 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
    * @returns a new audio track
    */
   public createTrack(codecParameters: AudioCodecParameters, metadata: object = {}): AgentTrack {
+    const mergedMetadata = { ...codecParameters.metadata, ...metadata };
     const track: AgentTrack = {
       id: uuid4() as TrackId,
       type: ProtoTrackType.TRACK_TYPE_AUDIO,
-      metadata: JSON.stringify(metadata),
+      metadata: JSON.stringify(mergedMetadata),
     };
 
     const codecParams = { ...codecParameters, encoding: toProtoEncoding(codecParameters.encoding) };
@@ -124,6 +128,15 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
     this.client.send(trackData);
   }
 
+  /**
+   * Request a captured image from the given track
+   */
+  public captureImage(trackId: TrackId): void {
+    const msg = AgentRequest.encode({ captureImage: { trackId: trackId } }).finish();
+
+    this.client.send(msg);
+  }
+
   public disconnect(): void {
     this.client.close();
   }
@@ -136,6 +149,7 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
 
       if (!this.isExpectedEvent(notification)) return;
 
+      console.log(notification, msg);
       this.emit(notification, msg);
     } catch (e) {
       console.error("Couldn't decode websocket agent message", e, message);

@@ -5851,6 +5851,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"multimodal-demo@workspace:examples/multimodal":
+  version: 0.0.0-use.local
+  resolution: "multimodal-demo@workspace:examples/multimodal"
+  dependencies:
+    "@fishjam-cloud/js-server-sdk": "workspace:*"
+    "@google/genai": "npm:^1.13.0"
+    "@grotto/logysia": "npm:^0.1.6"
+    "@types/bun": "npm:^1"
+    bun: "npm:^1.2.20"
+    bun-types: "npm:latest"
+    elysia: "npm:latest"
+    prettier: "npm:^3.6.2"
+    typescript: "npm:^5.9.3"
+  languageName: unknown
+  linkType: soft
+
 "mute-stream@npm:0.0.8":
   version: 0.0.8
   resolution: "mute-stream@npm:0.0.8"
