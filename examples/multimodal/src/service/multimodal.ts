@@ -141,7 +141,7 @@ export class MultimodalService {
   }
 
   handleTrackAdded(message: TrackAdded) {
-    if (!message.track || message.track.type !== 1) return; // 2 = TRACK_TYPE_VIDEO
+    if (!message.track || message.track.type !== 1) return;
 
     const trackId = message.track.id as TrackId;
     const tracks = this.videoTracks.get(message.roomId);

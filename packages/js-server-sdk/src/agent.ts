@@ -32,7 +32,6 @@ export type AudioCodecParameters = {
   encoding: 'opus' | 'pcm16';
   sampleRate: 16000 | 24000 | 48000;
   channels: 1;
-  metadata?: object;
 };
 export type TrackId = Brand<string, 'TrackId'>;
 
@@ -81,11 +80,10 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
    * @returns a new audio track
    */
   public createTrack(codecParameters: AudioCodecParameters, metadata: object = {}): AgentTrack {
-    const mergedMetadata = { ...codecParameters.metadata, ...metadata };
     const track: AgentTrack = {
       id: uuid4() as TrackId,
       type: ProtoTrackType.TRACK_TYPE_AUDIO,
-      metadata: JSON.stringify(mergedMetadata),
+      metadata: JSON.stringify(metadata),
     };
 
     const codecParams = { ...codecParameters, encoding: toProtoEncoding(codecParameters.encoding) };
@@ -149,7 +147,6 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
 
       if (!this.isExpectedEvent(notification)) return;
 
-      console.log(notification, msg);
       this.emit(notification, msg);
     } catch (e) {
       console.error("Couldn't decode websocket agent message", e, message);
