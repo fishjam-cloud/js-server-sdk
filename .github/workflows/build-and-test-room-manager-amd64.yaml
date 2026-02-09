@@ -58,7 +58,7 @@ jobs:
           [[ $(jq -r .peer.name tmp2.json) == "testPeerName" ]]
       - name: Test Livestream token endpoint
         run: |
-          curl -vvv "http://127.0.0.1:8080/api/rooms?roomName=live&peerName=peer&roomType=livestream"
+          curl -vvv "http://127.0.0.1:8080/api/rooms/livestream?roomName=live"
           curl -o tmp3.json -s -vvv "http://127.0.0.1:8080/api/rooms/live/livestream-viewer-token"
           TOKEN=$(jq -r .token tmp3.json)
           # test if it's a json web token
