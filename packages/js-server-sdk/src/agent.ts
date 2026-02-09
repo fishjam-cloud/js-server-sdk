@@ -7,7 +7,6 @@ import {
   AgentRequest_TrackData,
   AgentResponse,
   AgentResponse_TrackData,
-  AgentResponse_TrackImage,
   Track as ProtoTrack,
   TrackType as ProtoTrackType,
   TrackEncoding,
@@ -15,14 +14,13 @@ import {
 import { AgentCallbacks, Brand, FishjamConfig, PeerId } from './types';
 import { getFishjamUrl, httpToWebsocket, WithPeerId } from './utils';
 
-const expectedEventsList = ['trackData', 'trackImage'] as const;
+const expectedEventsList = ['trackData'] as const;
 /**
  * @useDeclaredType
  */
 export type ExpectedAgentEvents = (typeof expectedEventsList)[number];
 
 export type IncomingTrackData = Omit<NonNullable<AgentResponse_TrackData>, 'peerId'> & { peerId: PeerId };
-export type IncomingTrackImage = NonNullable<AgentResponse_TrackImage>;
 export type OutgoingTrackData = Omit<NonNullable<AgentRequest_TrackData>, 'peerId'> & { peerId: PeerId };
 
 export type AgentTrack = Omit<ProtoTrack, 'id'> & { id: TrackId };
@@ -124,15 +122,6 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
     const trackData = AgentRequest.encode({ trackData: { trackId: trackId, data: data } }).finish();
 
     this.client.send(trackData);
-  }
-
-  /**
-   * Request a captured image from the given track
-   */
-  public captureImage(trackId: TrackId): void {
-    const msg = AgentRequest.encode({ captureImage: { trackId: trackId } }).finish();
-
-    this.client.send(msg);
   }
 
   public disconnect(): void {
