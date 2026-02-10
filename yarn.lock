@@ -1301,10 +1301,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/deepmerge@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@fastify/deepmerge@npm:2.0.0"
-  checksum: 10c0/ebed25084e8b5fe1b28127f408df9b683c1d0d45358ba4b98e101b75fbf6144c311608a3c1f6787dcd77a3afd6034116256440e7aaef6af12a1cd8b57c1069a3
+"@fastify/deepmerge@npm:^3.0.0":
+  version: 3.1.0
+  resolution: "@fastify/deepmerge@npm:3.1.0"
+  checksum: 10c0/57eda9079e9ed6d137f966e8b0d08f219cbca6e79706a1be76fe10ba2b8fd87c33846f1c653299b09a2e8260ffba8c8fc708f9b40b54243648d6821061999c9b
   languageName: node
   linkType: hard
 
@@ -4616,12 +4616,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fluent-json-schema@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "fluent-json-schema@npm:5.0.0"
+"fluent-json-schema@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "fluent-json-schema@npm:6.0.0"
   dependencies:
-    "@fastify/deepmerge": "npm:^2.0.0"
-  checksum: 10c0/d5d8be126c36d30bf8c3ac737dfeca7f9f63ea79cc31582d1f508b84263ae718bd4dadc8106c5b31ddabe918e554eda7e273ac4840412b543a09650a3a4027dd
+    "@fastify/deepmerge": "npm:^3.0.0"
+  checksum: 10c0/62d9921cb49dc3a12e6368a30176a04af0e29ceb03e6208af37a25c6cf3274cd67fca9e2d7576e6d0f4d339336164589e2901c54c5a4c8e8bb71d7fe02505920
   languageName: node
   linkType: hard
 
@@ -6796,7 +6796,7 @@ __metadata:
     axios: "npm:^1.7.9"
     fastify: "npm:^5.2.1"
     fastify-healthcheck: "npm:^5.1.0"
-    fluent-json-schema: "npm:^5.0.0"
+    fluent-json-schema: "npm:^6.0.0"
     pino-pretty: "npm:^13.0.0"
     tsc: "npm:^2.0.4"
     tsx: "npm:^4.19.3"
