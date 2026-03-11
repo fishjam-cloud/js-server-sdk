@@ -6,9 +6,6 @@ import type { AudioCodecParameters } from '../agent';
 const SDK_NAME = 'fishjam-js-server-sdk';
 
 /**
- * A collection of settings for Google Gemini integration.
- */
-/**
  * Creates a GoogleGenAI client.
  * This function dynamically imports the "@google/genai" module,
  * so it will only be loaded when this function is called.

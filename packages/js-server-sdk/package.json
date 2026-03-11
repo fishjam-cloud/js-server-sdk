@@ -85,7 +85,7 @@
   },
   "lint-staged": {
     "*.{js,ts,tsx,mjs,cjs}": [
-      "eslint --fix --config packages/js-server-sdk/eslint.config.mjs"
+      "eslint --fix --config eslint.config.mjs"
     ]
   }
 }
