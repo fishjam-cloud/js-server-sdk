@@ -1,6 +1,6 @@
 {
   "name": "multimodal-demo",
-  "version": "0.24.0",
+  "version": "0.25.2",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write .",
