@@ -7,7 +7,7 @@ const SDK_NAME = 'fishjam-js-server-sdk';
 
 /**
  * Creates a GoogleGenAI client.
- * This function dynamically imports the "@google/genai" module,
+ * This function dynamically loads the "@google/genai" module,
  * so it will only be loaded when this function is called.
  *
  * @param options Configuration for the GoogleGenAI client.
