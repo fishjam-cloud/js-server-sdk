@@ -8,7 +8,7 @@ import {
   FishjamClient,
   RoomId,
 } from '@fishjam-cloud/js-server-sdk';
-import GeminiIntegration from '@fishjam-cloud/js-server-sdk/gemini';
+import * as GeminiIntegration from '@fishjam-cloud/js-server-sdk/gemini';
 import { GoogleGenAI, LiveServerMessage, Modality, Session } from '@google/genai';
 import { TRANSCRIPTION_MODEL } from '../const';
 

@@ -24,8 +24,16 @@
     "dist"
   ],
   "exports": {
-    ".": "./dist/index.js",
-    "./gemini": "./dist/integrations/gemini.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./gemini": {
+      "types": "./dist/integrations/gemini.d.ts",
+      "import": "./dist/integrations/gemini.mjs",
+      "require": "./dist/integrations/gemini.js"
+    }
   },
   "scripts": {
     "build": "tsup --dts-resolve",

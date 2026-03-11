@@ -13,7 +13,7 @@ import {
   IncomingTrackData,
   IncomingTrackImage,
 } from '@fishjam-cloud/js-server-sdk';
-import GeminiIntegration from '@fishjam-cloud/js-server-sdk/gemini';
+import * as GeminiIntegration from '@fishjam-cloud/js-server-sdk/gemini';
 import { GoogleGenAI, LiveServerMessage, Modality, Session } from '@google/genai';
 import { MULTIMODAL_MODEL, CAPTURE_INTERVAL_MS } from '../const';
 
