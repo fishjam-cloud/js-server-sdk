@@ -1,21 +1,21 @@
-import type { GoogleGenAI, GoogleGenAIOptions } from '@google/genai' with { 'resolution-mode': 'import' };
+import { GoogleGenAI } from '@google/genai';
+import type { GoogleGenAIOptions } from '@google/genai';
 import fishjamSDK from '../../package.json';
 import type { AgentOutput } from '@fishjam-cloud/fishjam-openapi';
-import type { AudioCodecParameters } from '../agent';
+import type { AudioCodecParameters } from '../agent.js';
 
 const SDK_NAME = 'fishjam-js-server-sdk';
 
 /**
  * Creates a GoogleGenAI client.
- * This function dynamically loads the "@google/genai" module,
- * so it will only be loaded when this function is called.
+ *
+ * This module is a separate entry point (`@fishjam-cloud/js-server-sdk/gemini`),
+ * so `@google/genai` is only loaded when the consumer imports this module.
  *
  * @param options Configuration for the GoogleGenAI client.
  * @returns A GoogleGenAI instance.
  */
 export const createClient = (options: GoogleGenAIOptions): GoogleGenAI => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { GoogleGenAI } = require('@google/genai');
   const trackingHeader = { 'X-Goog-Api-Client': `${SDK_NAME}/${fishjamSDK.version}` };
   const finalOptions = {
     ...options,
