@@ -1,6 +1,6 @@
 {
   "name": "selective-subscription-backend",
-  "version": "0.25.2",
+  "version": "0.25.3",
   "scripts": {
     "dev": "bun run --watch src/index.ts",
     "typecheck": "tsc --noEmit"
