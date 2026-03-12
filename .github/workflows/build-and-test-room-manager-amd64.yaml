@@ -61,5 +61,5 @@ jobs:
           curl -vvv "http://127.0.0.1:8080/api/rooms/livestream?roomName=live"
           curl -o tmp3.json -s -vvv "http://127.0.0.1:8080/api/rooms/live/livestream-viewer-token"
           TOKEN=$(jq -r .token tmp3.json)
-          # test if it's a json web token
-          [[ "$TOKEN" =~ ^[^.]+\.[^.]+\.[^.]+$ ]]
+          # test if it's a uuid without dashes (32 hex characters)
+          [[ "$TOKEN" =~ ^[0-9a-f]{32}$ ]]
