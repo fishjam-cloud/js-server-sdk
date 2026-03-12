@@ -1,4 +1,4 @@
-import axios from 'axios';
+import type { AxiosError as BaseAxiosError } from 'axios';
 import {
   BadRequestException,
   FishjamNotFoundException,
@@ -8,7 +8,7 @@ import {
   UnauthorizedException,
   UnknownException,
 } from '.';
-type AxiosError = axios.AxiosError<Record<string, string>>;
+type AxiosError = BaseAxiosError<Record<string, string>>;
 function isAxiosException(error: unknown): error is AxiosError {
   return !!error && typeof error === 'object' && 'isAxiosError' in error && !!error.isAxiosError;
 }

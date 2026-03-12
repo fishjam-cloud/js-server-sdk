@@ -1388,6 +1388,7 @@ __metadata:
   resolution: "@fishjam-cloud/fishjam-openapi@workspace:packages/fishjam-openapi"
   dependencies:
     "@openapitools/openapi-generator-cli": "npm:^2.18.4"
+    axios: "npm:^1.7.9"
     tsup: "npm:^8.4.0"
   languageName: unknown
   linkType: soft

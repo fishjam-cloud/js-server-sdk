@@ -1,4 +1,4 @@
-import axios from 'axios';
+import type { AxiosError } from 'axios';
 
 export class MissingFishjamIdException extends Error {
   constructor() {
@@ -10,7 +10,7 @@ export class FishjamBaseException extends Error {
   statusCode: number;
   axiosCode?: string;
   details?: string;
-  constructor(error: axios.AxiosError<Record<string, string>>) {
+  constructor(error: AxiosError<Record<string, string>>) {
     super(error.message);
     this.statusCode = error.response?.status ?? 500;
     this.axiosCode = error.code;
