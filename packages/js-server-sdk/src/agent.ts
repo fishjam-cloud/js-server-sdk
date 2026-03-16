@@ -15,7 +15,7 @@ import {
 import { AgentCallbacks, Brand, FishjamConfig, PeerId } from './types';
 import { getFishjamUrl, httpToWebsocket, WithPeerId } from './utils';
 
-const expectedEventsList = ['trackData', 'trackImage'] as const;
+const expectedEventsList = ['trackData'] as const;
 /**
  * @useDeclaredType
  */
@@ -46,6 +46,7 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
 
   private resolveConnectionPromise: ((value: void | PromiseLike<void>) => void) | null = null;
   private readonly connectionPromise: Promise<void>;
+  private readonly pendingCaptures = new Map<string, (image: IncomingTrackImage) => void>();
 
   constructor(config: FishjamConfig, agentToken: string, callbacks?: AgentCallbacks) {
     super();
@@ -128,21 +129,47 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
 
   /**
    * Request a captured image from the given track
+   * @param trackId - the track to capture an image from
+   * @returns a promise that resolves with the captured image data
    */
-  public captureImage(trackId: TrackId): void {
-    const msg = AgentRequest.encode({ captureImage: { trackId: trackId } }).finish();
+  public captureImage(trackId: TrackId): Promise<IncomingTrackImage> {
+    return new Promise<IncomingTrackImage>((resolve, reject) => {
+      const timer = setTimeout(() => {
+        this.pendingCaptures.delete(trackId);
+        reject(new Error(`captureImage timed out after 5s for track ${trackId}`));
+      }, 5000);
 
-    this.client.send(msg);
+      this.pendingCaptures.set(trackId, (image) => {
+        clearTimeout(timer);
+        resolve(image);
+      });
+
+      const msg = AgentRequest.encode({ captureImage: { trackId } }).finish();
+      this.client.send(msg);
+    });
   }
 
   public disconnect(): void {
     this.client.close();
   }
 
+  private handleTrackImageMessage({ trackImage }: AgentResponse) {
+    if (!trackImage) return;
+
+    const resolve = this.pendingCaptures.get(trackImage.trackId);
+    if (resolve) {
+      this.pendingCaptures.delete(trackImage.trackId);
+      resolve(trackImage);
+    }
+  }
+
   private dispatchNotification(message: MessageEvent) {
     try {
       const data = new Uint8Array(message.data);
       const decodedMessage = AgentResponse.decode(data);
+
+      this.handleTrackImageMessage(decodedMessage);
+
       const [notification, msg] = Object.entries(decodedMessage).find(([_k, v]) => v)!;
 
       if (!this.isExpectedEvent(notification)) return;
