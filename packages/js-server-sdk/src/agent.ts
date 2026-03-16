@@ -46,7 +46,7 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
 
   private resolveConnectionPromise: ((value: void | PromiseLike<void>) => void) | null = null;
   private readonly connectionPromise: Promise<void>;
-  private readonly pendingCaptures = new Map<string, (image: IncomingTrackImage) => void>();
+  private readonly pendingImageCaptures = new Map<string, (image: IncomingTrackImage) => void>();
 
   constructor(config: FishjamConfig, agentToken: string, callbacks?: AgentCallbacks) {
     super();
@@ -136,11 +136,11 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
   public captureImage(trackId: TrackId, timeoutMs: number = 5000): Promise<IncomingTrackImage> {
     return new Promise<IncomingTrackImage>((resolve, reject) => {
       const timer = setTimeout(() => {
-        this.pendingCaptures.delete(trackId);
+        this.pendingImageCaptures.delete(trackId);
         reject(new Error(`captureImage timed out after 5s for track ${trackId}`));
       }, timeoutMs);
 
-      this.pendingCaptures.set(trackId, (image) => {
+      this.pendingImageCaptures.set(trackId, (image) => {
         clearTimeout(timer);
         resolve(image);
       });
@@ -157,9 +157,9 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
   private handleTrackImageMessage({ trackImage }: AgentResponse) {
     if (!trackImage) return;
 
-    const resolve = this.pendingCaptures.get(trackImage.trackId);
+    const resolve = this.pendingImageCaptures.get(trackImage.trackId);
     if (resolve) {
-      this.pendingCaptures.delete(trackImage.trackId);
+      this.pendingImageCaptures.delete(trackImage.trackId);
       resolve(trackImage);
     }
   }
