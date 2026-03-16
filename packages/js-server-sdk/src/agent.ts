@@ -130,14 +130,15 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
   /**
    * Request a captured image from the given track
    * @param trackId - the track to capture an image from
+   * @param timeoutMs - timeout in milliseconds (default: 5000)
    * @returns a promise that resolves with the captured image data
    */
-  public captureImage(trackId: TrackId): Promise<IncomingTrackImage> {
+  public captureImage(trackId: TrackId, timeoutMs: number = 5000): Promise<IncomingTrackImage> {
     return new Promise<IncomingTrackImage>((resolve, reject) => {
       const timer = setTimeout(() => {
         this.pendingCaptures.delete(trackId);
         reject(new Error(`captureImage timed out after 5s for track ${trackId}`));
-      }, 5000);
+      }, timeoutMs);
 
       this.pendingCaptures.set(trackId, (image) => {
         clearTimeout(timer);
