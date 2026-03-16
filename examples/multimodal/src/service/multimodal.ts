@@ -80,7 +80,6 @@ export class MultimodalService {
       this.videoTracks.set(message.roomId, new Set());
 
       agent.on('trackData', (msg) => this.handleTrackData(msg));
-      agent.on('trackImage', (msg) => this.handleTrackImage(message.roomId, msg));
 
       this.startImageCapture(message.roomId);
 
@@ -202,16 +201,19 @@ export class MultimodalService {
   }
 
   private startImageCapture(roomId: RoomId) {
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       const agentState = this.agents.get(roomId);
       const tracks = this.videoTracks.get(roomId);
 
       if (!agentState || !tracks || tracks.size === 0) return;
 
-      for (const trackId of tracks) {
-        console.log('Sending image capture request for track', trackId);
-        agentState.agent.captureImage(trackId);
-      }
+      await Promise.allSettled(
+        Array.from(tracks).map(async (trackId) => {
+          console.log('Sending image capture request for track', trackId);
+          const image = await agentState.agent.captureImage(trackId);
+          this.handleTrackImage(roomId, image);
+        })
+      );
     }, CAPTURE_INTERVAL_MS);
 
     this.captureIntervals.set(roomId, interval);
