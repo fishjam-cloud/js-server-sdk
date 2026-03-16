@@ -207,7 +207,7 @@ export class MultimodalService {
 
       if (!agentState || !tracks || tracks.size === 0) return;
 
-      await Promise.all(
+      await Promise.allSettled(
         Array.from(tracks).map(async (trackId) => {
           console.log('Sending image capture request for track', trackId);
           const image = await agentState.agent.captureImage(trackId);
