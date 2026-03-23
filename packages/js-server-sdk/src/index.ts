@@ -1,3 +1,8 @@
+/**
+ * Server-side Node.js SDK for creating and managing Fishjam rooms, peers, agents, and receiving real-time server notifications.
+ *
+ * @packageDocumentation
+ */
 export {
   PeerStatus,
   RoomConfig,
