@@ -1,6 +1,6 @@
 {
   "name": "@fishjam-cloud/js-server-sdk",
-  "version": "0.25.4",
+  "version": "0.25.5",
   "description": "Fishjam server SDK for JavaScript",
   "homepage": "https://github.com/fishjam-cloud/js-server-sdk",
   "author": "Fishjam Team",
