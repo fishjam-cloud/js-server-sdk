@@ -106,3 +106,4 @@ QVGA
 Memberof
 unmutes
 websocat
+vapi
