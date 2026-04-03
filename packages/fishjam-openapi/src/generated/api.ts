@@ -218,7 +218,7 @@ export interface PeerDetailsResponseData {
  * Peer-specific options
  * @export
  */
-export type PeerOptions = PeerOptionsAgent | PeerOptionsVAPI | PeerOptionsWebRTC;
+export type PeerOptions = PeerOptionsAgent | PeerOptionsVapi | PeerOptionsWebRTC;
 
 /**
  * Options specific to the Agent peer
@@ -244,25 +244,25 @@ export interface PeerOptionsAgent {
 /**
  * Options specific to the VAPI peer
  * @export
- * @interface PeerOptionsVAPI
+ * @interface PeerOptionsVapi
  */
-export interface PeerOptionsVAPI {
+export interface PeerOptionsVapi {
     /**
      * VAPI API key
      * @type {string}
-     * @memberof PeerOptionsVAPI
+     * @memberof PeerOptionsVapi
      */
     'apiKey': string;
     /**
      * VAPI call ID
      * @type {string}
-     * @memberof PeerOptionsVAPI
+     * @memberof PeerOptionsVapi
      */
     'callId': string;
     /**
      * 
      * @type {SubscribeMode}
-     * @memberof PeerOptionsVAPI
+     * @memberof PeerOptionsVapi
      */
     'subscribeMode'?: SubscribeMode;
 }
