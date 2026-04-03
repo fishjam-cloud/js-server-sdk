@@ -11,8 +11,6 @@ export {
   PeerOptionsAgent,
   VideoCodec,
   RoomType,
-  ViewerToken,
-  StreamerToken,
 } from '@fishjam-cloud/fishjam-openapi';
 
 export { ServerMessage } from '@fishjam-cloud/fishjam-proto';
