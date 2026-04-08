@@ -9,6 +9,7 @@ export {
   PeerOptions,
   PeerOptionsWebRTC,
   PeerOptionsAgent,
+  PeerOptionsVapi,
   VideoCodec,
   RoomType,
   ViewerToken,

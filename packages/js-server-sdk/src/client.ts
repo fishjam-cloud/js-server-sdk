@@ -5,6 +5,7 @@ import {
   RoomConfig,
   StreamerApi,
   PeerOptionsWebRTC,
+  PeerOptionsVapi,
   PeerOptionsAgent,
 } from '@fishjam-cloud/fishjam-openapi';
 import type { AgentCallbacks, FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
@@ -157,6 +158,26 @@ export class FishjamClient {
       await agent.awaitConnected();
 
       return { agent: agent, peer: data.peer as Peer };
+    } catch (error) {
+      throw mapException(error);
+    }
+  }
+
+  /**
+   * Create a new VAPI agent assigned to a room.
+   */
+  async createVapiAgent(roomId: RoomId, options: PeerOptionsVapi): Promise<{ peer: Peer }> {
+    try {
+      const response = await this.roomApi.addPeer(roomId, {
+        type: 'vapi',
+        options,
+      });
+
+      const {
+        data: { data },
+      } = response;
+
+      return { peer: data.peer as Peer };
     } catch (error) {
       throw mapException(error);
     }
