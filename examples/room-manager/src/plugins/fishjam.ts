@@ -9,6 +9,7 @@ import {
   RoomId,
   RoomNotFoundException,
   type VideoCodec,
+  type ViewerToken,
 } from '@fishjam-cloud/js-server-sdk';
 import { RoomManagerError } from '../errors';
 import { LivestreamData, PeerAccessData } from '../schema';
@@ -22,7 +23,7 @@ declare module 'fastify' {
         roomType?: RoomType,
         isPublic?: boolean
       ) => Promise<PeerAccessData>;
-      getLivestreamViewerToken: (roomName: string) => Promise<string>;
+      getLivestreamViewerToken: (roomName: string) => Promise<ViewerToken>;
       getLivestreamStreamerToken: (roomName: string, isPublic: boolean) => Promise<LivestreamData>;
     };
   }
@@ -153,7 +154,7 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
 
   async function getLivestreamStreamerToken(roomName: string, isPublic: boolean): Promise<LivestreamData> {
     const room = await findOrCreateRoomInFishjam(roomName, { roomType: 'livestream', public: isPublic });
-    const streamerToken = await fishjamClient.createLivestreamStreamerToken(room.id);
+    const { token: streamerToken } = await fishjamClient.createLivestreamStreamerToken(room.id);
 
     return { streamerToken, room: { id: room.id, name: roomName } };
   }

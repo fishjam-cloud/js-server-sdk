@@ -578,7 +578,7 @@ export interface Streamer {
      */
     'status': StreamerStatusEnum;
     /**
-     * Token for authorizing broadcaster streamer connection
+     * 
      * @type {string}
      * @memberof Streamer
      */
@@ -604,6 +604,19 @@ export interface StreamerDetailsResponse {
      * @memberof StreamerDetailsResponse
      */
     'data': Streamer;
+}
+/**
+ * Token for authorizing broadcaster streamer connection
+ * @export
+ * @interface StreamerToken
+ */
+export interface StreamerToken {
+    /**
+     * 
+     * @type {string}
+     * @memberof StreamerToken
+     */
+    'token': string;
 }
 /**
  * Response containing list of all streams
@@ -782,7 +795,7 @@ export interface Viewer {
      */
     'id': string;
     /**
-     * Token for authorizing broadcaster viewer connection
+     * 
      * @type {string}
      * @memberof Viewer
      */
@@ -800,6 +813,19 @@ export interface ViewerDetailsResponse {
      * @memberof ViewerDetailsResponse
      */
     'data': Viewer;
+}
+/**
+ * Token for authorizing broadcaster viewer connection
+ * @export
+ * @interface ViewerToken
+ */
+export interface ViewerToken {
+    /**
+     * 
+     * @type {string}
+     * @memberof ViewerToken
+     */
+    'token': string;
 }
 
 /**
@@ -2033,7 +2059,7 @@ export const StreamerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async generateStreamerToken(roomId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+        async generateStreamerToken(roomId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StreamerToken>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.generateStreamerToken(roomId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['StreamerApi.generateStreamerToken']?.[localVarOperationServerIndex]?.url;
@@ -2077,7 +2103,7 @@ export const StreamerApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        generateStreamerToken(roomId: string, options?: any): AxiosPromise<string> {
+        generateStreamerToken(roomId: string, options?: any): AxiosPromise<StreamerToken> {
             return localVarFp.generateStreamerToken(roomId, options).then((request) => request(axios, basePath));
         },
     };
@@ -2417,7 +2443,7 @@ export const ViewerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async generateViewerToken(roomId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+        async generateViewerToken(roomId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ViewerToken>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.generateViewerToken(roomId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ViewerApi.generateViewerToken']?.[localVarOperationServerIndex]?.url;
@@ -2461,7 +2487,7 @@ export const ViewerApiFactory = function (configuration?: Configuration, basePat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        generateViewerToken(roomId: string, options?: any): AxiosPromise<string> {
+        generateViewerToken(roomId: string, options?: any): AxiosPromise<ViewerToken> {
             return localVarFp.generateViewerToken(roomId, options).then((request) => request(axios, basePath));
         },
     };
