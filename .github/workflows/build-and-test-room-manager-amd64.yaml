@@ -46,7 +46,7 @@ jobs:
       - name: Test Room Manager Healthcheck
         run: |
           sleep 2
-          curl -o tmp1.json -s -vvv http://127.0.0.1:8080/health
+          curl --retry 5 --retry-delay 1 --retry-all-errors -o tmp1.json -s -vvv http://localhost:8080/health
           jq . tmp1.json
           [[ $(jq -r .status tmp1.json) == "ok" ]]
       - name: Test Room Manager API
