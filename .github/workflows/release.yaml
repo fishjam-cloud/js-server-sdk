@@ -19,5 +19,7 @@ jobs:
       - run: corepack enable
       - run: yarn
       - run: yarn build
-      - run: npm publish
+      - run: yarn pack -o package.tgz
+        working-directory: packages/js-server-sdk
+      - run: npm publish ./package.tgz
         working-directory: packages/js-server-sdk
