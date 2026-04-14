@@ -273,6 +273,10 @@ export class FishjamClient {
     }
   }
 
+  /**
+   * Creates a MoQ publisher token for the given stream.
+   * @returns a MoQ publisher token
+   */
   async createMoqPublisherToken(streamId: StreamId) {
     try {
       const tokenResponse = await this.moqApi.createMoqPublisherToken(streamId);
@@ -282,6 +286,10 @@ export class FishjamClient {
     }
   }
 
+  /**
+   * Creates a MoQ subscriber token for the given stream.
+   * @returns a MoQ subscriber token
+   */
   async createMoqSubscriberToken(streamId: StreamId) {
     try {
       const tokenResponse = await this.moqApi.createMoqSubscriberToken(streamId);
