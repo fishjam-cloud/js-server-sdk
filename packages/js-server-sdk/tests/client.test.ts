@@ -1,6 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { FishjamClient } from '../src/client';
-import { UnauthorizedException, RoomNotFoundException, PeerNotFoundException } from '../src/exceptions';
+import {
+  UnauthorizedException,
+  RoomNotFoundException,
+  PeerNotFoundException,
+  FishjamNotFoundException,
+} from '../src/exceptions';
 import { RoomType } from '@fishjam-cloud/fishjam-openapi';
 import type { RoomId, PeerId, StreamId } from '../src/types';
 
@@ -162,11 +167,11 @@ describe('createLivestreamStreamerToken', () => {
     expect(typeof result.token).toBe('string');
   });
 
-  it('throws for a non-livestream room', async () => {
+  it('throws FishjamNotFoundException for a non-livestream room', async () => {
     const client = createClient();
     const room = await client.createRoom();
 
-    await expect(client.createLivestreamStreamerToken(room.id)).rejects.toThrow();
+    await expect(client.createLivestreamStreamerToken(room.id)).rejects.toThrow(FishjamNotFoundException);
   });
 });
 
@@ -179,11 +184,11 @@ describe('createLivestreamViewerToken', () => {
     expect(typeof result.token).toBe('string');
   });
 
-  it('throws for a non-livestream room', async () => {
+  it('throws FishjamNotFoundException for a non-livestream room', async () => {
     const client = createClient();
     const room = await client.createRoom();
 
-    await expect(client.createLivestreamViewerToken(room.id)).rejects.toThrow();
+    await expect(client.createLivestreamViewerToken(room.id)).rejects.toThrow(FishjamNotFoundException);
   });
 });
 

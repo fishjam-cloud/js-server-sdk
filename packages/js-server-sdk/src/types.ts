@@ -17,6 +17,10 @@ export type RoomId = Brand<string, 'RoomId'>;
  */
 export type PeerId = Brand<string, 'PeerId'>;
 
+/**
+ * ID of a MoQ stream. Tokens for a stream can be created with
+ * {@link FishjamClient.createMoqPublisherToken} and {@link FishjamClient.createMoqSubscriberToken}.
+ */
 export type StreamId = Brand<string, 'StreamId'>;
 
 export type Peer = Omit<OpenApiPeer, 'id'> & { id: PeerId };

@@ -41,7 +41,7 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --fix",
-    "lint:check": "eslint . ",
+    "lint:check": "eslint .",
     "test": "vitest run"
   },
   "tsup": {
