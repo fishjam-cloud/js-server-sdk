@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         run: yarn --immutable
 
+      - name: Build packages
+        run: yarn build
+
       - name: Run integration tests
         run: yarn workspace @fishjam-cloud/js-server-sdk test
         env:
