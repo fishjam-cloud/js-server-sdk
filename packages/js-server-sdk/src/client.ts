@@ -1,5 +1,6 @@
 import axios, { RawAxiosResponseHeaders } from 'axios';
 import {
+  MoqApi,
   RoomApi,
   ViewerApi,
   RoomConfig,
@@ -8,7 +9,7 @@ import {
   PeerOptionsVapi,
   PeerOptionsAgent,
 } from '@fishjam-cloud/fishjam-openapi';
-import type { AgentCallbacks, FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
+import type { AgentCallbacks, FishjamConfig, PeerId, Room, RoomId, Peer, StreamId } from './types';
 import { mapException } from './exceptions/mapper';
 import { getFishjamUrl } from './utils';
 import { FishjamAgent, TrackId } from './agent';
@@ -20,6 +21,7 @@ import packageJson from '../package.json';
  * @category Client
  */
 export class FishjamClient {
+  private readonly moqApi: MoqApi;
   private readonly roomApi: RoomApi;
   private readonly viewerApi: ViewerApi;
   private readonly streamerApi: StreamerApi;
@@ -52,6 +54,7 @@ export class FishjamClient {
 
     const fishjamUrl = getFishjamUrl(config);
 
+    this.moqApi = new MoqApi(undefined, fishjamUrl, client);
     this.roomApi = new RoomApi(undefined, fishjamUrl, client);
     this.viewerApi = new ViewerApi(undefined, fishjamUrl, client);
     this.streamerApi = new StreamerApi(undefined, fishjamUrl, client);
@@ -264,6 +267,24 @@ export class FishjamClient {
   async createLivestreamStreamerToken(roomId: RoomId) {
     try {
       const tokenResponse = await this.streamerApi.generateStreamerToken(roomId);
+      return tokenResponse.data;
+    } catch (error) {
+      throw mapException(error);
+    }
+  }
+
+  async createMoqPublisherToken(streamId: StreamId) {
+    try {
+      const tokenResponse = await this.moqApi.createMoqPublisherToken(streamId);
+      return tokenResponse.data;
+    } catch (error) {
+      throw mapException(error);
+    }
+  }
+
+  async createMoqSubscriberToken(streamId: StreamId) {
+    try {
+      const tokenResponse = await this.moqApi.createMoqSubscriberToken(streamId);
       return tokenResponse.data;
     } catch (error) {
       throw mapException(error);

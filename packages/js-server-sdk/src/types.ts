@@ -17,6 +17,8 @@ export type RoomId = Brand<string, 'RoomId'>;
  */
 export type PeerId = Brand<string, 'PeerId'>;
 
+export type StreamId = Brand<string, 'StreamId'>;
+
 export type Peer = Omit<OpenApiPeer, 'id'> & { id: PeerId };
 
 export type Room = {
