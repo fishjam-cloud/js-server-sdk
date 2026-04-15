@@ -1,0 +1,37 @@
+name: Integration Tests
+
+on:
+  push:
+    branches: [main]
+
+  pull_request:
+    branches: [main]
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn --immutable
+
+      - name: Build packages
+        run: yarn build
+
+      - name: Run integration tests
+        run: yarn workspace @fishjam-cloud/js-server-sdk test
+        env:
+          FISHJAM_ID: ${{ secrets.CI_FISHJAM_ID }}
+          FISHJAM_MANAGEMENT_TOKEN: ${{ secrets.CI_FISHJAM_MANAGEMENT_TOKEN }}
