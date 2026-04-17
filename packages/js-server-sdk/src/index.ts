@@ -14,6 +14,7 @@ export {
   RoomType,
   ViewerToken,
   StreamerToken,
+  MoqToken,
 } from '@fishjam-cloud/fishjam-openapi';
 
 export { ServerMessage } from '@fishjam-cloud/fishjam-proto';
