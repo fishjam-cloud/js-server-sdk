@@ -1,6 +1,6 @@
 {
   "name": "room-manager",
-  "version": "0.26.0",
+  "version": "0.27.0-rc.0",
   "description": "",
   "main": "index.js",
   "scripts": {
