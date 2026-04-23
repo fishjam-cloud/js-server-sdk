@@ -4,7 +4,7 @@ import { expectedEventsList, ignoredEventsList, peerEventsWithPeerType, trackEve
 import type { ExpectedEvents, IgnoredEvents, Notifications } from '../src/notifications';
 import type * as SDK from '../src';
 
-// 1. Compile-time completeness: every `ServerMessage` oneof must be classified
+//    Compile-time completeness: every `ServerMessage` oneof must be classified
 //    as either an ExpectedEvents or IgnoredEvents member. If a new oneof is
 //    added, this line fails to compile with the offending name literally in
 //    the error.
@@ -14,7 +14,7 @@ const _exhaustive: [Unaccounted] extends [never] ? true : Unaccounted = true as 
   : Unaccounted;
 void _exhaustive;
 
-// 4. Mapping-set coverage (compile-time): if someone adds a new peerType- or
+//    Mapping-set coverage (compile-time): if someone adds a new peerType- or
 //    track-carrying event to ExpectedEvents, the runtime required[] below
 //    will fail to satisfy the computed key set.
 type EventsWithPeerTypeField = {
