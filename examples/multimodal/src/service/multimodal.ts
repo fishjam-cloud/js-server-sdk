@@ -52,7 +52,7 @@ export class MultimodalService {
   }
 
   async handlePeerConnected(message: PeerConnected) {
-    if (message.peerType === 2) return;
+    if (message.peerType === 'agent') return;
 
     console.log('Peer connected: %O', message);
 
@@ -140,7 +140,7 @@ export class MultimodalService {
   }
 
   handleTrackAdded(message: TrackAdded) {
-    if (!message.track || message.track.type !== 1) return;
+    if (!message.track || message.track.type !== 'video') return;
 
     const trackId = message.track.id as TrackId;
     const tracks = this.videoTracks.get(message.roomId);
