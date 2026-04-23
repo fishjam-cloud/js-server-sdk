@@ -42,65 +42,54 @@ const trackTypeMap: Record<ProtoTrackType, TrackType> = {
   [ProtoTrackType.UNRECOGNIZED]: 'unspecified',
 };
 
-export type ExpectedEvents =
-  | 'roomCreated'
-  | 'roomDeleted'
-  | 'roomCrashed'
-  | 'peerAdded'
-  | 'peerDeleted'
-  | 'peerConnected'
-  | 'peerDisconnected'
-  | 'peerMetadataUpdated'
-  | 'peerCrashed'
-  | 'streamConnected'
-  | 'streamDisconnected'
-  | 'viewerConnected'
-  | 'viewerDisconnected'
-  | 'trackAdded'
-  | 'trackRemoved'
-  | 'trackMetadataUpdated';
+export const expectedEventsList = [
+  'roomCreated',
+  'roomDeleted',
+  'roomCrashed',
+  'peerAdded',
+  'peerDeleted',
+  'peerConnected',
+  'peerDisconnected',
+  'peerMetadataUpdated',
+  'peerCrashed',
+  'streamerConnected',
+  'streamerDisconnected',
+  'viewerConnected',
+  'viewerDisconnected',
+  'trackAdded',
+  'trackRemoved',
+  'trackMetadataUpdated',
+  'channelAdded',
+  'channelRemoved',
+] as const;
+
+export type ExpectedEvents = (typeof expectedEventsList)[number];
 
 /**
  * `ServerMessage` oneof members that are intentionally NOT emitted to users.
  * Grouped with a brief rationale so the classification stays reviewable.
  * Mirrors the Python SDK's `IGNORED_NOTIFICATIONS` partition (FCE-3215).
  */
-export type IgnoredEvents =
+export const ignoredEventsList = [
   // Handshake / request-side — never inbound notifications.
-  | 'authenticated'
-  | 'authRequest'
-  | 'subscribeRequest'
-  | 'subscribeResponse'
-  // Currently unsurfaced server notifications — no consumer demand yet.
-  | 'channelAdded'
-  | 'channelRemoved'
-  | 'trackForwarding'
-  | 'trackForwardingRemoved'
-  | 'vadNotification'
-  | 'streamerConnected'
-  | 'streamerDisconnected'
-  | 'hlsPlayable'
-  | 'hlsUploaded'
-  | 'hlsUploadCrashed'
-  | 'componentCrashed';
-
-export const ignoredEventsList: ReadonlyArray<IgnoredEvents> = [
   'authenticated',
   'authRequest',
   'subscribeRequest',
   'subscribeResponse',
-  'channelAdded',
-  'channelRemoved',
+  // Currently unsurfaced server notifications — no consumer demand yet.
   'trackForwarding',
   'trackForwardingRemoved',
   'vadNotification',
-  'streamerConnected',
-  'streamerDisconnected',
+  // Deprecated
+  'streamConnected',
+  'streamDisconnected',
   'hlsPlayable',
   'hlsUploaded',
   'hlsUploadCrashed',
   'componentCrashed',
 ] as const;
+
+export type IgnoredEvents = (typeof ignoredEventsList)[number];
 
 /**
  * @inline
@@ -123,13 +112,15 @@ export type Notifications = {
   peerDisconnected: WithMappedPeerType<NonNullable<MessageWithIds['peerDisconnected']>>;
   peerMetadataUpdated: WithMappedPeerType<NonNullable<MessageWithIds['peerMetadataUpdated']>>;
   peerCrashed: WithMappedPeerType<NonNullable<MessageWithIds['peerCrashed']>>;
-  streamConnected: NonNullable<MessageWithIds['streamConnected']>;
-  streamDisconnected: NonNullable<MessageWithIds['streamDisconnected']>;
+  streamerConnected: NonNullable<MessageWithIds['streamerConnected']>;
+  streamerDisconnected: NonNullable<MessageWithIds['streamerDisconnected']>;
   viewerConnected: NonNullable<MessageWithIds['viewerConnected']>;
   viewerDisconnected: NonNullable<MessageWithIds['viewerDisconnected']>;
   trackAdded: WithMappedTrack<NonNullable<MessageWithIds['trackAdded']>>;
   trackRemoved: WithMappedTrack<NonNullable<MessageWithIds['trackRemoved']>>;
   trackMetadataUpdated: WithMappedTrack<NonNullable<MessageWithIds['trackMetadataUpdated']>>;
+  channelAdded: NonNullable<MessageWithIds['channelAdded']>;
+  channelRemoved: NonNullable<MessageWithIds['channelRemoved']>;
 };
 
 export type RoomCreated = Notifications['roomCreated'];
@@ -141,32 +132,15 @@ export type PeerConnected = Notifications['peerConnected'];
 export type PeerDisconnected = Notifications['peerDisconnected'];
 export type PeerMetadataUpdated = Notifications['peerMetadataUpdated'];
 export type PeerCrashed = Notifications['peerCrashed'];
-export type StreamConnected = Notifications['streamConnected'];
-export type StreamDisconnected = Notifications['streamDisconnected'];
+export type StreamerConnected = Notifications['streamerConnected'];
+export type StreamerDisconnected = Notifications['streamerDisconnected'];
 export type ViewerConnected = Notifications['viewerConnected'];
 export type ViewerDisconnected = Notifications['viewerDisconnected'];
 export type TrackAdded = Notifications['trackAdded'];
 export type TrackRemoved = Notifications['trackRemoved'];
 export type TrackMetadataUpdated = Notifications['trackMetadataUpdated'];
-
-export const expectedEventsList: ReadonlyArray<ExpectedEvents> = [
-  'roomCreated',
-  'roomDeleted',
-  'roomCrashed',
-  'peerAdded',
-  'peerDeleted',
-  'peerConnected',
-  'peerDisconnected',
-  'peerMetadataUpdated',
-  'peerCrashed',
-  'streamConnected',
-  'streamDisconnected',
-  'viewerConnected',
-  'viewerDisconnected',
-  'trackAdded',
-  'trackRemoved',
-  'trackMetadataUpdated',
-] as const;
+export type ChannelAdded = Notifications['channelAdded'];
+export type ChannelRemoved = Notifications['channelRemoved'];
 
 export const peerEventsWithPeerType = new Set<ExpectedEvents>([
   'peerAdded',

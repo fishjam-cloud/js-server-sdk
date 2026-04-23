@@ -34,13 +34,15 @@ export type {
   PeerDisconnected,
   PeerMetadataUpdated,
   PeerCrashed,
-  StreamConnected,
-  StreamDisconnected,
+  StreamerConnected,
+  StreamerDisconnected,
   ViewerConnected,
   ViewerDisconnected,
   TrackAdded,
   TrackRemoved,
   TrackMetadataUpdated,
+  ChannelAdded,
+  ChannelRemoved,
   NotificationEvents,
 } from './notifications';
 export { FishjamAgent } from './agent';

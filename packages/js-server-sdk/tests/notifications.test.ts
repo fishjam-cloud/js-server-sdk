@@ -42,13 +42,15 @@ describe('notifications module', () => {
     expectTypeOf<SDK.PeerCrashed>().toEqualTypeOf<Notifications['peerCrashed']>();
     expectTypeOf<SDK.RoomDeleted>().toEqualTypeOf<Notifications['roomDeleted']>();
     expectTypeOf<SDK.RoomCrashed>().toEqualTypeOf<Notifications['roomCrashed']>();
-    expectTypeOf<SDK.StreamConnected>().toEqualTypeOf<Notifications['streamConnected']>();
-    expectTypeOf<SDK.StreamDisconnected>().toEqualTypeOf<Notifications['streamDisconnected']>();
+    expectTypeOf<SDK.StreamerConnected>().toEqualTypeOf<Notifications['streamerConnected']>();
+    expectTypeOf<SDK.StreamerDisconnected>().toEqualTypeOf<Notifications['streamerDisconnected']>();
     expectTypeOf<SDK.ViewerConnected>().toEqualTypeOf<Notifications['viewerConnected']>();
     expectTypeOf<SDK.ViewerDisconnected>().toEqualTypeOf<Notifications['viewerDisconnected']>();
     expectTypeOf<SDK.TrackAdded>().toEqualTypeOf<Notifications['trackAdded']>();
     expectTypeOf<SDK.TrackRemoved>().toEqualTypeOf<Notifications['trackRemoved']>();
     expectTypeOf<SDK.TrackMetadataUpdated>().toEqualTypeOf<Notifications['trackMetadataUpdated']>();
+    expectTypeOf<SDK.ChannelAdded>().toEqualTypeOf<Notifications['channelAdded']>();
+    expectTypeOf<SDK.ChannelRemoved>().toEqualTypeOf<Notifications['channelRemoved']>();
   });
 
   it('peerEventsWithPeerType covers all ExpectedEvents with a peerType field', () => {
