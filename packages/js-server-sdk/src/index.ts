@@ -20,8 +20,6 @@ export {
 export { ServerMessage } from '@fishjam-cloud/fishjam-proto';
 export { FishjamWSNotifier } from './ws_notifier';
 export type {
-  PeerType,
-  TrackType,
   Track,
   ExpectedEvents,
   IgnoredEvents,

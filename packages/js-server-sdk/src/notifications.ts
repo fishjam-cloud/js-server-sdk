@@ -4,19 +4,8 @@ import {
   TrackType as ProtoTrackType,
   Track as ProtoTrack,
 } from '@fishjam-cloud/fishjam-proto';
+import { PeerType, TrackType } from './types';
 import { WithPeerId, WithRoomId } from './utils';
-
-/**
- * Peer type as emitted by {@link FishjamWSNotifier}. Matches the REST API's `PeerType`,
- * with the addition of `'unspecified'` for messages whose peer type is not set on the wire.
- */
-export type PeerType = 'webrtc' | 'agent' | 'vapi' | 'unspecified';
-
-/**
- * Track type as emitted by {@link FishjamWSNotifier}. Matches the REST API's `TrackType`,
- * with the addition of `'unspecified'` for messages whose track type is not set on the wire.
- */
-export type TrackType = 'audio' | 'video' | 'unspecified';
 
 /**
  * Track payload embedded in {@link TrackAdded}, {@link TrackRemoved}, {@link TrackMetadataUpdated}.
@@ -96,7 +85,10 @@ export type IgnoredEvents = (typeof ignoredEventsList)[number];
  */
 type MessageWithIds = WithPeerId<WithRoomId<ServerMessage>>;
 
+/** @inline */
 type WithMappedPeerType<T> = Omit<T, 'peerType'> & { peerType: PeerType };
+
+/** @inline */
 type WithMappedTrack<T> = Omit<T, 'track'> & { track: Track | undefined };
 
 /**
