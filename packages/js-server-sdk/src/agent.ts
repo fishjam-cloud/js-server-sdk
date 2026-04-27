@@ -27,7 +27,6 @@ export type OutgoingTrackData = Omit<NonNullable<AgentRequest_TrackData>, 'peerI
 
 export type AgentTrack = Omit<ProtoTrack, 'id'> & { id: TrackId };
 
-export type TrackType = 'audio' | 'video';
 export type AudioCodecParameters = {
   encoding: 'opus' | 'pcm16';
   sampleRate: 16000 | 24000 | 48000;

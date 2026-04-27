@@ -19,7 +19,30 @@ export {
 
 export { ServerMessage } from '@fishjam-cloud/fishjam-proto';
 export { FishjamWSNotifier } from './ws_notifier';
-export type * from './ws_notifier';
+export type {
+  Track,
+  ExpectedEvents,
+  IgnoredEvents,
+  RoomCreated,
+  RoomDeleted,
+  RoomCrashed,
+  PeerAdded,
+  PeerDeleted,
+  PeerConnected,
+  PeerDisconnected,
+  PeerMetadataUpdated,
+  PeerCrashed,
+  StreamerConnected,
+  StreamerDisconnected,
+  ViewerConnected,
+  ViewerDisconnected,
+  TrackAdded,
+  TrackRemoved,
+  TrackMetadataUpdated,
+  ChannelAdded,
+  ChannelRemoved,
+  NotificationEvents,
+} from './notifications';
 export { FishjamAgent } from './agent';
 export type * from './agent';
 export { FishjamClient } from './client';

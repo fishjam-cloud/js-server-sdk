@@ -1,4 +1,9 @@
-import { Peer as OpenApiPeer, RoomConfig } from '@fishjam-cloud/fishjam-openapi';
+import {
+  Peer as OpenApiPeer,
+  PeerType as OpenApiPeerType,
+  RoomConfig,
+  TrackType as OpenApiTrackType,
+} from '@fishjam-cloud/fishjam-openapi';
 
 // branded types are useful for restricting where given value can be passed
 declare const brand: unique symbol;
@@ -24,6 +29,18 @@ export type PeerId = Brand<string, 'PeerId'>;
 export type StreamId = Brand<string, 'StreamId'>;
 
 export type Peer = Omit<OpenApiPeer, 'id'> & { id: PeerId };
+
+/**
+ * Peer type as emitted by {@link FishjamWSNotifier}. Matches the REST API's `PeerType`,
+ * with the addition of `'unspecified'` for messages whose peer type is not set on the wire.
+ */
+export type PeerType = OpenApiPeerType | 'unspecified';
+
+/**
+ * Track type as emitted by {@link FishjamWSNotifier}. Matches the REST API's `TrackType`,
+ * with the addition of `'unspecified'` for messages whose track type is not set on the wire.
+ */
+export type TrackType = OpenApiTrackType | 'unspecified';
 
 export type Room = {
   id: RoomId;
