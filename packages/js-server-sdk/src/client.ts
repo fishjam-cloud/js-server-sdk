@@ -8,8 +8,9 @@ import {
   PeerOptionsWebRTC,
   PeerOptionsVapi,
   PeerOptionsAgent,
+  MoqTokenConfig,
 } from '@fishjam-cloud/fishjam-openapi';
-import type { AgentCallbacks, FishjamConfig, PeerId, Room, RoomId, Peer, StreamId } from './types';
+import type { AgentCallbacks, FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
 import { mapException } from './exceptions/mapper';
 import { getFishjamUrl } from './utils';
 import { FishjamAgent, TrackId } from './agent';
@@ -274,25 +275,12 @@ export class FishjamClient {
   }
 
   /**
-   * Creates a MoQ publisher token for the given stream.
-   * @returns a MoQ publisher token
+   * Creates a MoQ token.
+   * @returns a MoQ token
    */
-  async createMoqPublisherToken(streamId: StreamId) {
+  async createMoqToken(config?: MoqTokenConfig) {
     try {
-      const tokenResponse = await this.moqApi.createMoqPublisherToken(streamId);
-      return tokenResponse.data;
-    } catch (error) {
-      throw mapException(error);
-    }
-  }
-
-  /**
-   * Creates a MoQ subscriber token for the given stream.
-   * @returns a MoQ subscriber token
-   */
-  async createMoqSubscriberToken(streamId: StreamId) {
-    try {
-      const tokenResponse = await this.moqApi.createMoqSubscriberToken(streamId);
+      const tokenResponse = await this.moqApi.createMoqToken(config);
       return tokenResponse.data;
     } catch (error) {
       throw mapException(error);
