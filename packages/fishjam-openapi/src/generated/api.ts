@@ -117,6 +117,25 @@ export interface MoqToken {
     'token': string;
 }
 /**
+ * MoQ token configuration
+ * @export
+ * @interface MoqTokenConfig
+ */
+export interface MoqTokenConfig {
+    /**
+     * Path under the root the token grants publish access to
+     * @type {string}
+     * @memberof MoqTokenConfig
+     */
+    'publishPath'?: string | null;
+    /**
+     * Path under the root the token grants subscribe access to
+     * @type {string}
+     * @memberof MoqTokenConfig
+     */
+    'subscribePath'?: string | null;
+}
+/**
  * Describes peer status
  * @export
  * @interface Peer
@@ -849,16 +868,13 @@ export const MoqApiAxiosParamCreator = function (configuration?: Configuration) 
     return {
         /**
          * 
-         * @summary Creates a MoQ publisher token for the given stream
-         * @param {string} streamId Stream id
+         * @summary Creates a MoQ token for the given stream
+         * @param {MoqTokenConfig} [moqTokenConfig] Token configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createMoqPublisherToken: async (streamId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'streamId' is not null or undefined
-            assertParamExists('createMoqPublisherToken', 'streamId', streamId)
-            const localVarPath = `/moq/{stream_id}/publisher`
-                .replace(`{${"stream_id"}}`, encodeURIComponent(String(streamId)));
+        createMoqToken: async (moqTokenConfig?: MoqTokenConfig, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/moq/token`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -876,47 +892,12 @@ export const MoqApiAxiosParamCreator = function (configuration?: Configuration) 
 
 
     
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @summary Creates a MoQ subscriber token for the given stream
-         * @param {string} streamId Stream id
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        createMoqSubscriberToken: async (streamId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'streamId' is not null or undefined
-            assertParamExists('createMoqSubscriberToken', 'streamId', streamId)
-            const localVarPath = `/moq/{stream_id}/subscriber`
-                .replace(`{${"stream_id"}}`, encodeURIComponent(String(streamId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication authorization required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(moqTokenConfig, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -935,28 +916,15 @@ export const MoqApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @summary Creates a MoQ publisher token for the given stream
-         * @param {string} streamId Stream id
+         * @summary Creates a MoQ token for the given stream
+         * @param {MoqTokenConfig} [moqTokenConfig] Token configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createMoqPublisherToken(streamId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MoqToken>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.createMoqPublisherToken(streamId, options);
+        async createMoqToken(moqTokenConfig?: MoqTokenConfig, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MoqToken>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createMoqToken(moqTokenConfig, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['MoqApi.createMoqPublisherToken']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @summary Creates a MoQ subscriber token for the given stream
-         * @param {string} streamId Stream id
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async createMoqSubscriberToken(streamId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MoqToken>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.createMoqSubscriberToken(streamId, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['MoqApi.createMoqSubscriberToken']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['MoqApi.createMoqToken']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -971,23 +939,13 @@ export const MoqApiFactory = function (configuration?: Configuration, basePath?:
     return {
         /**
          * 
-         * @summary Creates a MoQ publisher token for the given stream
-         * @param {string} streamId Stream id
+         * @summary Creates a MoQ token for the given stream
+         * @param {MoqTokenConfig} [moqTokenConfig] Token configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createMoqPublisherToken(streamId: string, options?: any): AxiosPromise<MoqToken> {
-            return localVarFp.createMoqPublisherToken(streamId, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @summary Creates a MoQ subscriber token for the given stream
-         * @param {string} streamId Stream id
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        createMoqSubscriberToken(streamId: string, options?: any): AxiosPromise<MoqToken> {
-            return localVarFp.createMoqSubscriberToken(streamId, options).then((request) => request(axios, basePath));
+        createMoqToken(moqTokenConfig?: MoqTokenConfig, options?: any): AxiosPromise<MoqToken> {
+            return localVarFp.createMoqToken(moqTokenConfig, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1001,26 +959,14 @@ export const MoqApiFactory = function (configuration?: Configuration, basePath?:
 export class MoqApi extends BaseAPI {
     /**
      * 
-     * @summary Creates a MoQ publisher token for the given stream
-     * @param {string} streamId Stream id
+     * @summary Creates a MoQ token for the given stream
+     * @param {MoqTokenConfig} [moqTokenConfig] Token configuration
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof MoqApi
      */
-    public createMoqPublisherToken(streamId: string, options?: RawAxiosRequestConfig) {
-        return MoqApiFp(this.configuration).createMoqPublisherToken(streamId, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @summary Creates a MoQ subscriber token for the given stream
-     * @param {string} streamId Stream id
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof MoqApi
-     */
-    public createMoqSubscriberToken(streamId: string, options?: RawAxiosRequestConfig) {
-        return MoqApiFp(this.configuration).createMoqSubscriberToken(streamId, options).then((request) => request(this.axios, this.basePath));
+    public createMoqToken(moqTokenConfig?: MoqTokenConfig, options?: RawAxiosRequestConfig) {
+        return MoqApiFp(this.configuration).createMoqToken(moqTokenConfig, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

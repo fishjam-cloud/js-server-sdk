@@ -7,7 +7,7 @@ import {
   FishjamNotFoundException,
 } from '../src/exceptions';
 import { RoomType } from '@fishjam-cloud/fishjam-openapi';
-import type { RoomId, PeerId, StreamId } from '../src/types';
+import type { RoomId, PeerId } from '../src/types';
 
 const FISHJAM_ID = process.env.FISHJAM_ID!;
 const FISHJAM_MANAGEMENT_TOKEN = process.env.FISHJAM_MANAGEMENT_TOKEN!;
@@ -192,10 +192,15 @@ describe('createLivestreamViewerToken', () => {
   });
 });
 
-describe('createMoqPublisherToken', () => {
-  it('returns a token for a valid stream id', async () => {
+describe('createMoqToken', () => {
+  it('throws when config is empty', async () => {
     const client = createClient();
-    const result = await client.createMoqPublisherToken('test-stream' as unknown as StreamId);
+    await expect(client.createMoqToken()).rejects.toThrow();
+  });
+
+  it('returns a token with config', async () => {
+    const client = createClient();
+    const result = await client.createMoqToken({ publishPath: 'my/path', subscribePath: 'my/path' });
 
     expect(typeof result.token).toBe('string');
   });
@@ -203,25 +208,6 @@ describe('createMoqPublisherToken', () => {
   it('throws UnauthorizedException with invalid management token', async () => {
     const client = createClient('invalid');
 
-    await expect(client.createMoqPublisherToken('test-stream' as unknown as StreamId)).rejects.toThrow(
-      UnauthorizedException
-    );
-  });
-});
-
-describe('createMoqSubscriberToken', () => {
-  it('returns a token for a valid stream id', async () => {
-    const client = createClient();
-    const result = await client.createMoqSubscriberToken('test-stream' as unknown as StreamId);
-
-    expect(typeof result.token).toBe('string');
-  });
-
-  it('throws UnauthorizedException with invalid management token', async () => {
-    const client = createClient('invalid');
-
-    await expect(client.createMoqSubscriberToken('test-stream' as unknown as StreamId)).rejects.toThrow(
-      UnauthorizedException
-    );
+    await expect(client.createMoqToken()).rejects.toThrow(UnauthorizedException);
   });
 });
