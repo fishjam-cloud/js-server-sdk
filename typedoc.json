@@ -7,5 +7,9 @@
   "themeColor": "#FCF6E7",
   "readme": "none",
   "treatValidationWarningsAsErrors": true,
-  "treatWarningsAsErrors": true
+  "treatWarningsAsErrors": true,
+  "intentionallyNotExported": ["expectedEventsList", "ignoredEventsList"],
+  "packageOptions": {
+    "intentionallyNotExported": ["expectedEventsList", "ignoredEventsList"]
+  }
 }

@@ -27,7 +27,6 @@ export type OutgoingTrackData = Omit<NonNullable<AgentRequest_TrackData>, 'peerI
 
 export type AgentTrack = Omit<ProtoTrack, 'id'> & { id: TrackId };
 
-export type TrackType = 'audio' | 'video';
 export type AudioCodecParameters = {
   encoding: 'opus' | 'pcm16';
   sampleRate: 16000 | 24000 | 48000;
@@ -142,7 +141,7 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
    * @param timeoutMs - timeout in milliseconds (default: 5000)
    * @returns a promise that resolves with the captured image data
    */
-  public captureImage(trackId: string, timeoutMs: number = 5000): Promise<IncomingTrackImage> {
+  public captureImage(trackId: TrackId, timeoutMs: number = 5000): Promise<IncomingTrackImage> {
     if (this.pendingImageCaptures.has(trackId)) {
       return Promise.reject(new Error(`captureImage already pending for track ${trackId}`));
     }
