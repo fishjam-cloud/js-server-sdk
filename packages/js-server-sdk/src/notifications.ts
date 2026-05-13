@@ -69,6 +69,8 @@ export const ignoredEventsList = [
   'trackForwarding',
   'trackForwardingRemoved',
   'vadNotification',
+  // Webhook-only transport wrapper; the WebSocket notifier never receives it.
+  'notificationBatch',
   // Deprecated
   'streamConnected',
   'streamDisconnected',
