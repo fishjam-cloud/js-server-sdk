@@ -1,10 +1,10 @@
 import axios, { RawAxiosResponseHeaders } from 'axios';
 import {
-  MoqApi,
-  RoomApi,
-  ViewerApi,
+  MoQApi,
+  RoomsApi,
+  ViewersApi,
   RoomConfig,
-  StreamerApi,
+  StreamersApi,
   PeerOptionsWebRTC,
   PeerOptionsVapi,
   PeerOptionsAgent,
@@ -22,10 +22,10 @@ import packageJson from '../package.json';
  * @category Client
  */
 export class FishjamClient {
-  private readonly moqApi: MoqApi;
-  private readonly roomApi: RoomApi;
-  private readonly viewerApi: ViewerApi;
-  private readonly streamerApi: StreamerApi;
+  private readonly moqApi: MoQApi;
+  private readonly roomApi: RoomsApi;
+  private readonly viewerApi: ViewersApi;
+  private readonly streamerApi: StreamersApi;
   private readonly fishjamConfig: FishjamConfig;
   private deprecationWarningShown: boolean = false;
 
@@ -55,10 +55,10 @@ export class FishjamClient {
 
     const fishjamUrl = getFishjamUrl(config);
 
-    this.moqApi = new MoqApi(undefined, fishjamUrl, client);
-    this.roomApi = new RoomApi(undefined, fishjamUrl, client);
-    this.viewerApi = new ViewerApi(undefined, fishjamUrl, client);
-    this.streamerApi = new StreamerApi(undefined, fishjamUrl, client);
+    this.moqApi = new MoQApi(undefined, fishjamUrl, client);
+    this.roomApi = new RoomsApi(undefined, fishjamUrl, client);
+    this.viewerApi = new ViewersApi(undefined, fishjamUrl, client);
+    this.streamerApi = new StreamersApi(undefined, fishjamUrl, client);
     this.fishjamConfig = config;
   }
 
