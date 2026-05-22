@@ -4,8 +4,13 @@ export class FishjamService {
   roomId?: RoomId;
   fishjam: FishjamClient;
 
-  constructor(config: FishjamConfig) {
-    this.fishjam = new FishjamClient(config);
+  private constructor(fishjam: FishjamClient) {
+    this.fishjam = fishjam;
+  }
+
+  static async create(config: FishjamConfig): Promise<FishjamService> {
+    const fishjam = await FishjamClient.create(config);
+    return new FishjamService(fishjam);
   }
 
   async createPeer() {
