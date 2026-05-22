@@ -19,8 +19,14 @@ export type Brand<T, TBrand extends string> = T & { [brand]: TBrand };
  *
  * Keys present in `M` but not in `T` are ignored — only fields that already exist on `T`
  * are overridden, so a shared override map can be reused across multiple source types.
+ *
+ * `undefined` is re-added to the override when the original field allowed it, so optional
+ * fields on generated proto types (e.g. `peerId?: string | undefined`) remain assignable
+ * from `undefined` under `exactOptionalPropertyTypes`.
  */
-export type Override<T, M> = { [K in keyof T]: K extends keyof M ? M[K] : T[K] };
+export type Override<T, M> = {
+  [K in keyof T]: K extends keyof M ? (undefined extends T[K] ? M[K] | undefined : M[K]) : T[K];
+};
 
 /**
  * ID of the Room.
