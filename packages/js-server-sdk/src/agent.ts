@@ -12,8 +12,8 @@ import {
   TrackType as ProtoTrackType,
   TrackEncoding,
 } from '@fishjam-cloud/fishjam-proto';
-import { AgentCallbacks, Brand, FishjamConfig, PeerId } from './types';
-import { getFishjamUrl, httpToWebsocket, WithPeerId } from './utils';
+import { AgentCallbacks, Brand, FishjamConfig, Override, PeerId } from './types';
+import { getFishjamUrl, httpToWebsocket } from './utils';
 
 const expectedEventsList = ['trackData'] as const;
 /**
@@ -21,11 +21,11 @@ const expectedEventsList = ['trackData'] as const;
  */
 export type ExpectedAgentEvents = (typeof expectedEventsList)[number];
 
-export type IncomingTrackData = Omit<NonNullable<AgentResponse_TrackData>, 'peerId'> & { peerId: PeerId };
+export type IncomingTrackData = Override<NonNullable<AgentResponse_TrackData>, { peerId: PeerId }>;
 export type IncomingTrackImage = NonNullable<AgentResponse_TrackImage>;
-export type OutgoingTrackData = Omit<NonNullable<AgentRequest_TrackData>, 'peerId'> & { peerId: PeerId };
+export type OutgoingTrackData = Override<NonNullable<AgentRequest_TrackData>, { peerId: PeerId }>;
 
-export type AgentTrack = Omit<ProtoTrack, 'id'> & { id: TrackId };
+export type AgentTrack = Override<ProtoTrack, { id: TrackId }>;
 
 export type AudioCodecParameters = {
   encoding: 'opus' | 'pcm16';
@@ -40,11 +40,9 @@ type PendingImageCapture = {
   timer: ReturnType<typeof setTimeout>;
 };
 
-/**
- * @inline
- */
-type ResponseWithPeerId = WithPeerId<AgentResponse>;
-export type AgentEvents = { [K in ExpectedAgentEvents]: (message: NonNullable<ResponseWithPeerId[K]>) => void };
+export type AgentEvents = {
+  [K in ExpectedAgentEvents]: (message: Override<NonNullable<AgentResponse[K]>, { peerId: PeerId }>) => void;
+};
 
 export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentEvents>) {
   private readonly client: WebSocket;
