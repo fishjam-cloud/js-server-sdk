@@ -18,4 +18,3 @@ export const getFishjamUrl = (config: FishjamConfig) => {
     return `https://fishjam.io/api/v1/connect/${config.fishjamId}`;
   }
 };
-
