@@ -32,9 +32,11 @@ export class FishjamClient {
   /**
    * Create new instance of Fishjam Client.
    *
-   * The constructor does NOT verify the provided credentials against the
-   * Fishjam backend. Use {@link FishjamClient.create} or
-   * {@link FishjamClient.checkCredentials} to verify them at construction time.
+   * Throws {@link MissingFishjamIdException} or
+   * {@link MissingManagementTokenException} if either field is missing.
+   * Does not verify credentials against the backend — use
+   * {@link FishjamClient.create} or call
+   * {@link FishjamClient.checkCredentials} afterwards for that.
    *
    * Example usage:
    * ```
@@ -68,11 +70,12 @@ export class FishjamClient {
   }
 
   /**
-   * Async factory. Constructs a client and verifies that the provided
-   * `fishjamId` and `managementToken` are accepted by the Fishjam backend.
+   * Async factory: constructs a client and verifies credentials against
+   * the backend.
    *
-   * Throws {@link InvalidFishjamConfigException} for malformed config,
-   * {@link UnauthorizedException} for bad credentials, or
+   * Throws {@link MissingFishjamIdException} /
+   * {@link MissingManagementTokenException} for missing fields,
+   * {@link UnauthorizedException} for bad credentials,
    * {@link FishjamNotFoundException} for an unknown `fishjamId`.
    *
    * Example:
