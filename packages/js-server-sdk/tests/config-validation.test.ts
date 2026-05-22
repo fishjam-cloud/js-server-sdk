@@ -28,10 +28,11 @@ describe('FishjamClient constructor sync validation', () => {
 });
 
 describe('FishjamClient live credential checks (mocked)', () => {
-  let getAllRoomsSpy: ReturnType<typeof vi.spyOn>;
+  const spy = () => vi.spyOn(RoomsApi.prototype, 'getAllRooms');
+  let getAllRoomsSpy: ReturnType<typeof spy>;
 
   beforeEach(() => {
-    getAllRoomsSpy = vi.spyOn(RoomsApi.prototype, 'getAllRooms');
+    getAllRoomsSpy = spy();
   });
 
   afterEach(() => {
