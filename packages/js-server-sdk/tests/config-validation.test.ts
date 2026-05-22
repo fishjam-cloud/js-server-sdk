@@ -1,11 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { RoomsApi } from '@fishjam-cloud/fishjam-openapi';
 import { FishjamClient } from '../src/client';
-import {
-  MissingFishjamIdException,
-  MissingManagementTokenException,
-  UnauthorizedException,
-} from '../src/exceptions';
+import { MissingFishjamIdException, MissingManagementTokenException, UnauthorizedException } from '../src/exceptions';
 import type { FishjamConfig } from '../src/types';
 
 const VALID_CONFIG: FishjamConfig = { fishjamId: 'fjm_test', managementToken: 'tok_test' };
@@ -19,15 +15,11 @@ const axiosError = (status: number, detail = 'error') => ({
 
 describe('FishjamClient constructor sync validation', () => {
   it('throws MissingFishjamIdException when fishjamId is empty', () => {
-    expect(() => new FishjamClient({ fishjamId: '', managementToken: 'tok' })).toThrow(
-      MissingFishjamIdException
-    );
+    expect(() => new FishjamClient({ fishjamId: '', managementToken: 'tok' })).toThrow(MissingFishjamIdException);
   });
 
   it('throws MissingManagementTokenException when managementToken is empty', () => {
-    expect(() => new FishjamClient({ fishjamId: 'fjm', managementToken: '' })).toThrow(
-      MissingManagementTokenException
-    );
+    expect(() => new FishjamClient({ fishjamId: 'fjm', managementToken: '' })).toThrow(MissingManagementTokenException);
   });
 
   it('does not throw when both fields are provided', () => {
