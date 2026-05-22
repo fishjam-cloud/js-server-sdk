@@ -4,8 +4,7 @@ import {
   TrackType as ProtoTrackType,
   Track as ProtoTrack,
 } from '@fishjam-cloud/fishjam-proto';
-import { PeerType, TrackType } from './types';
-import { WithPeerId, WithRoomId } from './utils';
+import { Override, PeerId, PeerType, RoomId, TrackType } from './types';
 
 /**
  * Track payload embedded in {@link TrackAdded}, {@link TrackRemoved}, {@link TrackMetadataUpdated}.
@@ -83,38 +82,44 @@ export const ignoredEventsList = [
 export type IgnoredEvents = (typeof ignoredEventsList)[number];
 
 /**
+ * Field-level overrides applied to every notification payload: branded ID types
+ * and the user-facing enums replace their raw protobuf counterparts. {@link Override}
+ * only swaps keys that exist on the source type, so a single map covers all variants.
+ *
  * @inline
  */
-type MessageWithIds = WithPeerId<WithRoomId<ServerMessage>>;
+type NotificationOverrides = {
+  roomId: RoomId;
+  peerId: PeerId;
+  peerType: PeerType;
+  track: Track | undefined;
+};
 
 /** @inline */
-type WithMappedPeerType<T> = Omit<T, 'peerType'> & { peerType: PeerType };
-
-/** @inline */
-type WithMappedTrack<T> = Omit<T, 'track'> & { track: Track | undefined };
+type Notification<K extends keyof ServerMessage> = Override<NonNullable<ServerMessage[K]>, NotificationOverrides>;
 
 /**
  * @inline
  */
 export type Notifications = {
-  roomCreated: NonNullable<MessageWithIds['roomCreated']>;
-  roomDeleted: NonNullable<MessageWithIds['roomDeleted']>;
-  roomCrashed: NonNullable<MessageWithIds['roomCrashed']>;
-  peerAdded: WithMappedPeerType<NonNullable<MessageWithIds['peerAdded']>>;
-  peerDeleted: WithMappedPeerType<NonNullable<MessageWithIds['peerDeleted']>>;
-  peerConnected: WithMappedPeerType<NonNullable<MessageWithIds['peerConnected']>>;
-  peerDisconnected: WithMappedPeerType<NonNullable<MessageWithIds['peerDisconnected']>>;
-  peerMetadataUpdated: WithMappedPeerType<NonNullable<MessageWithIds['peerMetadataUpdated']>>;
-  peerCrashed: WithMappedPeerType<NonNullable<MessageWithIds['peerCrashed']>>;
-  streamerConnected: NonNullable<MessageWithIds['streamerConnected']>;
-  streamerDisconnected: NonNullable<MessageWithIds['streamerDisconnected']>;
-  viewerConnected: NonNullable<MessageWithIds['viewerConnected']>;
-  viewerDisconnected: NonNullable<MessageWithIds['viewerDisconnected']>;
-  trackAdded: WithMappedTrack<NonNullable<MessageWithIds['trackAdded']>>;
-  trackRemoved: WithMappedTrack<NonNullable<MessageWithIds['trackRemoved']>>;
-  trackMetadataUpdated: WithMappedTrack<NonNullable<MessageWithIds['trackMetadataUpdated']>>;
-  channelAdded: NonNullable<MessageWithIds['channelAdded']>;
-  channelRemoved: NonNullable<MessageWithIds['channelRemoved']>;
+  roomCreated: Notification<'roomCreated'>;
+  roomDeleted: Notification<'roomDeleted'>;
+  roomCrashed: Notification<'roomCrashed'>;
+  peerAdded: Notification<'peerAdded'>;
+  peerDeleted: Notification<'peerDeleted'>;
+  peerConnected: Notification<'peerConnected'>;
+  peerDisconnected: Notification<'peerDisconnected'>;
+  peerMetadataUpdated: Notification<'peerMetadataUpdated'>;
+  peerCrashed: Notification<'peerCrashed'>;
+  streamerConnected: Notification<'streamerConnected'>;
+  streamerDisconnected: Notification<'streamerDisconnected'>;
+  viewerConnected: Notification<'viewerConnected'>;
+  viewerDisconnected: Notification<'viewerDisconnected'>;
+  trackAdded: Notification<'trackAdded'>;
+  trackRemoved: Notification<'trackRemoved'>;
+  trackMetadataUpdated: Notification<'trackMetadataUpdated'>;
+  channelAdded: Notification<'channelAdded'>;
+  channelRemoved: Notification<'channelRemoved'>;
 };
 
 export type RoomCreated = Notifications['roomCreated'];

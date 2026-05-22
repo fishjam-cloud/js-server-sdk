@@ -1,5 +1,5 @@
 import { MissingFishjamIdException } from './exceptions';
-import type { FishjamConfig, PeerId, RoomId } from './types';
+import type { FishjamConfig } from './types';
 
 export const httpToWebsocket = (httpUrl: string) => {
   const url = new URL(httpUrl);
@@ -19,14 +19,3 @@ export const getFishjamUrl = (config: FishjamConfig) => {
   }
 };
 
-export type WithRoomId<T> = {
-  [P in keyof T]: NonNullable<T[P]> extends { roomId: string }
-    ? Omit<NonNullable<T[P]>, 'roomId'> & { roomId: RoomId }
-    : T[P];
-};
-
-export type WithPeerId<T> = {
-  [P in keyof T]: NonNullable<T[P]> extends { peerId: string }
-    ? Omit<NonNullable<T[P]>, 'peerId'> & { peerId: PeerId }
-    : T[P];
-};
