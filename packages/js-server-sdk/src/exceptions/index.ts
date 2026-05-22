@@ -6,6 +6,12 @@ export class MissingFishjamIdException extends Error {
   }
 }
 
+export class MissingManagementTokenException extends Error {
+  constructor() {
+    super('Management Token is required');
+  }
+}
+
 export class FishjamBaseException extends Error {
   statusCode: number;
   axiosCode?: string;

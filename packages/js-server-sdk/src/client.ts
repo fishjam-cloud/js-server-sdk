@@ -12,7 +12,7 @@ import {
 } from '@fishjam-cloud/fishjam-openapi';
 import type { AgentCallbacks, FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
 import { mapException } from './exceptions/mapper';
-import { getFishjamUrl } from './utils';
+import { getFishjamUrl, validateFishjamConfig } from './utils';
 import { FishjamAgent, TrackId } from './agent';
 import packageJson from '../package.json';
 
@@ -32,6 +32,10 @@ export class FishjamClient {
   /**
    * Create new instance of Fishjam Client.
    *
+   * The constructor does NOT verify the provided credentials against the
+   * Fishjam backend. Use {@link FishjamClient.create} or
+   * {@link FishjamClient.checkCredentials} to verify them at construction time.
+   *
    * Example usage:
    * ```
    * const fishjamClient = new FishjamClient({
@@ -41,6 +45,7 @@ export class FishjamClient {
    * ```
    */
   constructor(config: FishjamConfig) {
+    validateFishjamConfig(config);
     const client = axios.create({
       headers: {
         Authorization: `Bearer ${config.managementToken}`,
@@ -60,6 +65,42 @@ export class FishjamClient {
     this.viewerApi = new ViewersApi(undefined, fishjamUrl, client);
     this.streamerApi = new StreamersApi(undefined, fishjamUrl, client);
     this.fishjamConfig = config;
+  }
+
+  /**
+   * Async factory. Constructs a client and verifies that the provided
+   * `fishjamId` and `managementToken` are accepted by the Fishjam backend.
+   *
+   * Throws {@link InvalidFishjamConfigException} for malformed config,
+   * {@link UnauthorizedException} for bad credentials, or
+   * {@link FishjamNotFoundException} for an unknown `fishjamId`.
+   *
+   * Example:
+   * ```
+   * const client = await FishjamClient.create({
+   *   fishjamId: process.env.FISHJAM_ID!,
+   *   managementToken: process.env.FISHJAM_MANAGEMENT_TOKEN!,
+   * });
+   * ```
+   */
+  static async create(config: FishjamConfig): Promise<FishjamClient> {
+    const client = new FishjamClient(config);
+    await client.checkCredentials();
+    return client;
+  }
+
+  /**
+   * Verifies the configured credentials by making a single lightweight
+   * call to the Fishjam backend. Resolves on success, otherwise throws the
+   * same exception types thrown by other client methods (notably
+   * {@link UnauthorizedException} and {@link FishjamNotFoundException}).
+   */
+  async checkCredentials(): Promise<void> {
+    try {
+      await this.roomApi.getAllRooms();
+    } catch (error) {
+      throw mapException(error);
+    }
   }
 
   private handleDeprecationHeader(headers: RawAxiosResponseHeaders): void {
