@@ -12,7 +12,8 @@ import {
 } from '@fishjam-cloud/fishjam-openapi';
 import type { AgentCallbacks, FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
 import { mapException } from './exceptions/mapper';
-import { getFishjamUrl, validateFishjamConfig } from './utils';
+import { InvalidFishjamCredentialsException } from './exceptions';
+import { getFishjamUrl } from './utils';
 import { FishjamAgent, TrackId } from './agent';
 import packageJson from '../package.json';
 
@@ -32,8 +33,6 @@ export class FishjamClient {
   /**
    * Create new instance of Fishjam Client.
    *
-   * Throws {@link MissingFishjamIdException} or
-   * {@link MissingManagementTokenException} if either field is missing.
    * Does not verify credentials against the backend — use
    * {@link FishjamClient.create} or call
    * {@link FishjamClient.checkCredentials} afterwards for that.
@@ -47,7 +46,6 @@ export class FishjamClient {
    * ```
    */
   constructor(config: FishjamConfig) {
-    validateFishjamConfig(config);
     const client = axios.create({
       headers: {
         Authorization: `Bearer ${config.managementToken}`,
@@ -73,10 +71,8 @@ export class FishjamClient {
    * Async factory: constructs a client and verifies credentials against
    * the backend.
    *
-   * Throws {@link MissingFishjamIdException} /
-   * {@link MissingManagementTokenException} for missing fields,
-   * {@link UnauthorizedException} for bad credentials,
-   * {@link FishjamNotFoundException} for an unknown `fishjamId`.
+   * Throws {@link InvalidFishjamCredentialsException} when the
+   * `fishjamId` / `managementToken` pair is rejected by the backend.
    *
    * Example:
    * ```
@@ -94,14 +90,20 @@ export class FishjamClient {
 
   /**
    * Verifies the configured credentials by making a single lightweight
-   * call to the Fishjam backend. Resolves on success, otherwise throws the
-   * same exception types thrown by other client methods (notably
-   * {@link UnauthorizedException} and {@link FishjamNotFoundException}).
+   * call to the Fishjam backend. Resolves on success, throws
+   * {@link InvalidFishjamCredentialsException} on 401/404 from the backend,
+   * otherwise rethrows the standard mapped exception.
    */
   async checkCredentials(): Promise<void> {
     try {
       await this.roomApi.getAllRooms();
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        if (status === 401 || status === 404) {
+          throw new InvalidFishjamCredentialsException(error);
+        }
+      }
       throw mapException(error);
     }
   }
