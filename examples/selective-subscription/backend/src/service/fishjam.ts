@@ -12,9 +12,9 @@ export class FishjamService extends EventTarget {
   roomId?: RoomId;
   fishjam: FishjamClient;
 
-  constructor(config: FishjamConfig) {
+  private constructor(fishjam: FishjamClient, config: FishjamConfig) {
     super();
-    this.fishjam = new FishjamClient(config);
+    this.fishjam = fishjam;
     const notifier = new FishjamWSNotifier(
       config,
       () => {},
@@ -25,6 +25,11 @@ export class FishjamService extends EventTarget {
     notifier.on('peerDisconnected', (msg) => this.emit('peerDisconnected', msg));
     notifier.on('trackAdded', (msg) => this.emit('trackAdded', msg));
     notifier.on('trackRemoved', (msg) => this.emit('trackRemoved', msg));
+  }
+
+  static async create(config: FishjamConfig): Promise<FishjamService> {
+    const fishjam = await FishjamClient.create(config);
+    return new FishjamService(fishjam, config);
   }
 
   async createPeer() {

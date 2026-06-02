@@ -34,7 +34,7 @@ export const fishjamPlugin = fastifyPlugin(async (fastify: FastifyInstance): Pro
     throw new Error('The `fishjamPlugin` plugin has already been registered.');
   }
 
-  const fishjamClient = new FishjamClient({
+  const fishjamClient = await FishjamClient.create({
     fishjamId: fastify.config.FISHJAM_ID,
     managementToken: fastify.config.FISHJAM_MANAGEMENT_TOKEN,
   });

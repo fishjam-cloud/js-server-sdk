@@ -28,6 +28,8 @@ export class RoomNotFoundException extends FishjamBaseException {}
 
 export class FishjamNotFoundException extends FishjamBaseException {}
 
+export class InvalidFishjamCredentialsException extends FishjamBaseException {}
+
 export class PeerNotFoundException extends FishjamBaseException {}
 
 export class ServiceUnavailableException extends FishjamBaseException {}

@@ -4,7 +4,7 @@ import { peerController } from './controllers/peers';
 import { notificationsController } from './controllers/notifications';
 import { FishjamService } from './service/fishjam';
 
-const fishjam = new FishjamService({
+const fishjam = await FishjamService.create({
   fishjamId: process.env.FISHJAM_ID!,
   managementToken: process.env.FISHJAM_TOKEN!,
 });

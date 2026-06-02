@@ -12,7 +12,7 @@ const fishjamConfig = {
   managementToken: process.env.FISHJAM_TOKEN,
 };
 
-const fishjam = new FishjamService(fishjamConfig);
+const fishjam = await FishjamService.create(fishjamConfig);
 
 new TranscriptionService(fishjamConfig, process.env.GEMINI_API_KEY);
 
