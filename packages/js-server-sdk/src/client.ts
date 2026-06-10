@@ -13,7 +13,6 @@ import {
 } from '@fishjam-cloud/fishjam-openapi';
 import type { AgentCallbacks, FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
 import { mapException } from './exceptions/mapper';
-import { InvalidFishjamCredentialsException } from './exceptions';
 import { getFishjamUrl } from './utils';
 import { FishjamAgent, TrackId } from './agent';
 import packageJson from '../package.json';
@@ -101,9 +100,6 @@ export class FishjamClient {
     try {
       await this.credentialsApi.validateCredentials();
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 404) {
-        throw new InvalidFishjamCredentialsException(error);
-      }
       throw mapException(error);
     }
   }

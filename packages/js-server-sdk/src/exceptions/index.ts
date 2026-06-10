@@ -34,4 +34,6 @@ export class PeerNotFoundException extends FishjamBaseException {}
 
 export class ServiceUnavailableException extends FishjamBaseException {}
 
+export class QuotaExceededException extends FishjamBaseException {}
+
 export class UnknownException extends FishjamBaseException {}
