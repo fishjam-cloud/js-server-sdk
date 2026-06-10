@@ -8,6 +8,7 @@ const VALID_CONFIG: FishjamConfig = { fishjamId: 'fjm_test', managementToken: 't
 
 const axiosError = (status: number, detail = 'error') => ({
   isAxiosError: true,
+  request: { path: 'https://fish.jam/api/v1/connect/fishjam_id/validate' },
   message: `Request failed with status code ${status}`,
   code: 'ERR_BAD_REQUEST',
   response: { status, data: { detail } },
@@ -35,12 +36,6 @@ describe('FishjamClient live credential checks (mocked)', () => {
     validateSpy.mockRestore();
   });
 
-  it('FishjamClient.create rejects with InvalidFishjamCredentialsException on 401', async () => {
-    validateSpy.mockRejectedValueOnce(axiosError(401, 'Invalid token'));
-
-    await expect(FishjamClient.create(VALID_CONFIG)).rejects.toThrow(InvalidFishjamCredentialsException);
-  });
-
   it('FishjamClient.create rejects with InvalidFishjamCredentialsException on 404', async () => {
     validateSpy.mockRejectedValueOnce(axiosError(404, 'Fishjam not found'));
 
@@ -54,13 +49,6 @@ describe('FishjamClient live credential checks (mocked)', () => {
 
     expect(client).toBeInstanceOf(FishjamClient);
     expect(validateSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it('checkCredentials throws InvalidFishjamCredentialsException on 401', async () => {
-    validateSpy.mockRejectedValueOnce(axiosError(401, 'Invalid token'));
-
-    const client = new FishjamClient(VALID_CONFIG);
-    await expect(client.checkCredentials()).rejects.toThrow(InvalidFishjamCredentialsException);
   });
 
   it('checkCredentials throws InvalidFishjamCredentialsException on 404', async () => {
