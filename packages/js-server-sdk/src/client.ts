@@ -101,7 +101,7 @@ export class FishjamClient {
     try {
       await this.credentialsApi.validateCredentials();
     } catch (error) {
-      if (axios.isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 404)) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
         throw new InvalidFishjamCredentialsException(error);
       }
       throw mapException(error);
