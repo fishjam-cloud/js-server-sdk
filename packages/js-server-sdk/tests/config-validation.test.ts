@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { RoomsApi } from '@fishjam-cloud/fishjam-openapi';
+import { CredentialsApi } from '@fishjam-cloud/fishjam-openapi';
 import { FishjamClient } from '../src/client';
 import { InvalidFishjamCredentialsException, MissingFishjamIdException } from '../src/exceptions';
 import type { FishjamConfig } from '../src/types';
@@ -24,54 +24,54 @@ describe('FishjamClient constructor sync validation', () => {
 });
 
 describe('FishjamClient live credential checks (mocked)', () => {
-  const spy = () => vi.spyOn(RoomsApi.prototype, 'getAllRooms');
-  let getAllRoomsSpy: ReturnType<typeof spy>;
+  const spy = () => vi.spyOn(CredentialsApi.prototype, 'validateCredentials');
+  let validateSpy: ReturnType<typeof spy>;
 
   beforeEach(() => {
-    getAllRoomsSpy = spy();
+    validateSpy = spy();
   });
 
   afterEach(() => {
-    getAllRoomsSpy.mockRestore();
+    validateSpy.mockRestore();
   });
 
   it('FishjamClient.create rejects with InvalidFishjamCredentialsException on 401', async () => {
-    getAllRoomsSpy.mockRejectedValueOnce(axiosError(401, 'Invalid token'));
+    validateSpy.mockRejectedValueOnce(axiosError(401, 'Invalid token'));
 
     await expect(FishjamClient.create(VALID_CONFIG)).rejects.toThrow(InvalidFishjamCredentialsException);
   });
 
   it('FishjamClient.create rejects with InvalidFishjamCredentialsException on 404', async () => {
-    getAllRoomsSpy.mockRejectedValueOnce(axiosError(404, 'Fishjam not found'));
+    validateSpy.mockRejectedValueOnce(axiosError(404, 'Fishjam not found'));
 
     await expect(FishjamClient.create(VALID_CONFIG)).rejects.toThrow(InvalidFishjamCredentialsException);
   });
 
   it('FishjamClient.create resolves and pings backend once on success', async () => {
-    getAllRoomsSpy.mockResolvedValueOnce({ data: { data: [] } } as never);
+    validateSpy.mockResolvedValueOnce({ data: {} } as never);
 
     const client = await FishjamClient.create(VALID_CONFIG);
 
     expect(client).toBeInstanceOf(FishjamClient);
-    expect(getAllRoomsSpy).toHaveBeenCalledTimes(1);
+    expect(validateSpy).toHaveBeenCalledTimes(1);
   });
 
   it('checkCredentials throws InvalidFishjamCredentialsException on 401', async () => {
-    getAllRoomsSpy.mockRejectedValueOnce(axiosError(401, 'Invalid token'));
+    validateSpy.mockRejectedValueOnce(axiosError(401, 'Invalid token'));
 
     const client = new FishjamClient(VALID_CONFIG);
     await expect(client.checkCredentials()).rejects.toThrow(InvalidFishjamCredentialsException);
   });
 
   it('checkCredentials throws InvalidFishjamCredentialsException on 404', async () => {
-    getAllRoomsSpy.mockRejectedValueOnce(axiosError(404, 'Fishjam not found'));
+    validateSpy.mockRejectedValueOnce(axiosError(404, 'Fishjam not found'));
 
     const client = new FishjamClient(VALID_CONFIG);
     await expect(client.checkCredentials()).rejects.toThrow(InvalidFishjamCredentialsException);
   });
 
   it('checkCredentials resolves on success', async () => {
-    getAllRoomsSpy.mockResolvedValueOnce({ data: { data: [] } } as never);
+    validateSpy.mockResolvedValueOnce({ data: {} } as never);
 
     const client = new FishjamClient(VALID_CONFIG);
     await expect(client.checkCredentials()).resolves.toBeUndefined();
