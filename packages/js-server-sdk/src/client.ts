@@ -4,6 +4,7 @@ import {
   RoomsApi,
   ViewersApi,
   RoomConfig,
+  CredentialsApi,
   StreamersApi,
   PeerOptionsWebRTC,
   PeerOptionsVapi,
@@ -27,6 +28,7 @@ export class FishjamClient {
   private readonly roomApi: RoomsApi;
   private readonly viewerApi: ViewersApi;
   private readonly streamerApi: StreamersApi;
+  private readonly credentialsApi: CredentialsApi;
   private readonly fishjamConfig: FishjamConfig;
   private deprecationWarningShown: boolean = false;
 
@@ -64,6 +66,7 @@ export class FishjamClient {
     this.roomApi = new RoomsApi(undefined, fishjamUrl, client);
     this.viewerApi = new ViewersApi(undefined, fishjamUrl, client);
     this.streamerApi = new StreamersApi(undefined, fishjamUrl, client);
+    this.credentialsApi = new CredentialsApi(undefined, fishjamUrl, client);
     this.fishjamConfig = config;
   }
 
@@ -96,13 +99,10 @@ export class FishjamClient {
    */
   async checkCredentials(): Promise<void> {
     try {
-      await this.roomApi.getAllRooms();
+      await this.credentialsApi.validateCredentials();
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const status = error.response?.status;
-        if (status === 401 || status === 404) {
-          throw new InvalidFishjamCredentialsException(error);
-        }
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        throw new InvalidFishjamCredentialsException(error);
       }
       throw mapException(error);
     }
