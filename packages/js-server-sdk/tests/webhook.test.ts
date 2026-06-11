@@ -42,11 +42,7 @@ describe('decodeServerNotifications', () => {
   it('unwraps a NotificationBatch into its elements, preserving order', () => {
     const batch = encode({
       notificationBatch: {
-        notifications: [
-          { roomCreated: { roomId: 'room-1' } },
-          peerConnected,
-          { roomDeleted: { roomId: 'room-1' } },
-        ],
+        notifications: [{ roomCreated: { roomId: 'room-1' } }, peerConnected, { roomDeleted: { roomId: 'room-1' } }],
       },
     });
 
