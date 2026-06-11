@@ -2,7 +2,9 @@ import type { AxiosError as BaseAxiosError } from 'axios';
 import {
   BadRequestException,
   FishjamNotFoundException,
+  InvalidFishjamCredentialsException,
   PeerNotFoundException,
+  QuotaExceededException,
   RoomNotFoundException,
   ServiceUnavailableException,
   UnauthorizedException,
@@ -18,9 +20,15 @@ export const mapException = (error: unknown, entity?: 'peer' | 'room') => {
     switch (error.response?.status) {
       case 400:
         return new BadRequestException(error);
+      case 402:
+        return new QuotaExceededException(error);
       case 401:
         throw new UnauthorizedException(error);
       case 404:
+        if (error.request.path.includes('validate')) {
+          return new InvalidFishjamCredentialsException(error);
+        }
+
         switch (entity) {
           case 'peer':
             return new PeerNotFoundException(error);
