@@ -68,7 +68,8 @@ export const ignoredEventsList = [
   'trackForwarding',
   'trackForwardingRemoved',
   'vadNotification',
-  // Webhook-only transport wrapper; the WebSocket notifier never receives it.
+  // Transport wrapper, not a user-facing event: unwrapped by `extractNotifications`
+  // into its constituent notifications rather than emitted under its own key.
   'notificationBatch',
   // Deprecated
   'streamConnected',
@@ -168,3 +169,48 @@ export const mapNotification = (event: ExpectedEvents, msg: unknown): unknown =>
 };
 
 export type NotificationEvents = { [K in ExpectedEvents]: (message: Notifications[K]) => void };
+
+/**
+ * A single decoded, mapped server notification tagged with its event type.
+ * The discriminated `type` lets consumers narrow `notification` to the matching
+ * payload (e.g. `if (n.type === 'peerConnected') n.notification.peerType`).
+ */
+export type ServerNotification = {
+  [K in ExpectedEvents]: { type: K; notification: Notifications[K] };
+}[ExpectedEvents];
+
+const isExpectedEvent = (event: string): event is ExpectedEvents =>
+  (expectedEventsList as readonly string[]).includes(event);
+
+/**
+ * Unwrap a {@link ServerMessage} into the individual notification messages it carries.
+ * A `notificationBatch` expands to its elements; any other message yields itself.
+ * Only one level is unwrapped — nested batches are a documented protocol violation
+ * and their inner batch (not an expected event) is dropped by {@link toServerNotification}.
+ */
+const flattenServerMessage = (message: ServerMessage): ServerMessage[] =>
+  message.notificationBatch?.notifications ?? [message];
+
+/**
+ * Map a single decoded {@link ServerMessage} to a typed notification, or `null` when
+ * its populated oneof variant is not surfaced to users (handshake, deprecated, batch).
+ */
+const toServerNotification = (message: ServerMessage): ServerNotification | null => {
+  const entry = Object.entries(message).find(([, value]) => value);
+  if (!entry) return null;
+
+  const [event, msg] = entry;
+  if (!isExpectedEvent(event)) return null;
+
+  return { type: event, notification: mapNotification(event, msg) } as ServerNotification;
+};
+
+/**
+ * Decode-side core shared by the WebSocket notifier and the webhook decoder: flatten a
+ * {@link ServerMessage} (unwrapping a batch) and map each element to a typed notification,
+ * preserving wire order and discarding non-surfaced variants.
+ */
+export const extractNotifications = (message: ServerMessage): ServerNotification[] =>
+  flattenServerMessage(message)
+    .map(toServerNotification)
+    .filter((notification): notification is ServerNotification => notification !== null);

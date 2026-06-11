@@ -3,7 +3,7 @@ import cors from '@fastify/cors';
 import fastifyEnv from '@fastify/env';
 import fastifySwagger from '@fastify/swagger';
 import healthcheck from 'fastify-healthcheck';
-import { ServerMessage } from '@fishjam-cloud/js-server-sdk';
+import { decodeServerNotifications } from '@fishjam-cloud/js-server-sdk';
 
 import { configSchema } from './config';
 import { rooms } from './routes';
@@ -31,11 +31,14 @@ async function setupServer() {
 
   fastify.log.info({ config: fastify.config });
 
+  // Decode webhook bodies into typed notifications. `decodeServerNotifications`
+  // transparently unwraps a NotificationBatch, so rooms created with
+  // `batchWebhookNotifications: true` are handled the same as single notifications.
   fastify.addContentTypeParser(
     'application/x-protobuf',
     { parseAs: 'buffer' },
     async (_req: FastifyRequest, body: Buffer) => {
-      return ServerMessage.decode(body);
+      return decodeServerNotifications(body);
     }
   );
 

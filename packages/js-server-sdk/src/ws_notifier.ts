@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 import { CloseEventHandler, ErrorEventHandler, FishjamConfig } from './types';
 import { getFishjamUrl, httpToWebsocket } from './utils';
 import { ServerMessage, ServerMessage_EventType } from '@fishjam-cloud/fishjam-proto';
-import { ExpectedEvents, NotificationEvents, expectedEventsList, mapNotification } from './notifications';
+import { ExpectedEvents, NotificationEvents, extractNotifications } from './notifications';
 
 /**
  * Notifier object that can be used to get notified about various events related to the Fishjam App.
@@ -30,15 +30,16 @@ export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<N
 
   private dispatchNotification(message: MessageEvent) {
     try {
-      const data = new Uint8Array(message.data);
-      const decodedMessage = ServerMessage.decode(data);
-      const [notification, msg] = Object.entries(decodedMessage).find(([_k, v]) => v)!;
+      const decodedMessage = ServerMessage.decode(new Uint8Array(message.data));
 
-      if (!this.isExpectedEvent(notification)) return;
-
-      // TS can't narrow per-event through Object.entries, so widen emit's signature at the call site.
+      // TS can't narrow per-event through the discriminated union, so widen emit's signature here.
       const emit = this.emit as (event: ExpectedEvents, message: unknown) => boolean;
-      emit(notification, mapNotification(notification, msg));
+
+      // `extractNotifications` unwraps any NotificationBatch and applies payload mapping,
+      // so a single message and a batch are emitted identically, in wire order.
+      for (const { type, notification } of extractNotifications(decodedMessage)) {
+        emit(type, notification);
+      }
     } catch (e) {
       console.error("Couldn't decode websocket server message", e, message);
     }
@@ -52,9 +53,5 @@ export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<N
 
     this.client.send(auth);
     this.client.send(subscription);
-  }
-
-  private isExpectedEvent(notification: string): notification is ExpectedEvents {
-    return expectedEventsList.includes(notification as ExpectedEvents);
   }
 }

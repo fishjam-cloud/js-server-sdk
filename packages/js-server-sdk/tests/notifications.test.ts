@@ -1,7 +1,7 @@
 import { describe, it, expect, expectTypeOf } from 'vitest';
 import type { ServerMessage } from '@fishjam-cloud/fishjam-proto';
 import { expectedEventsList, ignoredEventsList, peerEventsWithPeerType, trackEvents } from '../src/notifications';
-import type { ExpectedEvents, IgnoredEvents, Notifications } from '../src/notifications';
+import type { ExpectedEvents, IgnoredEvents, Notifications, ServerNotification } from '../src/notifications';
 import type * as SDK from '../src';
 
 //    Compile-time completeness: every `ServerMessage` oneof must be classified
@@ -72,5 +72,9 @@ describe('notifications module', () => {
     for (const event of required) {
       expect(trackEvents.has(event)).toBe(true);
     }
+  });
+
+  it("ServerNotification's discriminant covers exactly ExpectedEvents", () => {
+    expectTypeOf<ServerNotification['type']>().toEqualTypeOf<ExpectedEvents>();
   });
 });
