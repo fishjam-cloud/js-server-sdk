@@ -17,6 +17,11 @@ import { extractNotifications, ServerNotification } from './notifications';
  *
  * @example
  * ```ts
+ * import { decodeServerNotifications } from '@fishjam-cloud/js-server-sdk';
+ *
+ * declare const body: Uint8Array;
+ * declare const handlePeerConnected: (notification: unknown) => void;
+ * // ---cut---
  * for (const { type, notification } of decodeServerNotifications(body)) {
  *   if (type === 'peerConnected') handlePeerConnected(notification);
  * }
