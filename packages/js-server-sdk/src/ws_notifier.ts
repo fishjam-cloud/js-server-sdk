@@ -32,8 +32,8 @@ export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<N
     try {
       const decodedMessage = ServerMessage.decode(new Uint8Array(message.data));
 
-      // TS can't narrow per-event through the discriminated union, so widen emit's signature here.
-      const emit = this.emit as (event: ExpectedEvents, message: unknown) => boolean;
+      // `.bind(this)` keeps emit's receiver (a bare `this.emit` runs with `this === undefined` and throws, FCE-3373); the cast widens the per-event signature TS can't narrow through the union.
+      const emit = this.emit.bind(this) as (event: ExpectedEvents, message: unknown) => boolean;
 
       // `extractNotifications` unwraps any NotificationBatch and applies payload mapping,
       // so a single message and a batch are emitted identically, in wire order.
