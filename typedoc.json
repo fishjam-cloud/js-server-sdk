@@ -8,8 +8,8 @@
   "readme": "none",
   "treatValidationWarningsAsErrors": true,
   "treatWarningsAsErrors": true,
-  "intentionallyNotExported": ["expectedEventsList", "ignoredEventsList"],
+  "intentionallyNotExported": ["expectedEventsList", "ignoredEventsList", "Notification"],
   "packageOptions": {
-    "intentionallyNotExported": ["expectedEventsList", "ignoredEventsList"]
+    "intentionallyNotExported": ["expectedEventsList", "ignoredEventsList", "Notification"]
   }
 }
