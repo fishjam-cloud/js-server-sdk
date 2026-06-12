@@ -1,6 +1,6 @@
 {
   "name": "room-manager",
-  "version": "0.27.0",
+  "version": "0.28.0-rc.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -35,5 +35,6 @@
     "*.{ts,tsx,js,jsx}": [
       "eslint --fix"
     ]
-  }
+  },
+  "stableVersion": "0.27.0"
 }

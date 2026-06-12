@@ -1,7 +1,7 @@
 {
   "name": "selective-subscription-frontend",
   "private": true,
-  "version": "0.27.0",
+  "version": "0.28.0-rc.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -20,5 +20,6 @@
     "@vitejs/plugin-react": "^5.0.3",
     "typescript": "^5.9.3",
     "vite": "^7.1.9"
-  }
+  },
+  "stableVersion": "0.27.0"
 }
