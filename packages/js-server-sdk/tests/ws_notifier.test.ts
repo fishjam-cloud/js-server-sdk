@@ -96,6 +96,7 @@ describe('FishjamWSNotifier.dispatchNotification', () => {
     if (!socket) throw new Error('FishjamWSNotifier did not open a WebSocket');
 
     const errorEvent = { type: 'error' } as unknown as Event;
+    socket.onerror?.(errorEvent);
     socket.onclose?.({ code: 1006, reason: 'connection lost' });
 
     expect(notifier).toBeInstanceOf(FishjamWSNotifier);
