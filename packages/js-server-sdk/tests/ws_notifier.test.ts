@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ServerMessage, ServerMessage_PeerType } from '@fishjam-cloud/fishjam-proto';
+import { ServerMessage, ServerMessage_EventType, ServerMessage_PeerType } from '@fishjam-cloud/fishjam-proto';
 import { FishjamWSNotifier } from '../src/ws_notifier';
 
 const encode = (message: Parameters<typeof ServerMessage.encode>[0]): Uint8Array =>
@@ -54,6 +54,54 @@ describe('FishjamWSNotifier.dispatchNotification', () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
+  });
+
+  it('opens the expected websocket URL and requests arraybuffer messages', () => {
+    const { socket } = createNotifier();
+
+    expect(socket.url).toBe('wss://fishjam.io/api/v1/connect/test-id/socket/server/websocket');
+    expect(socket.binaryType).toBe('arraybuffer');
+  });
+
+  it('supports full Fishjam URLs when building the websocket URL', () => {
+    const notifier = new FishjamWSNotifier(
+      { fishjamId: 'http://localhost:4000/api/v1/connect/local-id', managementToken: 'test-token' },
+      noop,
+      noop
+    );
+    const socket = FakeWebSocket.instances.at(-1);
+    if (!socket) throw new Error('FishjamWSNotifier did not open a WebSocket');
+
+    expect(notifier).toBeInstanceOf(FishjamWSNotifier);
+    expect(socket.url).toBe('ws://localhost:4000/api/v1/connect/local-id/socket/server/websocket');
+  });
+
+  it('authenticates and subscribes to server notifications when the websocket opens', () => {
+    const { socket } = createNotifier();
+
+    socket.onopen?.();
+
+    expect(socket.sent).toHaveLength(2);
+    expect(ServerMessage.decode(socket.sent[0] as Uint8Array).authRequest?.token).toBe('test-token');
+    expect(ServerMessage.decode(socket.sent[1] as Uint8Array).subscribeRequest?.eventType).toBe(
+      ServerMessage_EventType.EVENT_TYPE_SERVER_NOTIFICATION
+    );
+  });
+
+  it('forwards websocket error and close events to the configured callbacks', () => {
+    const onError = vi.fn();
+    const onClose = vi.fn();
+    const notifier = new FishjamWSNotifier(config, onError, onClose);
+    const socket = FakeWebSocket.instances.at(-1);
+    if (!socket) throw new Error('FishjamWSNotifier did not open a WebSocket');
+
+    const errorEvent = new Error('boom');
+    socket.onerror?.(errorEvent);
+    socket.onclose?.({ code: 1006, reason: 'connection lost' });
+
+    expect(notifier).toBeInstanceOf(FishjamWSNotifier);
+    expect(onError).toHaveBeenCalledWith(errorEvent);
+    expect(onClose).toHaveBeenCalledWith(1006, 'connection lost');
   });
 
   // Regression for FCE-3373: `emit` used to be called detached from its EventEmitter
