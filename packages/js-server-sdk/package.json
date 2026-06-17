@@ -33,11 +33,6 @@
       "types": "./dist/integrations/gemini.d.ts",
       "import": "./dist/integrations/gemini.mjs",
       "require": "./dist/integrations/gemini.js"
-    },
-    "./composition": {
-      "types": "./dist/composition/index.d.ts",
-      "import": "./dist/composition/index.mjs",
-      "require": "./dist/composition/index.js"
     }
   },
   "scripts": {
@@ -53,7 +48,6 @@
     "entry": [
       "src/index.ts",
       "src/integrations/gemini.ts",
-      "src/composition/index.ts",
       "src/proto.ts"
     ],
     "noExternal": [
@@ -72,14 +66,10 @@
     "uuid": "^11.1.0"
   },
   "peerDependencies": {
-    "@google/genai": "^1.0.0",
-    "react": "^18.3.0 || ^19.0.0"
+    "@google/genai": "^1.0.0"
   },
   "peerDependenciesMeta": {
     "@google/genai": {
-      "optional": true
-    },
-    "react": {
       "optional": true
     }
   },
@@ -87,17 +77,10 @@
     "@fishjam-cloud/fishjam-openapi": "workspace:*",
     "@fishjam-cloud/fishjam-proto": "workspace:*",
     "@openapitools/openapi-generator-cli": "^2.18.4",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/react": "^16.3.0",
     "@types/node": "^22.13.16",
-    "@types/react": "19.1.0",
-    "@types/react-dom": "^19.1.0",
     "@types/websocket": "^1.0.10",
     "eslint": "^9.33.0",
-    "jsdom": "^26.0.0",
     "prettier": "^3.6.2",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
     "tsup": "^8.4.0",
     "typed-emitter": "^2.1.0",
     "vitest": "^3.0.0"
