@@ -13,8 +13,9 @@
     "declaration": true,
     "moduleResolution": "bundler",
     "forceConsistentCasingInFileNames": true,
+    "jsx": "react-jsx",
     "outDir": "dist"
   },
   "exclude": ["node_modules", "dist"],
-  "include": ["src/**/*.ts", "tests/**/*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "tests/**/*.ts", "tests/**/*.tsx"]
 }
