@@ -1649,6 +1649,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fishjam-cloud/composition@workspace:packages/composition":
+  version: 0.0.0-use.local
+  resolution: "@fishjam-cloud/composition@workspace:packages/composition"
+  dependencies:
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/react": "npm:^16.3.0"
+    "@types/react": "npm:19.1.0"
+    "@types/react-dom": "npm:^19.1.0"
+    eslint: "npm:^9.33.0"
+    jsdom: "npm:^26.0.0"
+    prettier: "npm:^3.6.2"
+    react: "npm:^19.1.0"
+    react-dom: "npm:^19.1.0"
+    tsup: "npm:^8.4.0"
+    vitest: "npm:^3.0.0"
+  peerDependencies:
+    react: ^18.3.0 || ^19.0.0
+  languageName: unknown
+  linkType: soft
+
 "@fishjam-cloud/fishjam-openapi@workspace:*, @fishjam-cloud/fishjam-openapi@workspace:packages/fishjam-openapi":
   version: 0.0.0-use.local
   resolution: "@fishjam-cloud/fishjam-openapi@workspace:packages/fishjam-openapi"
@@ -1676,29 +1696,19 @@ __metadata:
     "@fishjam-cloud/fishjam-openapi": "workspace:*"
     "@fishjam-cloud/fishjam-proto": "workspace:*"
     "@openapitools/openapi-generator-cli": "npm:^2.18.4"
-    "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^22.13.16"
-    "@types/react": "npm:19.1.0"
-    "@types/react-dom": "npm:^19.1.0"
     "@types/websocket": "npm:^1.0.10"
     axios: "npm:^1.7.9"
     eslint: "npm:^9.33.0"
-    jsdom: "npm:^26.0.0"
     prettier: "npm:^3.6.2"
-    react: "npm:^19.1.0"
-    react-dom: "npm:^19.1.0"
     tsup: "npm:^8.4.0"
     typed-emitter: "npm:^2.1.0"
     uuid: "npm:^11.1.0"
     vitest: "npm:^3.0.0"
   peerDependencies:
     "@google/genai": ^1.0.0
-    react: ^18.3.0 || ^19.0.0
   peerDependenciesMeta:
     "@google/genai":
-      optional: true
-    react:
       optional: true
   languageName: unknown
   linkType: soft
