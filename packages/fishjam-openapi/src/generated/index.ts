@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Fishjam API
- * API for managing Fishjam real-time media resources.  ## Authentication ## Credentials (Fishjam ID, Fishjam Management Token) can be obtained at https://fishjam.io/app. All requests require HTTP Bearer authorization using the Fishjam Management Token.  ## Fishjam SDKs ## For TypeScript and Python users, we provide SDKs that simplify using this API. We recommend using them instead of manually consuming the API in these languages.  You can learn more about our SDKs in our [SDK Docs](http://fishjam.swmansion.com/docs/how-to/backend/server-setup) 
+ * API for managing Fishjam real-time media resources.  ## Authentication ## Credentials (Fishjam ID, Fishjam Management Token) can be obtained at https://fishjam.io/app. All requests require HTTP Bearer authorization using the Fishjam Management Token.  ## Fishjam SDKs ## For TypeScript and Python users, we provide SDKs that simplify using this API. We recommend using them instead of manually consuming the API in these languages.  You can learn more about our SDKs in our [SDK Docs](http://fishjam.swmansion.com/docs/how-to/backend/server-setup)
  *
  * The version of the OpenAPI document: 0.27.0
  * Contact: contact@fishjam.io
@@ -12,7 +12,5 @@
  * Do not edit the class manually.
  */
 
-
-export * from "./api";
-export * from "./configuration";
-
+export * from './api';
+export * from './configuration';

@@ -5,10 +5,10 @@
 // source: fishjam/agent_notifications.proto
 
 /* eslint-disable */
-import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
-import { Track, TrackEncoding, trackEncodingFromJSON, trackEncodingToJSON } from "./notifications/shared";
+import { BinaryReader, BinaryWriter } from '@bufbuild/protobuf/wire';
+import { Track, TrackEncoding, trackEncodingFromJSON, trackEncodingToJSON } from './notifications/shared';
 
-export const protobufPackage = "fishjam";
+export const protobufPackage = 'fishjam';
 
 /** Defines any type of message passed from agent peer to Fishjam */
 export interface AgentRequest {
@@ -28,9 +28,7 @@ export interface AgentRequest_AuthRequest {
 /** Request to add a track of the specified type */
 export interface AgentRequest_AddTrack {
   /** Specification of the track to be added */
-  track:
-    | Track
-    | undefined;
+  track: Track | undefined;
   /** Parameters of the input data stream */
   codecParams: AgentRequest_AddTrack_CodecParameters | undefined;
 }
@@ -72,8 +70,7 @@ export interface AgentResponse {
 }
 
 /** Response confirming successful authentication */
-export interface AgentResponse_Authenticated {
-}
+export interface AgentResponse_Authenticated {}
 
 /** Notification containing a chunk of a track's data stream */
 export interface AgentResponse_TrackData {
@@ -227,35 +224,41 @@ export const AgentRequest: MessageFns<AgentRequest> = {
   },
   fromPartial<I extends Exact<DeepPartial<AgentRequest>, I>>(object: I): AgentRequest {
     const message = createBaseAgentRequest();
-    message.authRequest = (object.authRequest !== undefined && object.authRequest !== null)
-      ? AgentRequest_AuthRequest.fromPartial(object.authRequest)
-      : undefined;
-    message.addTrack = (object.addTrack !== undefined && object.addTrack !== null)
-      ? AgentRequest_AddTrack.fromPartial(object.addTrack)
-      : undefined;
-    message.removeTrack = (object.removeTrack !== undefined && object.removeTrack !== null)
-      ? AgentRequest_RemoveTrack.fromPartial(object.removeTrack)
-      : undefined;
-    message.trackData = (object.trackData !== undefined && object.trackData !== null)
-      ? AgentRequest_TrackData.fromPartial(object.trackData)
-      : undefined;
-    message.interruptTrack = (object.interruptTrack !== undefined && object.interruptTrack !== null)
-      ? AgentRequest_InterruptTrack.fromPartial(object.interruptTrack)
-      : undefined;
-    message.captureImage = (object.captureImage !== undefined && object.captureImage !== null)
-      ? AgentRequest_CaptureImage.fromPartial(object.captureImage)
-      : undefined;
+    message.authRequest =
+      object.authRequest !== undefined && object.authRequest !== null
+        ? AgentRequest_AuthRequest.fromPartial(object.authRequest)
+        : undefined;
+    message.addTrack =
+      object.addTrack !== undefined && object.addTrack !== null
+        ? AgentRequest_AddTrack.fromPartial(object.addTrack)
+        : undefined;
+    message.removeTrack =
+      object.removeTrack !== undefined && object.removeTrack !== null
+        ? AgentRequest_RemoveTrack.fromPartial(object.removeTrack)
+        : undefined;
+    message.trackData =
+      object.trackData !== undefined && object.trackData !== null
+        ? AgentRequest_TrackData.fromPartial(object.trackData)
+        : undefined;
+    message.interruptTrack =
+      object.interruptTrack !== undefined && object.interruptTrack !== null
+        ? AgentRequest_InterruptTrack.fromPartial(object.interruptTrack)
+        : undefined;
+    message.captureImage =
+      object.captureImage !== undefined && object.captureImage !== null
+        ? AgentRequest_CaptureImage.fromPartial(object.captureImage)
+        : undefined;
     return message;
   },
 };
 
 function createBaseAgentRequest_AuthRequest(): AgentRequest_AuthRequest {
-  return { token: "" };
+  return { token: '' };
 }
 
 export const AgentRequest_AuthRequest: MessageFns<AgentRequest_AuthRequest> = {
   encode(message: AgentRequest_AuthRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.token !== "") {
+    if (message.token !== '') {
       writer.uint32(10).string(message.token);
     }
     return writer;
@@ -286,12 +289,12 @@ export const AgentRequest_AuthRequest: MessageFns<AgentRequest_AuthRequest> = {
   },
 
   fromJSON(object: any): AgentRequest_AuthRequest {
-    return { token: isSet(object.token) ? globalThis.String(object.token) : "" };
+    return { token: isSet(object.token) ? globalThis.String(object.token) : '' };
   },
 
   toJSON(message: AgentRequest_AuthRequest): unknown {
     const obj: any = {};
-    if (message.token !== "") {
+    if (message.token !== '') {
       obj.token = message.token;
     }
     return obj;
@@ -302,7 +305,7 @@ export const AgentRequest_AuthRequest: MessageFns<AgentRequest_AuthRequest> = {
   },
   fromPartial<I extends Exact<DeepPartial<AgentRequest_AuthRequest>, I>>(object: I): AgentRequest_AuthRequest {
     const message = createBaseAgentRequest_AuthRequest();
-    message.token = object.token ?? "";
+    message.token = object.token ?? '';
     return message;
   },
 };
@@ -379,10 +382,11 @@ export const AgentRequest_AddTrack: MessageFns<AgentRequest_AddTrack> = {
   },
   fromPartial<I extends Exact<DeepPartial<AgentRequest_AddTrack>, I>>(object: I): AgentRequest_AddTrack {
     const message = createBaseAgentRequest_AddTrack();
-    message.track = (object.track !== undefined && object.track !== null) ? Track.fromPartial(object.track) : undefined;
-    message.codecParams = (object.codecParams !== undefined && object.codecParams !== null)
-      ? AgentRequest_AddTrack_CodecParameters.fromPartial(object.codecParams)
-      : undefined;
+    message.track = object.track !== undefined && object.track !== null ? Track.fromPartial(object.track) : undefined;
+    message.codecParams =
+      object.codecParams !== undefined && object.codecParams !== null
+        ? AgentRequest_AddTrack_CodecParameters.fromPartial(object.codecParams)
+        : undefined;
     return message;
   },
 };
@@ -468,12 +472,12 @@ export const AgentRequest_AddTrack_CodecParameters: MessageFns<AgentRequest_AddT
   },
 
   create<I extends Exact<DeepPartial<AgentRequest_AddTrack_CodecParameters>, I>>(
-    base?: I,
+    base?: I
   ): AgentRequest_AddTrack_CodecParameters {
     return AgentRequest_AddTrack_CodecParameters.fromPartial(base ?? ({} as any));
   },
   fromPartial<I extends Exact<DeepPartial<AgentRequest_AddTrack_CodecParameters>, I>>(
-    object: I,
+    object: I
   ): AgentRequest_AddTrack_CodecParameters {
     const message = createBaseAgentRequest_AddTrack_CodecParameters();
     message.encoding = object.encoding ?? 0;
@@ -484,12 +488,12 @@ export const AgentRequest_AddTrack_CodecParameters: MessageFns<AgentRequest_AddT
 };
 
 function createBaseAgentRequest_RemoveTrack(): AgentRequest_RemoveTrack {
-  return { trackId: "" };
+  return { trackId: '' };
 }
 
 export const AgentRequest_RemoveTrack: MessageFns<AgentRequest_RemoveTrack> = {
   encode(message: AgentRequest_RemoveTrack, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.trackId !== "") {
+    if (message.trackId !== '') {
       writer.uint32(10).string(message.trackId);
     }
     return writer;
@@ -520,12 +524,12 @@ export const AgentRequest_RemoveTrack: MessageFns<AgentRequest_RemoveTrack> = {
   },
 
   fromJSON(object: any): AgentRequest_RemoveTrack {
-    return { trackId: isSet(object.trackId) ? globalThis.String(object.trackId) : "" };
+    return { trackId: isSet(object.trackId) ? globalThis.String(object.trackId) : '' };
   },
 
   toJSON(message: AgentRequest_RemoveTrack): unknown {
     const obj: any = {};
-    if (message.trackId !== "") {
+    if (message.trackId !== '') {
       obj.trackId = message.trackId;
     }
     return obj;
@@ -536,18 +540,18 @@ export const AgentRequest_RemoveTrack: MessageFns<AgentRequest_RemoveTrack> = {
   },
   fromPartial<I extends Exact<DeepPartial<AgentRequest_RemoveTrack>, I>>(object: I): AgentRequest_RemoveTrack {
     const message = createBaseAgentRequest_RemoveTrack();
-    message.trackId = object.trackId ?? "";
+    message.trackId = object.trackId ?? '';
     return message;
   },
 };
 
 function createBaseAgentRequest_TrackData(): AgentRequest_TrackData {
-  return { trackId: "", data: new Uint8Array(0) };
+  return { trackId: '', data: new Uint8Array(0) };
 }
 
 export const AgentRequest_TrackData: MessageFns<AgentRequest_TrackData> = {
   encode(message: AgentRequest_TrackData, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.trackId !== "") {
+    if (message.trackId !== '') {
       writer.uint32(10).string(message.trackId);
     }
     if (message.data.length !== 0) {
@@ -590,14 +594,14 @@ export const AgentRequest_TrackData: MessageFns<AgentRequest_TrackData> = {
 
   fromJSON(object: any): AgentRequest_TrackData {
     return {
-      trackId: isSet(object.trackId) ? globalThis.String(object.trackId) : "",
+      trackId: isSet(object.trackId) ? globalThis.String(object.trackId) : '',
       data: isSet(object.data) ? bytesFromBase64(object.data) : new Uint8Array(0),
     };
   },
 
   toJSON(message: AgentRequest_TrackData): unknown {
     const obj: any = {};
-    if (message.trackId !== "") {
+    if (message.trackId !== '') {
       obj.trackId = message.trackId;
     }
     if (message.data.length !== 0) {
@@ -611,19 +615,19 @@ export const AgentRequest_TrackData: MessageFns<AgentRequest_TrackData> = {
   },
   fromPartial<I extends Exact<DeepPartial<AgentRequest_TrackData>, I>>(object: I): AgentRequest_TrackData {
     const message = createBaseAgentRequest_TrackData();
-    message.trackId = object.trackId ?? "";
+    message.trackId = object.trackId ?? '';
     message.data = object.data ?? new Uint8Array(0);
     return message;
   },
 };
 
 function createBaseAgentRequest_InterruptTrack(): AgentRequest_InterruptTrack {
-  return { trackId: "" };
+  return { trackId: '' };
 }
 
 export const AgentRequest_InterruptTrack: MessageFns<AgentRequest_InterruptTrack> = {
   encode(message: AgentRequest_InterruptTrack, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.trackId !== "") {
+    if (message.trackId !== '') {
       writer.uint32(10).string(message.trackId);
     }
     return writer;
@@ -654,12 +658,12 @@ export const AgentRequest_InterruptTrack: MessageFns<AgentRequest_InterruptTrack
   },
 
   fromJSON(object: any): AgentRequest_InterruptTrack {
-    return { trackId: isSet(object.trackId) ? globalThis.String(object.trackId) : "" };
+    return { trackId: isSet(object.trackId) ? globalThis.String(object.trackId) : '' };
   },
 
   toJSON(message: AgentRequest_InterruptTrack): unknown {
     const obj: any = {};
-    if (message.trackId !== "") {
+    if (message.trackId !== '') {
       obj.trackId = message.trackId;
     }
     return obj;
@@ -670,18 +674,18 @@ export const AgentRequest_InterruptTrack: MessageFns<AgentRequest_InterruptTrack
   },
   fromPartial<I extends Exact<DeepPartial<AgentRequest_InterruptTrack>, I>>(object: I): AgentRequest_InterruptTrack {
     const message = createBaseAgentRequest_InterruptTrack();
-    message.trackId = object.trackId ?? "";
+    message.trackId = object.trackId ?? '';
     return message;
   },
 };
 
 function createBaseAgentRequest_CaptureImage(): AgentRequest_CaptureImage {
-  return { trackId: "" };
+  return { trackId: '' };
 }
 
 export const AgentRequest_CaptureImage: MessageFns<AgentRequest_CaptureImage> = {
   encode(message: AgentRequest_CaptureImage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.trackId !== "") {
+    if (message.trackId !== '') {
       writer.uint32(10).string(message.trackId);
     }
     return writer;
@@ -712,12 +716,12 @@ export const AgentRequest_CaptureImage: MessageFns<AgentRequest_CaptureImage> = 
   },
 
   fromJSON(object: any): AgentRequest_CaptureImage {
-    return { trackId: isSet(object.trackId) ? globalThis.String(object.trackId) : "" };
+    return { trackId: isSet(object.trackId) ? globalThis.String(object.trackId) : '' };
   },
 
   toJSON(message: AgentRequest_CaptureImage): unknown {
     const obj: any = {};
-    if (message.trackId !== "") {
+    if (message.trackId !== '') {
       obj.trackId = message.trackId;
     }
     return obj;
@@ -728,7 +732,7 @@ export const AgentRequest_CaptureImage: MessageFns<AgentRequest_CaptureImage> = 
   },
   fromPartial<I extends Exact<DeepPartial<AgentRequest_CaptureImage>, I>>(object: I): AgentRequest_CaptureImage {
     const message = createBaseAgentRequest_CaptureImage();
-    message.trackId = object.trackId ?? "";
+    message.trackId = object.trackId ?? '';
     return message;
   },
 };
@@ -820,15 +824,18 @@ export const AgentResponse: MessageFns<AgentResponse> = {
   },
   fromPartial<I extends Exact<DeepPartial<AgentResponse>, I>>(object: I): AgentResponse {
     const message = createBaseAgentResponse();
-    message.authenticated = (object.authenticated !== undefined && object.authenticated !== null)
-      ? AgentResponse_Authenticated.fromPartial(object.authenticated)
-      : undefined;
-    message.trackData = (object.trackData !== undefined && object.trackData !== null)
-      ? AgentResponse_TrackData.fromPartial(object.trackData)
-      : undefined;
-    message.trackImage = (object.trackImage !== undefined && object.trackImage !== null)
-      ? AgentResponse_TrackImage.fromPartial(object.trackImage)
-      : undefined;
+    message.authenticated =
+      object.authenticated !== undefined && object.authenticated !== null
+        ? AgentResponse_Authenticated.fromPartial(object.authenticated)
+        : undefined;
+    message.trackData =
+      object.trackData !== undefined && object.trackData !== null
+        ? AgentResponse_TrackData.fromPartial(object.trackData)
+        : undefined;
+    message.trackImage =
+      object.trackImage !== undefined && object.trackImage !== null
+        ? AgentResponse_TrackImage.fromPartial(object.trackImage)
+        : undefined;
     return message;
   },
 };
@@ -877,12 +884,12 @@ export const AgentResponse_Authenticated: MessageFns<AgentResponse_Authenticated
 };
 
 function createBaseAgentResponse_TrackData(): AgentResponse_TrackData {
-  return { peerId: "", track: undefined, data: new Uint8Array(0) };
+  return { peerId: '', track: undefined, data: new Uint8Array(0) };
 }
 
 export const AgentResponse_TrackData: MessageFns<AgentResponse_TrackData> = {
   encode(message: AgentResponse_TrackData, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.peerId !== "") {
+    if (message.peerId !== '') {
       writer.uint32(10).string(message.peerId);
     }
     if (message.track !== undefined) {
@@ -936,7 +943,7 @@ export const AgentResponse_TrackData: MessageFns<AgentResponse_TrackData> = {
 
   fromJSON(object: any): AgentResponse_TrackData {
     return {
-      peerId: isSet(object.peerId) ? globalThis.String(object.peerId) : "",
+      peerId: isSet(object.peerId) ? globalThis.String(object.peerId) : '',
       track: isSet(object.track) ? Track.fromJSON(object.track) : undefined,
       data: isSet(object.data) ? bytesFromBase64(object.data) : new Uint8Array(0),
     };
@@ -944,7 +951,7 @@ export const AgentResponse_TrackData: MessageFns<AgentResponse_TrackData> = {
 
   toJSON(message: AgentResponse_TrackData): unknown {
     const obj: any = {};
-    if (message.peerId !== "") {
+    if (message.peerId !== '') {
       obj.peerId = message.peerId;
     }
     if (message.track !== undefined) {
@@ -961,23 +968,23 @@ export const AgentResponse_TrackData: MessageFns<AgentResponse_TrackData> = {
   },
   fromPartial<I extends Exact<DeepPartial<AgentResponse_TrackData>, I>>(object: I): AgentResponse_TrackData {
     const message = createBaseAgentResponse_TrackData();
-    message.peerId = object.peerId ?? "";
-    message.track = (object.track !== undefined && object.track !== null) ? Track.fromPartial(object.track) : undefined;
+    message.peerId = object.peerId ?? '';
+    message.track = object.track !== undefined && object.track !== null ? Track.fromPartial(object.track) : undefined;
     message.data = object.data ?? new Uint8Array(0);
     return message;
   },
 };
 
 function createBaseAgentResponse_TrackImage(): AgentResponse_TrackImage {
-  return { trackId: "", contentType: "", data: new Uint8Array(0) };
+  return { trackId: '', contentType: '', data: new Uint8Array(0) };
 }
 
 export const AgentResponse_TrackImage: MessageFns<AgentResponse_TrackImage> = {
   encode(message: AgentResponse_TrackImage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.trackId !== "") {
+    if (message.trackId !== '') {
       writer.uint32(10).string(message.trackId);
     }
-    if (message.contentType !== "") {
+    if (message.contentType !== '') {
       writer.uint32(18).string(message.contentType);
     }
     if (message.data.length !== 0) {
@@ -1028,18 +1035,18 @@ export const AgentResponse_TrackImage: MessageFns<AgentResponse_TrackImage> = {
 
   fromJSON(object: any): AgentResponse_TrackImage {
     return {
-      trackId: isSet(object.trackId) ? globalThis.String(object.trackId) : "",
-      contentType: isSet(object.contentType) ? globalThis.String(object.contentType) : "",
+      trackId: isSet(object.trackId) ? globalThis.String(object.trackId) : '',
+      contentType: isSet(object.contentType) ? globalThis.String(object.contentType) : '',
       data: isSet(object.data) ? bytesFromBase64(object.data) : new Uint8Array(0),
     };
   },
 
   toJSON(message: AgentResponse_TrackImage): unknown {
     const obj: any = {};
-    if (message.trackId !== "") {
+    if (message.trackId !== '') {
       obj.trackId = message.trackId;
     }
-    if (message.contentType !== "") {
+    if (message.contentType !== '') {
       obj.contentType = message.contentType;
     }
     if (message.data.length !== 0) {
@@ -1053,8 +1060,8 @@ export const AgentResponse_TrackImage: MessageFns<AgentResponse_TrackImage> = {
   },
   fromPartial<I extends Exact<DeepPartial<AgentResponse_TrackImage>, I>>(object: I): AgentResponse_TrackImage {
     const message = createBaseAgentResponse_TrackImage();
-    message.trackId = object.trackId ?? "";
-    message.contentType = object.contentType ?? "";
+    message.trackId = object.trackId ?? '';
+    message.contentType = object.contentType ?? '';
     message.data = object.data ?? new Uint8Array(0);
     return message;
   },
@@ -1062,7 +1069,7 @@ export const AgentResponse_TrackImage: MessageFns<AgentResponse_TrackImage> = {
 
 function bytesFromBase64(b64: string): Uint8Array {
   if ((globalThis as any).Buffer) {
-    return Uint8Array.from(globalThis.Buffer.from(b64, "base64"));
+    return Uint8Array.from(globalThis.Buffer.from(b64, 'base64'));
   } else {
     const bin = globalThis.atob(b64);
     const arr = new Uint8Array(bin.length);
@@ -1075,26 +1082,31 @@ function bytesFromBase64(b64: string): Uint8Array {
 
 function base64FromBytes(arr: Uint8Array): string {
   if ((globalThis as any).Buffer) {
-    return globalThis.Buffer.from(arr).toString("base64");
+    return globalThis.Buffer.from(arr).toString('base64');
   } else {
     const bin: string[] = [];
     arr.forEach((byte) => {
       bin.push(globalThis.String.fromCharCode(byte));
     });
-    return globalThis.btoa(bin.join(""));
+    return globalThis.btoa(bin.join(''));
   }
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
+export type DeepPartial<T> = T extends Builtin
+  ? T
+  : T extends globalThis.Array<infer U>
+    ? globalThis.Array<DeepPartial<U>>
+    : T extends ReadonlyArray<infer U>
+      ? ReadonlyArray<DeepPartial<U>>
+      : T extends {}
+        ? { [K in keyof T]?: DeepPartial<T[K]> }
+        : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function isSet(value: any): boolean {

@@ -78,5 +78,10 @@ npx @openapitools/openapi-generator-cli generate \
 rm openapi.yaml
 cd ../../
 
+echo "Formatting generated code..."
+npx prettier --write \
+  "packages/fishjam-openapi/src/generated/**/*.ts" \
+  "packages/fishjam-proto/src/**/*.ts"
+
 echo "✅ Version bump complete for $VERSION"
 echo "BRANCH_NAME:$BRANCH_NAME"

@@ -5,9 +5,9 @@
 // source: fishjam/notifications/shared.proto
 
 /* eslint-disable */
-import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
+import { BinaryReader, BinaryWriter } from '@bufbuild/protobuf/wire';
 
-export const protobufPackage = "fishjam.notifications";
+export const protobufPackage = 'fishjam.notifications';
 
 /** Defines types of tracks being published by peers and component */
 export enum TrackType {
@@ -20,16 +20,16 @@ export enum TrackType {
 export function trackTypeFromJSON(object: any): TrackType {
   switch (object) {
     case 0:
-    case "TRACK_TYPE_UNSPECIFIED":
+    case 'TRACK_TYPE_UNSPECIFIED':
       return TrackType.TRACK_TYPE_UNSPECIFIED;
     case 1:
-    case "TRACK_TYPE_VIDEO":
+    case 'TRACK_TYPE_VIDEO':
       return TrackType.TRACK_TYPE_VIDEO;
     case 2:
-    case "TRACK_TYPE_AUDIO":
+    case 'TRACK_TYPE_AUDIO':
       return TrackType.TRACK_TYPE_AUDIO;
     case -1:
-    case "UNRECOGNIZED":
+    case 'UNRECOGNIZED':
     default:
       return TrackType.UNRECOGNIZED;
   }
@@ -38,14 +38,14 @@ export function trackTypeFromJSON(object: any): TrackType {
 export function trackTypeToJSON(object: TrackType): string {
   switch (object) {
     case TrackType.TRACK_TYPE_UNSPECIFIED:
-      return "TRACK_TYPE_UNSPECIFIED";
+      return 'TRACK_TYPE_UNSPECIFIED';
     case TrackType.TRACK_TYPE_VIDEO:
-      return "TRACK_TYPE_VIDEO";
+      return 'TRACK_TYPE_VIDEO';
     case TrackType.TRACK_TYPE_AUDIO:
-      return "TRACK_TYPE_AUDIO";
+      return 'TRACK_TYPE_AUDIO';
     case TrackType.UNRECOGNIZED:
     default:
-      return "UNRECOGNIZED";
+      return 'UNRECOGNIZED';
   }
 }
 
@@ -59,16 +59,16 @@ export enum TrackEncoding {
 export function trackEncodingFromJSON(object: any): TrackEncoding {
   switch (object) {
     case 0:
-    case "TRACK_ENCODING_UNSPECIFIED":
+    case 'TRACK_ENCODING_UNSPECIFIED':
       return TrackEncoding.TRACK_ENCODING_UNSPECIFIED;
     case 1:
-    case "TRACK_ENCODING_PCM16":
+    case 'TRACK_ENCODING_PCM16':
       return TrackEncoding.TRACK_ENCODING_PCM16;
     case 2:
-    case "TRACK_ENCODING_OPUS":
+    case 'TRACK_ENCODING_OPUS':
       return TrackEncoding.TRACK_ENCODING_OPUS;
     case -1:
-    case "UNRECOGNIZED":
+    case 'UNRECOGNIZED':
     default:
       return TrackEncoding.UNRECOGNIZED;
   }
@@ -77,14 +77,14 @@ export function trackEncodingFromJSON(object: any): TrackEncoding {
 export function trackEncodingToJSON(object: TrackEncoding): string {
   switch (object) {
     case TrackEncoding.TRACK_ENCODING_UNSPECIFIED:
-      return "TRACK_ENCODING_UNSPECIFIED";
+      return 'TRACK_ENCODING_UNSPECIFIED';
     case TrackEncoding.TRACK_ENCODING_PCM16:
-      return "TRACK_ENCODING_PCM16";
+      return 'TRACK_ENCODING_PCM16';
     case TrackEncoding.TRACK_ENCODING_OPUS:
-      return "TRACK_ENCODING_OPUS";
+      return 'TRACK_ENCODING_OPUS';
     case TrackEncoding.UNRECOGNIZED:
     default:
-      return "UNRECOGNIZED";
+      return 'UNRECOGNIZED';
   }
 }
 
@@ -96,18 +96,18 @@ export interface Track {
 }
 
 function createBaseTrack(): Track {
-  return { id: "", type: 0, metadata: "" };
+  return { id: '', type: 0, metadata: '' };
 }
 
 export const Track: MessageFns<Track> = {
   encode(message: Track, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id !== "") {
+    if (message.id !== '') {
       writer.uint32(10).string(message.id);
     }
     if (message.type !== 0) {
       writer.uint32(16).int32(message.type);
     }
-    if (message.metadata !== "") {
+    if (message.metadata !== '') {
       writer.uint32(26).string(message.metadata);
     }
     return writer;
@@ -155,21 +155,21 @@ export const Track: MessageFns<Track> = {
 
   fromJSON(object: any): Track {
     return {
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : '',
       type: isSet(object.type) ? trackTypeFromJSON(object.type) : 0,
-      metadata: isSet(object.metadata) ? globalThis.String(object.metadata) : "",
+      metadata: isSet(object.metadata) ? globalThis.String(object.metadata) : '',
     };
   },
 
   toJSON(message: Track): unknown {
     const obj: any = {};
-    if (message.id !== "") {
+    if (message.id !== '') {
       obj.id = message.id;
     }
     if (message.type !== 0) {
       obj.type = trackTypeToJSON(message.type);
     }
-    if (message.metadata !== "") {
+    if (message.metadata !== '') {
       obj.metadata = message.metadata;
     }
     return obj;
@@ -180,23 +180,28 @@ export const Track: MessageFns<Track> = {
   },
   fromPartial<I extends Exact<DeepPartial<Track>, I>>(object: I): Track {
     const message = createBaseTrack();
-    message.id = object.id ?? "";
+    message.id = object.id ?? '';
     message.type = object.type ?? 0;
-    message.metadata = object.metadata ?? "";
+    message.metadata = object.metadata ?? '';
     return message;
   },
 };
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
+export type DeepPartial<T> = T extends Builtin
+  ? T
+  : T extends globalThis.Array<infer U>
+    ? globalThis.Array<DeepPartial<U>>
+    : T extends ReadonlyArray<infer U>
+      ? ReadonlyArray<DeepPartial<U>>
+      : T extends {}
+        ? { [K in keyof T]?: DeepPartial<T[K]> }
+        : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function isSet(value: any): boolean {
