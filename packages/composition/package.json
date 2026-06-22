@@ -1,7 +1,7 @@
 {
   "name": "@fishjam-cloud/composition",
   "version": "0.27.0",
-  "description": "React hooks for Fishjam composition templates",
+  "description": "Composition event bus contract for Fishjam templates",
   "homepage": "https://github.com/fishjam-cloud/js-server-sdk",
   "author": "Fishjam Team",
   "repository": {
@@ -55,14 +55,9 @@
     ],
     "outDir": "dist"
   },
-  "peerDependencies": {
-    "react": "^18.3.0 || ^19.0.0"
-  },
   "devDependencies": {
-    "@types/react": "19.1.0",
     "eslint": "^9.33.0",
     "prettier": "^3.6.2",
-    "react": "^19.1.0",
     "tsup": "^8.4.0",
     "vitest": "^3.0.0"
   },

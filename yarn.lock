@@ -1569,14 +1569,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fishjam-cloud/composition@workspace:packages/composition"
   dependencies:
-    "@types/react": "npm:19.1.0"
     eslint: "npm:^9.33.0"
     prettier: "npm:^3.6.2"
-    react: "npm:^19.1.0"
     tsup: "npm:^8.4.0"
     vitest: "npm:^3.0.0"
-  peerDependencies:
-    react: ^18.3.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -2603,15 +2599,6 @@ __metadata:
   peerDependencies:
     "@types/react": ^19.2.0
   checksum: 10c0/0dbbc5b7ecd74681bfac95a413133b26118a70b8840748277abafa47e5c7a037beae6a660e6a21fb53f5cbdb0b2d33e117ea7bbd976a888c298392a8a96bc68f
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:19.1.0":
-  version: 19.1.0
-  resolution: "@types/react@npm:19.1.0"
-  dependencies:
-    csstype: "npm:^3.0.2"
-  checksum: 10c0/632fd20ee176e55801a61c5f854141b043571a3e363ef106b047b766a813a12735cbb37abb3d61d126346979f530f2ed269a60c8ef3cdee54e5e9fe4174e5dad
   languageName: node
   linkType: hard
 
@@ -6981,13 +6968,6 @@ __metadata:
   version: 0.17.0
   resolution: "react-refresh@npm:0.17.0"
   checksum: 10c0/002cba940384c9930008c0bce26cac97a9d5682bc623112c2268ba0c155127d9c178a9a5cc2212d560088d60dfd503edd808669a25f9b377f316a32361d0b23c
-  languageName: node
-  linkType: hard
-
-"react@npm:^19.1.0":
-  version: 19.2.7
-  resolution: "react@npm:19.2.7"
-  checksum: 10c0/0bd0e2f1bbd4ba97561c6597bf8a5fec05e6476fe61e165c1065598d16668efc6715205599c94d3ddd49d36cb0f21cbf1b9bcc18ee840b805ce222c3e8d558ac
   languageName: node
   linkType: hard
 

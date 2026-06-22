@@ -1,3 +1,5 @@
-export { useCompositionEvent } from './useCompositionEvent';
-export { CompositionEventProvider } from './context';
-export { createCompositionEventBus, type CompositionEventBus, type CompositionEventStore } from './eventBus';
+export interface CompositionEventBus {
+  on<T = unknown>(eventName: string, callback: (data: T) => void): () => void;
+}
+
+export const eventBus = (globalThis as unknown as { eventBus: CompositionEventBus }).eventBus;
