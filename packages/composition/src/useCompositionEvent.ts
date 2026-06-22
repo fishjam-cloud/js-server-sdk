@@ -1,20 +1,12 @@
-import { useContext, useEffect, useRef } from 'react';
+import { useCallback, useContext, useSyncExternalStore } from 'react';
 import { CompositionEventContext } from './context';
-import type { CompositionEventHandler } from './eventBus';
 
-export function useCompositionEvent(eventName: string, handler: CompositionEventHandler): void {
-  const source = useContext(CompositionEventContext);
-  if (source === null) {
+export function useCompositionEvent<T = unknown>(eventName: string): T | undefined {
+  const store = useContext(CompositionEventContext);
+  if (store === null) {
     throw new Error('useCompositionEvent must be used within a CompositionEventProvider');
   }
 
-  const handlerRef = useRef(handler);
-  useEffect(() => {
-    handlerRef.current = handler;
-  });
-
-  useEffect(() => {
-    const unsubscribe = source.subscribe(eventName, (data) => handlerRef.current(data));
-    return unsubscribe;
-  }, [source, eventName]);
+  const getSnapshot = useCallback(() => store.getLatest(eventName), [store, eventName]);
+  return useSyncExternalStore(store.subscribe, getSnapshot) as T | undefined;
 }

@@ -2,83 +2,54 @@ import { describe, it, expect, vi } from 'vitest';
 import { createCompositionEventBus } from '../src/eventBus';
 
 describe('createCompositionEventBus', () => {
-  it('delivers an emitted event to a subscriber with its data', () => {
+  it('returns undefined for an event with nothing emitted yet', () => {
     const bus = createCompositionEventBus();
-    const received: unknown[] = [];
-    bus.subscribe('START_LIVE', (data) => received.push(data));
-
-    bus.emit('START_LIVE', { round: 1 });
-
-    expect(received).toEqual([{ round: 1 }]);
+    expect(bus.getLatest('START_LIVE')).toBeUndefined();
   });
 
-  it('broadcasts a single emit to every subscriber of that name', () => {
+  it('exposes the latest data emitted for an event name', () => {
     const bus = createCompositionEventBus();
-    const calls: string[] = [];
-    bus.subscribe('E', () => calls.push('a'));
-    bus.subscribe('E', () => calls.push('b'));
-
-    bus.emit('E', null);
-
-    expect(calls.sort()).toEqual(['a', 'b']);
+    bus.emit('VOLUME', { level: 1 });
+    bus.emit('VOLUME', { level: 2 });
+    expect(bus.getLatest('VOLUME')).toEqual({ level: 2 });
   });
 
-  it('only notifies handlers registered for the emitted name', () => {
+  it('tracks event names independently', () => {
     const bus = createCompositionEventBus();
-    const other: unknown[] = [];
-    bus.subscribe('OTHER', (d) => other.push(d));
-
-    bus.emit('START_LIVE', {});
-
-    expect(other).toEqual([]);
+    bus.emit('A', 1);
+    bus.emit('B', 2);
+    expect(bus.getLatest('A')).toBe(1);
+    expect(bus.getLatest('B')).toBe(2);
   });
 
-  it('stops delivering after the returned unsubscribe is called', () => {
+  it('returns a stable snapshot reference between emits', () => {
     const bus = createCompositionEventBus();
-    const received: unknown[] = [];
-    const unsubscribe = bus.subscribe('E', (d) => received.push(d));
+    bus.emit('E', { x: 1 });
+    expect(bus.getLatest('E')).toBe(bus.getLatest('E'));
+  });
+
+  it('notifies every subscriber on each emit', () => {
+    const bus = createCompositionEventBus();
+    const a = vi.fn();
+    const b = vi.fn();
+    bus.subscribe(a);
+    bus.subscribe(b);
+
+    bus.emit('E', 1);
+    bus.emit('E', 2);
+
+    expect(a).toHaveBeenCalledTimes(2);
+    expect(b).toHaveBeenCalledTimes(2);
+  });
+
+  it('stops notifying after unsubscribe', () => {
+    const bus = createCompositionEventBus();
+    const listener = vi.fn();
+    const unsubscribe = bus.subscribe(listener);
 
     unsubscribe();
-    bus.emit('E', { ignored: true });
+    bus.emit('E', 1);
 
-    expect(received).toEqual([]);
-  });
-
-  it('is a no-op when emitting with no subscribers', () => {
-    const bus = createCompositionEventBus();
-    expect(() => bus.emit('NOBODY_LISTENING', { x: 1 })).not.toThrow();
-  });
-
-  it('isolates a throwing handler so siblings still run', () => {
-    const bus = createCompositionEventBus();
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const calls: string[] = [];
-    bus.subscribe('E', () => {
-      throw new Error('boom');
-    });
-    bus.subscribe('E', () => calls.push('survivor'));
-
-    expect(() => bus.emit('E', null)).not.toThrow();
-
-    expect(calls).toEqual(['survivor']);
-    expect(errorSpy).toHaveBeenCalledOnce();
-    errorSpy.mockRestore();
-  });
-
-  it('isolates a rejecting async handler so siblings still run', async () => {
-    const bus = createCompositionEventBus();
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const calls: string[] = [];
-    bus.subscribe('E', async () => {
-      throw new Error('boom');
-    });
-    bus.subscribe('E', () => calls.push('survivor'));
-
-    expect(() => bus.emit('E', null)).not.toThrow();
-    expect(calls).toEqual(['survivor']);
-
-    await Promise.resolve();
-    expect(errorSpy).toHaveBeenCalledOnce();
-    errorSpy.mockRestore();
+    expect(listener).not.toHaveBeenCalled();
   });
 });
