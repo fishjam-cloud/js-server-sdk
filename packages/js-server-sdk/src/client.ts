@@ -318,7 +318,7 @@ export class FishjamClient {
 
   /**
    * Creates a MoQ token.
-   * @returns a MoQ token
+   * @returns connection details containing the relay URL with the JWT embedded as a `?jwt=` query parameter
    */
   async createMoqToken(config?: MoqTokenConfig) {
     try {

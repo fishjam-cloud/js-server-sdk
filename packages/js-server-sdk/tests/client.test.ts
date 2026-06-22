@@ -198,11 +198,11 @@ describe('createMoqToken', () => {
     await expect(client.createMoqToken()).rejects.toThrow();
   });
 
-  it('returns a token with config', async () => {
+  it('returns a connection url with config', async () => {
     const client = createClient();
     const result = await client.createMoqToken({ publishPath: 'my/path', subscribePath: 'my/path' });
 
-    expect(typeof result.token).toBe('string');
+    expect(typeof result.url).toBe('string');
   });
 
   it('throws UnauthorizedException with invalid management token', async () => {
