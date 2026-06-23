@@ -106,32 +106,38 @@ export interface ModelError {
 /**
  * Connection details for a MoQ relay client
  * @export
- * @interface MoqToken
+ * @interface MoqAccess
  */
-export interface MoqToken {
+export interface MoqAccess {
     /**
      * Relay connection URL with the JWT embedded as a `?jwt=` query parameter. Pass directly to a MoQ client SDK.
      * @type {string}
-     * @memberof MoqToken
+     * @memberof MoqAccess
      */
-    'url': string;
+    'connection_url': string;
+    /**
+     * JWT authorizing the MoQ relay connection, also embedded in `connection_url`
+     * @type {string}
+     * @memberof MoqAccess
+     */
+    'token': string;
 }
 /**
- * MoQ token configuration
+ * MoQ access configuration
  * @export
- * @interface MoqTokenConfig
+ * @interface MoqAccessConfig
  */
-export interface MoqTokenConfig {
+export interface MoqAccessConfig {
     /**
      * Path under the root the token grants publish access to
      * @type {string}
-     * @memberof MoqTokenConfig
+     * @memberof MoqAccessConfig
      */
     'publishPath'?: string | null;
     /**
      * Path under the root the token grants subscribe access to
      * @type {string}
-     * @memberof MoqTokenConfig
+     * @memberof MoqAccessConfig
      */
     'subscribePath'?: string | null;
 }
@@ -985,13 +991,13 @@ export const MoQApiAxiosParamCreator = function (configuration?: Configuration) 
     return {
         /**
          * Issue a short-lived JWT for a Media over QUIC client.
-         * @summary Create a MoQ token
-         * @param {MoqTokenConfig} [moqTokenConfig] 
+         * @summary Create MoQ access
+         * @param {MoqAccessConfig} [moqAccessConfig] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createMoqToken: async (moqTokenConfig?: MoqTokenConfig, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/moq/token`;
+        createMoqAccess: async (moqAccessConfig?: MoqAccessConfig, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/moq/access`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1014,7 +1020,7 @@ export const MoQApiAxiosParamCreator = function (configuration?: Configuration) 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(moqTokenConfig, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(moqAccessConfig, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -1033,15 +1039,15 @@ export const MoQApiFp = function(configuration?: Configuration) {
     return {
         /**
          * Issue a short-lived JWT for a Media over QUIC client.
-         * @summary Create a MoQ token
-         * @param {MoqTokenConfig} [moqTokenConfig] 
+         * @summary Create MoQ access
+         * @param {MoqAccessConfig} [moqAccessConfig] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createMoqToken(moqTokenConfig?: MoqTokenConfig, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MoqToken>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.createMoqToken(moqTokenConfig, options);
+        async createMoqAccess(moqAccessConfig?: MoqAccessConfig, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MoqAccess>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createMoqAccess(moqAccessConfig, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['MoQApi.createMoqToken']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['MoQApi.createMoqAccess']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -1056,13 +1062,13 @@ export const MoQApiFactory = function (configuration?: Configuration, basePath?:
     return {
         /**
          * Issue a short-lived JWT for a Media over QUIC client.
-         * @summary Create a MoQ token
-         * @param {MoqTokenConfig} [moqTokenConfig] 
+         * @summary Create MoQ access
+         * @param {MoqAccessConfig} [moqAccessConfig] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createMoqToken(moqTokenConfig?: MoqTokenConfig, options?: any): AxiosPromise<MoqToken> {
-            return localVarFp.createMoqToken(moqTokenConfig, options).then((request) => request(axios, basePath));
+        createMoqAccess(moqAccessConfig?: MoqAccessConfig, options?: any): AxiosPromise<MoqAccess> {
+            return localVarFp.createMoqAccess(moqAccessConfig, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1076,14 +1082,14 @@ export const MoQApiFactory = function (configuration?: Configuration, basePath?:
 export class MoQApi extends BaseAPI {
     /**
      * Issue a short-lived JWT for a Media over QUIC client.
-     * @summary Create a MoQ token
-     * @param {MoqTokenConfig} [moqTokenConfig] 
+     * @summary Create MoQ access
+     * @param {MoqAccessConfig} [moqAccessConfig] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof MoQApi
      */
-    public createMoqToken(moqTokenConfig?: MoqTokenConfig, options?: RawAxiosRequestConfig) {
-        return MoQApiFp(this.configuration).createMoqToken(moqTokenConfig, options).then((request) => request(this.axios, this.basePath));
+    public createMoqAccess(moqAccessConfig?: MoqAccessConfig, options?: RawAxiosRequestConfig) {
+        return MoQApiFp(this.configuration).createMoqAccess(moqAccessConfig, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

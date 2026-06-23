@@ -9,7 +9,7 @@ import {
   PeerOptionsWebRTC,
   PeerOptionsVapi,
   PeerOptionsAgent,
-  MoqTokenConfig,
+  MoqAccessConfig,
 } from '@fishjam-cloud/fishjam-openapi';
 import type { AgentCallbacks, FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
 import { mapException } from './exceptions/mapper';
@@ -317,13 +317,13 @@ export class FishjamClient {
   }
 
   /**
-   * Creates a MoQ token.
-   * @returns connection details containing the relay URL with the JWT embedded as a `?jwt=` query parameter
+   * Creates MoQ access.
+   * @returns connection details containing the relay URL with the JWT embedded as a `?jwt=` query parameter, and the token itself
    */
-  async createMoqToken(config?: MoqTokenConfig) {
+  async createMoqAccess(config?: MoqAccessConfig) {
     try {
-      const tokenResponse = await this.moqApi.createMoqToken(config);
-      return tokenResponse.data;
+      const accessResponse = await this.moqApi.createMoqAccess(config);
+      return accessResponse.data;
     } catch (error) {
       throw mapException(error);
     }

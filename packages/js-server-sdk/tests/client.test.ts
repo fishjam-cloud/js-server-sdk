@@ -192,22 +192,23 @@ describe('createLivestreamViewerToken', () => {
   });
 });
 
-describe('createMoqToken', () => {
+describe('createMoqAccess', () => {
   it('throws when config is empty', async () => {
     const client = createClient();
-    await expect(client.createMoqToken()).rejects.toThrow();
+    await expect(client.createMoqAccess()).rejects.toThrow();
   });
 
-  it('returns a connection url with config', async () => {
+  it('returns a connection url and token with config', async () => {
     const client = createClient();
-    const result = await client.createMoqToken({ publishPath: 'my/path', subscribePath: 'my/path' });
+    const result = await client.createMoqAccess({ publishPath: 'my/path', subscribePath: 'my/path' });
 
-    expect(typeof result.url).toBe('string');
+    expect(typeof result.connection_url).toBe('string');
+    expect(typeof result.token).toBe('string');
   });
 
   it('throws UnauthorizedException with invalid management token', async () => {
     const client = createClient('invalid');
 
-    await expect(client.createMoqToken()).rejects.toThrow(UnauthorizedException);
+    await expect(client.createMoqAccess()).rejects.toThrow(UnauthorizedException);
   });
 });
