@@ -16,7 +16,6 @@
     "fishjam",
     "smelter",
     "composition",
-    "react",
     "template"
   ],
   "main": "./dist/index.js",

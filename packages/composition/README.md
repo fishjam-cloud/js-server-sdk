@@ -2,7 +2,7 @@
 
 # @fishjam-cloud/composition
 
-React hooks for building Fishjam composition templates.
+JS utilities for building Fishjam composition templates.
 
 ## License
 
