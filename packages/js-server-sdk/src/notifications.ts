@@ -1,10 +1,13 @@
 import {
   ServerMessage,
   ServerMessage_PeerType,
+  ServerMessage_TrackForwarding,
+  ServerMessage_VadNotification,
+  ServerMessage_VadNotification_Status,
   TrackType as ProtoTrackType,
   Track as ProtoTrack,
 } from '@fishjam-cloud/fishjam-proto';
-import { Override, PeerId, PeerType, RoomId, TrackType } from './types';
+import { Override, PeerId, PeerType, RoomId, TrackType, VadStatus } from './types';
 
 /**
  * Track payload embedded in {@link TrackAdded}, {@link TrackRemoved}, {@link TrackMetadataUpdated}.
@@ -30,6 +33,13 @@ const trackTypeMap: Record<ProtoTrackType, TrackType> = {
   [ProtoTrackType.UNRECOGNIZED]: 'unspecified',
 };
 
+const vadStatusMap: Record<ServerMessage_VadNotification_Status, VadStatus> = {
+  [ServerMessage_VadNotification_Status.STATUS_UNSPECIFIED]: 'silence',
+  [ServerMessage_VadNotification_Status.STATUS_SILENCE]: 'silence',
+  [ServerMessage_VadNotification_Status.STATUS_SPEECH]: 'speech',
+  [ServerMessage_VadNotification_Status.UNRECOGNIZED]: 'silence',
+};
+
 export const expectedEventsList = [
   'roomCreated',
   'roomDeleted',
@@ -47,6 +57,9 @@ export const expectedEventsList = [
   'trackAdded',
   'trackRemoved',
   'trackMetadataUpdated',
+  'trackForwarding',
+  'trackForwardingRemoved',
+  'vadNotification',
   'channelAdded',
   'channelRemoved',
 ] as const;
@@ -64,12 +77,7 @@ export const ignoredEventsList = [
   'authRequest',
   'subscribeRequest',
   'subscribeResponse',
-  // Currently unsurfaced server notifications — no consumer demand yet.
-  'trackForwarding',
-  'trackForwardingRemoved',
-  'vadNotification',
-  // Transport wrapper, not a user-facing event: unwrapped by `extractNotifications`
-  // into its constituent notifications rather than emitted under its own key.
+  // Transport wrapper, emitted only over webhooks
   'notificationBatch',
   // Deprecated
   'streamConnected',
@@ -94,6 +102,9 @@ type NotificationOverrides = {
   peerId: PeerId;
   peerType: PeerType;
   track: Track | undefined;
+  audioTrack: Track | undefined;
+  videoTrack: Track | undefined;
+  status: VadStatus;
 };
 
 /** @inline */
@@ -119,6 +130,9 @@ export type Notifications = {
   trackAdded: Notification<'trackAdded'>;
   trackRemoved: Notification<'trackRemoved'>;
   trackMetadataUpdated: Notification<'trackMetadataUpdated'>;
+  trackForwarding: Notification<'trackForwarding'>;
+  trackForwardingRemoved: Notification<'trackForwardingRemoved'>;
+  vadNotification: Notification<'vadNotification'>;
   channelAdded: Notification<'channelAdded'>;
   channelRemoved: Notification<'channelRemoved'>;
 };
@@ -139,6 +153,9 @@ export type ViewerDisconnected = Notifications['viewerDisconnected'];
 export type TrackAdded = Notifications['trackAdded'];
 export type TrackRemoved = Notifications['trackRemoved'];
 export type TrackMetadataUpdated = Notifications['trackMetadataUpdated'];
+export type TrackForwarding = Notifications['trackForwarding'];
+export type TrackForwardingRemoved = Notifications['trackForwardingRemoved'];
+export type VadNotification = Notifications['vadNotification'];
 export type ChannelAdded = Notifications['channelAdded'];
 export type ChannelRemoved = Notifications['channelRemoved'];
 
@@ -164,6 +181,14 @@ export const mapNotification = (event: ExpectedEvents, msg: unknown): unknown =>
   if (trackEvents.has(event)) {
     const trackMsg = msg as { track: ProtoTrack | undefined };
     return { ...trackMsg, track: mapTrack(trackMsg.track) };
+  }
+  if (event === 'trackForwarding') {
+    const fwd = msg as ServerMessage_TrackForwarding;
+    return { ...fwd, audioTrack: mapTrack(fwd.audioTrack), videoTrack: mapTrack(fwd.videoTrack) };
+  }
+  if (event === 'vadNotification') {
+    const vad = msg as ServerMessage_VadNotification;
+    return { ...vad, status: vadStatusMap[vad.status] };
   }
   return msg;
 };

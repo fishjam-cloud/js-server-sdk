@@ -52,6 +52,11 @@ export type PeerType = OpenApiPeerType | 'unspecified';
  */
 export type TrackType = OpenApiTrackType | 'unspecified';
 
+/**
+ * Voice activity status of a track.
+ */
+export type VadStatus = 'speech' | 'silence';
+
 export type Room = {
   id: RoomId;
   peers: Peer[];

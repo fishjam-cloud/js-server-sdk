@@ -57,7 +57,7 @@ describe('decodeServerNotifications', () => {
         notifications: [
           { subscribeResponse: { eventType: 0 } }, // handshake — ignored
           peerConnected,
-          { vadNotification: { roomId: 'room-1', peerId: 'peer-1', trackId: 'track-1', status: 0 } }, // ignored
+          { hlsPlayable: { roomId: 'room-1', componentId: 'comp-1' } }, // deprecated — ignored
         ],
       },
     });
