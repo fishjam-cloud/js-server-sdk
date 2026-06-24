@@ -139,38 +139,39 @@ class CompositionStore {
   }
 
   applyNotification(event: CompositionEvent): void {
+    let changed: boolean;
     switch (event.type) {
       case 'peerConnected':
-        this.onPeerConnected(event.data);
+        changed = this.onPeerConnected(event.data);
         break;
       case 'peerDisconnected':
-        this.onPeerDisconnected(event.data);
+        changed = this.onPeerDisconnected(event.data);
         break;
       case 'peerMetadataUpdated':
-        this.onPeerMetadataUpdated(event.data);
+        changed = this.onPeerMetadataUpdated(event.data);
         break;
       case 'trackAdded':
-        this.onTrackAdded(event.data);
+        changed = this.onTrackAdded(event.data);
         break;
       case 'trackRemoved':
-        this.onTrackRemoved(event.data);
+        changed = this.onTrackRemoved(event.data);
         break;
       case 'trackMetadataUpdated':
-        this.onTrackMetadataUpdated(event.data);
+        changed = this.onTrackMetadataUpdated(event.data);
         break;
       case 'trackForwarding':
-        this.onTrackForwarding(event.data);
+        changed = this.onTrackForwarding(event.data);
         break;
       case 'trackForwardingRemoved':
-        this.onTrackForwardingRemoved(event.data);
+        changed = this.onTrackForwardingRemoved(event.data);
         break;
       case 'vadNotification':
-        this.onVadNotification(event.data);
+        changed = this.onVadNotification(event.data);
         break;
       default:
-        assertNever(event);
+        return assertNever(event);
     }
-    this.commit();
+    if (changed) this.commit();
   }
 
   // -- reducer ---------------------------------------------------------------
@@ -184,63 +185,75 @@ class CompositionStore {
     return peer;
   }
 
-  private onPeerConnected(data: PeerConnected): void {
+  private onPeerConnected(data: PeerConnected): boolean {
+    if (this.peers.has(data.peerId)) return false;
     this.ensurePeer(data.peerId);
+    return true;
   }
 
-  private onPeerDisconnected(data: PeerDisconnected): void {
+  private onPeerDisconnected(data: PeerDisconnected): boolean {
+    let changed = false;
     const peer = this.peers.get(data.peerId);
     if (peer) {
       for (const inputId of peer.streams.keys()) this.vad.delete(inputId);
+      this.peers.delete(data.peerId);
+      changed = true;
     }
-    this.peers.delete(data.peerId);
     for (const key of this.forwarding.keys()) {
-      if (key.startsWith(`${data.peerId}:`)) this.forwarding.delete(key);
+      if (key.startsWith(`${data.peerId}:`)) {
+        this.forwarding.delete(key);
+        changed = true;
+      }
     }
+    return changed;
   }
 
-  private onPeerMetadataUpdated(data: PeerMetadataUpdated): void {
+  private onPeerMetadataUpdated(data: PeerMetadataUpdated): boolean {
     this.ensurePeer(data.peerId).metadata = splitMetadata(data.metadata);
+    return true;
   }
 
-  private onTrackAdded(data: TrackAdded): void {
-    if (!data.peerId || !data.track) return;
+  private onTrackAdded(data: TrackAdded): boolean {
+    if (!data.peerId || !data.track) return false;
     const peer = this.ensurePeer(data.peerId);
     peer.tracks.set(data.track.id, { id: data.track.id, metadata: normalizeMetadata(data.track.metadata) });
+    return true;
   }
 
-  private onTrackMetadataUpdated(data: TrackMetadataUpdated): void {
-    if (!data.peerId || !data.track) return;
+  private onTrackMetadataUpdated(data: TrackMetadataUpdated): boolean {
+    if (!data.peerId || !data.track) return false;
     const peer = this.peers.get(data.peerId);
-    if (!peer) return;
+    if (!peer) return false;
     const metadata = normalizeMetadata(data.track.metadata);
     peer.tracks.set(data.track.id, { id: data.track.id, metadata });
 
     const inputId = this.forwarding.get(`${data.peerId}:${data.track.id}`);
-    if (!inputId) return;
+    if (!inputId) return true;
     const stream = peer.streams.get(inputId);
-    if (!stream) return;
+    if (!stream) return true;
     if (stream.video?.id === data.track.id) stream.video = { id: data.track.id, metadata };
     if (stream.audio?.id === data.track.id) stream.audio = { id: data.track.id, metadata };
+    return true;
   }
 
-  private onTrackRemoved(data: TrackRemoved): void {
-    if (!data.peerId || !data.track) return;
+  private onTrackRemoved(data: TrackRemoved): boolean {
+    if (!data.peerId || !data.track) return false;
     const peer = this.peers.get(data.peerId);
-    if (!peer) return;
-    peer.tracks.delete(data.track.id);
+    if (!peer) return false;
+    const removed = peer.tracks.delete(data.track.id);
 
     const key = `${data.peerId}:${data.track.id}`;
     const inputId = this.forwarding.get(key);
-    this.forwarding.delete(key);
-    if (!inputId) return;
+    const forwardingRemoved = this.forwarding.delete(key);
+    if (!inputId) return removed || forwardingRemoved;
     const stream = peer.streams.get(inputId);
-    if (!stream) return;
+    if (!stream) return removed || forwardingRemoved;
     if (stream.video?.id === data.track.id) stream.video = undefined;
     if (stream.audio?.id === data.track.id) stream.audio = undefined;
+    return true;
   }
 
-  private onTrackForwarding(data: TrackForwarding): void {
+  private onTrackForwarding(data: TrackForwarding): boolean {
     const peer = this.ensurePeer(data.peerId);
     const stream: InternalStream = peer.streams.get(data.inputId) ?? { inputId: data.inputId };
 
@@ -255,22 +268,29 @@ class CompositionStore {
       peer.tracks.set(data.audioTrack.id, stream.audio);
     }
     peer.streams.set(data.inputId, stream);
+    return true;
   }
 
-  private onTrackForwardingRemoved(data: TrackForwardingRemoved): void {
+  private onTrackForwardingRemoved(data: TrackForwardingRemoved): boolean {
+    let changed = this.vad.delete(data.inputId);
     const peer = this.peers.get(data.peerId);
-    this.vad.delete(data.inputId);
-    if (!peer) return;
-    peer.streams.delete(data.inputId);
+    if (!peer) return changed;
+    if (peer.streams.delete(data.inputId)) changed = true;
     for (const [key, inputId] of this.forwarding) {
-      if (inputId === data.inputId && key.startsWith(`${data.peerId}:`)) this.forwarding.delete(key);
+      if (inputId === data.inputId && key.startsWith(`${data.peerId}:`)) {
+        this.forwarding.delete(key);
+        changed = true;
+      }
     }
+    return changed;
   }
 
-  private onVadNotification(data: VadNotification): void {
+  private onVadNotification(data: VadNotification): boolean {
     const inputId = this.forwarding.get(`${data.peerId}:${data.trackId}`);
-    if (!inputId) return;
+    if (!inputId) return false;
+    if (this.vad.get(inputId) === data.status) return false;
     this.vad.set(inputId, data.status);
+    return true;
   }
 
   // -- snapshot --------------------------------------------------------------
@@ -297,20 +317,20 @@ class CompositionStore {
     for (const internal of peer.streams.values()) {
       const video: VideoTrackState | undefined = internal.video
         ? {
-            id: internal.video.id,
-            paused: Boolean(internal.video.metadata.paused),
-            metadata: internal.video.metadata,
-            type: 'video',
-          }
+          id: internal.video.id,
+          paused: Boolean(internal.video.metadata.paused),
+          metadata: internal.video.metadata,
+          type: 'video',
+        }
         : undefined;
       const audio: AudioTrackState | undefined = internal.audio
         ? {
-            id: internal.audio.id,
-            paused: Boolean(internal.audio.metadata.paused),
-            metadata: internal.audio.metadata,
-            type: 'audio',
-            ...(vad[internal.inputId] !== undefined ? { vadStatus: vad[internal.inputId] } : {}),
-          }
+          id: internal.audio.id,
+          paused: Boolean(internal.audio.metadata.paused),
+          metadata: internal.audio.metadata,
+          type: 'audio',
+          ...(vad[internal.inputId] !== undefined ? { vadStatus: vad[internal.inputId] } : {}),
+        }
         : undefined;
 
       const stream: Stream = { inputId: internal.inputId, video, audio };
