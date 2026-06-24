@@ -36,7 +36,7 @@ class FakeWebSocket {
 }
 
 const config = { fishjamId: 'test-id', managementToken: 'test-token' };
-const noop = () => { };
+const noop = () => {};
 
 const peerConnected = {
   peerConnected: { roomId: 'room-1', peerId: 'peer-1', peerType: ServerMessage_PeerType.PEER_TYPE_WEBRTC },

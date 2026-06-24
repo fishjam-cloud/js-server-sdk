@@ -297,20 +297,20 @@ class CompositionStore {
     for (const internal of peer.streams.values()) {
       const video: VideoTrackState | undefined = internal.video
         ? {
-          id: internal.video.id,
-          paused: Boolean(internal.video.metadata.paused),
-          metadata: internal.video.metadata,
-          type: 'video',
-        }
+            id: internal.video.id,
+            paused: Boolean(internal.video.metadata.paused),
+            metadata: internal.video.metadata,
+            type: 'video',
+          }
         : undefined;
       const audio: AudioTrackState | undefined = internal.audio
         ? {
-          id: internal.audio.id,
-          paused: Boolean(internal.audio.metadata.paused),
-          metadata: internal.audio.metadata,
-          type: 'audio',
-          ...(vad[internal.inputId] !== undefined ? { vadStatus: vad[internal.inputId] } : {}),
-        }
+            id: internal.audio.id,
+            paused: Boolean(internal.audio.metadata.paused),
+            metadata: internal.audio.metadata,
+            type: 'audio',
+            ...(vad[internal.inputId] !== undefined ? { vadStatus: vad[internal.inputId] } : {}),
+          }
         : undefined;
 
       const stream: Stream = { inputId: internal.inputId, video, audio };
