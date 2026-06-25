@@ -6,7 +6,10 @@ import type { PeerWithStreams, VadStatus } from './types';
  * All peers in the linked room, projected into composition streams. Flat list —
  * the worker is not a peer, so there is no local/remote split.
  */
-export function usePeers<PeerMetadata = unknown, ServerMetadata = unknown>(): PeerWithStreams<PeerMetadata, ServerMetadata>[] {
+export function usePeers<PeerMetadata = unknown, ServerMetadata = unknown>(): PeerWithStreams<
+  PeerMetadata,
+  ServerMetadata
+>[] {
   const peers = useSyncExternalStore(compositionStore.subscribe, compositionStore.getPeers, compositionStore.getPeers);
   return peers as PeerWithStreams<PeerMetadata, ServerMetadata>[];
 }
