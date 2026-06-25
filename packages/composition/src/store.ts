@@ -10,8 +10,9 @@ import type {
   TrackMetadataUpdated,
   TrackRemoved,
   VadNotification,
+  TrackType,
 } from '@fishjam-cloud/js-server-sdk';
-import type { AudioTrackState, PeerWithStreams, Stream, VideoTrackState } from './types';
+import type { PeerWithStreams, Stream } from './types';
 
 /**
  * Discriminated notifier event accepted by {@link CompositionStore.applyNotification}.
@@ -40,19 +41,12 @@ export type RoomSnapshot = {
 
 type Metadata = Record<string, unknown>;
 
-type InternalTrack = { id: string; metadata: Metadata };
-
-type InternalStream = {
-  inputId: string;
-  video?: InternalTrack;
-  audio?: InternalTrack;
-};
+type InternalTrack = { id: string; metadata: Metadata; inputId?: string; type: TrackType };
 
 type InternalPeer = {
   id: string;
   metadata: { peer: unknown; server: unknown };
   tracks: Map<string, InternalTrack>;
-  streams: Map<string, InternalStream>;
 };
 
 const EMPTY_SNAPSHOT: RoomSnapshot = { peers: [], vad: {} };
@@ -79,10 +73,10 @@ const splitMetadata = (raw: string | object | null | undefined): { peer: unknown
   return { peer: obj.peer, server: obj.server };
 };
 
-const roleOf = (stream: InternalStream): 'camera' | 'screenShare' | 'custom' => {
+const roleOf = (stream: Stream): 'camera' | 'screenShare' | 'custom' => {
   const type = stream.video?.metadata.type ?? stream.audio?.metadata.type;
-  if (type === 'camera') return 'camera';
-  if (type === 'screenShare') return 'screenShare';
+  if (type === 'camera' || type === 'microphone') return 'camera';
+  if (type === 'screenShareVideo' || type === 'screenShareAudio') return 'screenShare';
   return 'custom';
 };
 
@@ -90,11 +84,11 @@ class CompositionStore {
   private peers = new Map<string, InternalPeer>();
   private roomId: string | undefined;
   /** trackId -> inputId, used to resolve VAD/metadata events to a stream. */
-  private forwarding = new Map<string, string>();
   private vad = new Map<string, VadStatus>();
 
   private listeners = new Set<() => void>();
   private cachedSnapshot: RoomSnapshot | null = EMPTY_SNAPSHOT;
+  private cachedPeers: PeerWithStreams[] = EMPTY_SNAPSHOT.peers;
 
   readonly subscribe = (cb: () => void): (() => void) => {
     this.listeners.add(cb);
@@ -102,23 +96,35 @@ class CompositionStore {
   };
 
   readonly getSnapshot = (): RoomSnapshot => {
-    if (this.cachedSnapshot === null) this.cachedSnapshot = this.buildSnapshot();
+    if (this.cachedSnapshot === null) {
+      this.cachedSnapshot = { peers: this.cachedPeers, roomId: this.roomId, vad: this.vadRecord() };
+    }
     return this.cachedSnapshot;
   };
+
+  readonly getPeers = (): PeerWithStreams[] => this.cachedPeers;
+
+  readonly getPeer = (inputId: string): PeerWithStreams | undefined =>
+    this.getPeers().find((peer) => peer.streams.some((stream) => stream.inputId === inputId));
+
+  readonly getRoomId = (): string | undefined => this.roomId;
+
+  readonly getVadStatus = (inputId: string): VadStatus => this.vad.get(inputId) ?? 'silence';
 
   // -- backward-facing feed API ------------------------------------------------
 
   reset(): void {
     this.peers.clear();
-    this.forwarding.clear();
     this.vad.clear();
     this.roomId = undefined;
+    this.cachedSnapshot = null;
+    this.cachedPeers = [];
+
     this.commit();
   }
 
   seedFromRoom(room: Room): void {
     this.peers.clear();
-    this.forwarding.clear();
     this.vad.clear();
     this.roomId = room.id;
 
@@ -127,18 +133,21 @@ class CompositionStore {
         id: peer.id,
         metadata: splitMetadata(peer.metadata),
         tracks: new Map(),
-        streams: new Map(),
       };
       for (const track of peer.tracks ?? []) {
         if (!track.id) continue;
-        internal.tracks.set(track.id, { id: track.id, metadata: normalizeMetadata(track.metadata) });
+        internal.tracks.set(track.id, { id: track.id, metadata: normalizeMetadata(track.metadata), type: track.type! });
       }
       this.peers.set(peer.id, internal);
     }
+
+    this.rebuildPeers();
     this.commit();
   }
 
   applyNotification(event: CompositionEvent): void {
+    if (event.data.roomId !== this.roomId) return;
+
     let changed: boolean;
     switch (event.type) {
       case 'peerConnected':
@@ -174,12 +183,10 @@ class CompositionStore {
     if (changed) this.commit();
   }
 
-  // -- reducer ---------------------------------------------------------------
-
   private ensurePeer(peerId: string): InternalPeer {
     let peer = this.peers.get(peerId);
     if (!peer) {
-      peer = { id: peerId, metadata: { peer: undefined, server: undefined }, tracks: new Map(), streams: new Map() };
+      peer = { id: peerId, metadata: { peer: undefined, server: undefined }, tracks: new Map() };
       this.peers.set(peerId, peer);
     }
     return peer;
@@ -188,163 +195,204 @@ class CompositionStore {
   private onPeerConnected(data: PeerConnected): boolean {
     if (this.peers.has(data.peerId)) return false;
     this.ensurePeer(data.peerId);
+    this.replacePeer(data.peerId);
     return true;
   }
 
   private onPeerDisconnected(data: PeerDisconnected): boolean {
-    let changed = false;
     const peer = this.peers.get(data.peerId);
-    if (peer) {
-      for (const inputId of peer.streams.keys()) this.vad.delete(inputId);
-      this.peers.delete(data.peerId);
-      changed = true;
-    }
-    for (const key of this.forwarding.keys()) {
-      if (key.startsWith(`${data.peerId}:`)) {
-        this.forwarding.delete(key);
-        changed = true;
-      }
-    }
-    return changed;
+    if (!peer) return false;
+
+    for (const { inputId } of peer.tracks.values()) if (inputId) this.vad.delete(inputId);
+    this.peers.delete(data.peerId);
+
+    this.replacePeer(data.peerId);
+    return true;
   }
 
   private onPeerMetadataUpdated(data: PeerMetadataUpdated): boolean {
     this.ensurePeer(data.peerId).metadata = splitMetadata(data.metadata);
+    this.replacePeer(data.peerId);
     return true;
   }
 
   private onTrackAdded(data: TrackAdded): boolean {
     if (!data.peerId || !data.track) return false;
+
     const peer = this.ensurePeer(data.peerId);
-    peer.tracks.set(data.track.id, { id: data.track.id, metadata: normalizeMetadata(data.track.metadata) });
+    peer.tracks.set(data.track.id, {
+      id: data.track.id,
+      metadata: normalizeMetadata(data.track.metadata),
+      type: data.track.type,
+    });
+    this.replacePeer(data.peerId);
     return true;
   }
 
   private onTrackMetadataUpdated(data: TrackMetadataUpdated): boolean {
     if (!data.peerId || !data.track) return false;
+
     const peer = this.peers.get(data.peerId);
     if (!peer) return false;
-    const metadata = normalizeMetadata(data.track.metadata);
-    peer.tracks.set(data.track.id, { id: data.track.id, metadata });
 
-    const inputId = this.forwarding.get(`${data.peerId}:${data.track.id}`);
-    if (!inputId) return true;
-    const stream = peer.streams.get(inputId);
-    if (!stream) return true;
-    if (stream.video?.id === data.track.id) stream.video = { id: data.track.id, metadata };
-    if (stream.audio?.id === data.track.id) stream.audio = { id: data.track.id, metadata };
+    const metadata = normalizeMetadata(data.track.metadata);
+    const inputId = peer.tracks.get(data.track.id)?.inputId;
+    peer.tracks.set(data.track.id, { id: data.track.id, metadata, type: data.track.type, inputId });
+
+    this.replacePeer(data.peerId);
     return true;
   }
 
   private onTrackRemoved(data: TrackRemoved): boolean {
     if (!data.peerId || !data.track) return false;
+
     const peer = this.peers.get(data.peerId);
     if (!peer) return false;
-    const removed = peer.tracks.delete(data.track.id);
+    if (!peer.tracks.delete(data.track.id)) return false;
 
-    const key = `${data.peerId}:${data.track.id}`;
-    const inputId = this.forwarding.get(key);
-    const forwardingRemoved = this.forwarding.delete(key);
-    if (!inputId) return removed || forwardingRemoved;
-    const stream = peer.streams.get(inputId);
-    if (!stream) return removed || forwardingRemoved;
-    if (stream.video?.id === data.track.id) stream.video = undefined;
-    if (stream.audio?.id === data.track.id) stream.audio = undefined;
+    this.replacePeer(data.peerId);
     return true;
   }
 
   private onTrackForwarding(data: TrackForwarding): boolean {
     const peer = this.ensurePeer(data.peerId);
-    const stream: InternalStream = peer.streams.get(data.inputId) ?? { inputId: data.inputId };
 
     if (data.videoTrack) {
-      stream.video = { id: data.videoTrack.id, metadata: normalizeMetadata(data.videoTrack.metadata) };
-      this.forwarding.set(`${data.peerId}:${data.videoTrack.id}`, data.inputId);
-      peer.tracks.set(data.videoTrack.id, stream.video);
+      peer.tracks.set(data.videoTrack.id, {
+        id: data.videoTrack.id,
+        metadata: normalizeMetadata(data.videoTrack.metadata),
+        inputId: data.inputId,
+        type: data.videoTrack.type,
+      });
     }
     if (data.audioTrack) {
-      stream.audio = { id: data.audioTrack.id, metadata: normalizeMetadata(data.audioTrack.metadata) };
-      this.forwarding.set(`${data.peerId}:${data.audioTrack.id}`, data.inputId);
-      peer.tracks.set(data.audioTrack.id, stream.audio);
+      peer.tracks.set(data.audioTrack.id, {
+        id: data.audioTrack.id,
+        metadata: normalizeMetadata(data.audioTrack.metadata),
+        inputId: data.inputId,
+        type: data.audioTrack.type,
+      });
     }
-    peer.streams.set(data.inputId, stream);
+    this.replacePeer(data.peerId);
     return true;
   }
 
   private onTrackForwardingRemoved(data: TrackForwardingRemoved): boolean {
     let changed = this.vad.delete(data.inputId);
     const peer = this.peers.get(data.peerId);
-    if (!peer) return changed;
-    if (peer.streams.delete(data.inputId)) changed = true;
-    for (const [key, inputId] of this.forwarding) {
-      if (inputId === data.inputId && key.startsWith(`${data.peerId}:`)) {
-        this.forwarding.delete(key);
+    if (!peer) {
+      if (changed) this.cachedSnapshot = null;
+      return changed;
+    }
+
+    for (const track of peer.tracks.values()) {
+      if (track.inputId === data.inputId) {
+        track.inputId = undefined;
         changed = true;
       }
     }
+
+    if (changed) this.replacePeer(data.peerId);
     return changed;
   }
 
   private onVadNotification(data: VadNotification): boolean {
-    const inputId = this.forwarding.get(`${data.peerId}:${data.trackId}`);
-    if (!inputId) return false;
-    if (this.vad.get(inputId) === data.status) return false;
-    this.vad.set(inputId, data.status);
+    const peer = this.peers.get(data.peerId);
+    if (!peer) return false;
+
+    const track = peer.tracks.get(data.trackId);
+    if (!track || !track.inputId) return false;
+    if (this.vad.get(track.inputId) === data.status) return false;
+
+    this.vad.set(track.inputId, data.status);
+    this.replacePeer(data.peerId);
     return true;
   }
 
-  // -- snapshot --------------------------------------------------------------
-
   private commit(): void {
-    this.cachedSnapshot = null;
     for (const cb of this.listeners) cb();
   }
 
-  private buildSnapshot(): RoomSnapshot {
+  /**
+   * Update `cachedPeers` array, reusing every other peer's reference.
+   */
+  private replacePeer(peerId: string): void {
+    const internal = this.peers.get(peerId);
+    const next = this.cachedPeers.slice();
+    const idx = next.findIndex((peer) => peer.id === peerId);
+    if (!internal) {
+      if (idx >= 0) next.splice(idx, 1);
+    } else if (idx >= 0) {
+      next[idx] = this.derivePeer(internal, this.vadRecord());
+    } else {
+      next.push(this.derivePeer(internal, this.vadRecord()));
+    }
+    this.cachedPeers = next;
+    this.cachedSnapshot = null;
+  }
+
+  private rebuildPeers(): void {
+    const vad = this.vadRecord();
+    this.cachedPeers = Array.from(this.peers.values(), (peer) => this.derivePeer(peer, vad));
+    this.cachedSnapshot = null;
+  }
+
+  private vadRecord(): Record<string, VadStatus> {
     const vad: Record<string, VadStatus> = {};
     for (const [inputId, status] of this.vad) vad[inputId] = status;
-
-    const peers = Array.from(this.peers.values()).map((peer) => this.derivePeer(peer, vad));
-    return { peers, roomId: this.roomId, vad };
+    return vad;
   }
 
   private derivePeer(peer: InternalPeer, vad: Record<string, VadStatus>): PeerWithStreams {
-    const streams: Stream[] = [];
-    const customStreams: Stream[] = [];
+    const streams = new Map<string, Stream>();
     let cameraStream: Stream | undefined;
     let screenShareStream: Stream | undefined;
+    const customStreams: Stream[] = [];
 
-    for (const internal of peer.streams.values()) {
-      const video: VideoTrackState | undefined = internal.video
-        ? {
-            id: internal.video.id,
-            paused: Boolean(internal.video.metadata.paused),
-            metadata: internal.video.metadata,
-            type: 'video',
-          }
-        : undefined;
-      const audio: AudioTrackState | undefined = internal.audio
-        ? {
-            id: internal.audio.id,
-            paused: Boolean(internal.audio.metadata.paused),
-            metadata: internal.audio.metadata,
-            type: 'audio',
-            ...(vad[internal.inputId] !== undefined ? { vadStatus: vad[internal.inputId] } : {}),
-          }
-        : undefined;
-
-      const stream: Stream = { inputId: internal.inputId, video, audio };
-      streams.push(stream);
-
-      const role = roleOf(internal);
-      if (role === 'camera') cameraStream = stream;
-      else if (role === 'screenShare') screenShareStream = stream;
-      else customStreams.push(stream);
+    for (const track of peer.tracks.values()) {
+      if (!track.inputId) continue;
+      const stream: Stream = streams.get(track.inputId) || { inputId: track.inputId };
+      if (track.type === 'audio')
+        stream.audio = {
+          id: track.id,
+          paused: Boolean(track.metadata.paused),
+          metadata: track.metadata,
+          type: 'audio',
+          vadStatus: vad[track.inputId],
+        };
+      else
+        stream.video = {
+          id: track.id,
+          paused: Boolean(track.metadata.paused),
+          metadata: track.metadata,
+          type: 'video',
+        };
+      streams.set(track.inputId, stream);
     }
 
-    return { id: peer.id, metadata: peer.metadata, streams, cameraStream, screenShareStream, customStreams };
+    for (const stream of streams.values()) {
+      const role = roleOf(stream);
+      switch (role) {
+        case 'camera':
+          cameraStream = stream;
+          break;
+        case 'screenShare':
+          screenShareStream = stream;
+          break;
+        default:
+          customStreams.push(stream);
+      }
+    }
+
+    return {
+      id: peer.id,
+      metadata: peer.metadata,
+      streams: Array.from(streams.values()),
+      cameraStream,
+      screenShareStream,
+      customStreams,
+    };
   }
 }
 
-/** Module-level singleton shared by the hooks and the worker feed API. */
 export const compositionStore = new CompositionStore();

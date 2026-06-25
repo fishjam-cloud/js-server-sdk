@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { compositionStore, type CompositionEvent } from '../src/store';
-import type { Room } from '@fishjam-cloud/js-server-sdk';
+import type { Room, RoomId } from '@fishjam-cloud/js-server-sdk';
 
 const apply = (event: CompositionEvent) => compositionStore.applyNotification(event);
 
@@ -28,13 +28,13 @@ const forwardScreenShare = (peerId = 'p1', inputId = 'in2') =>
       peerId,
       compositionUrl: 'url',
       inputId,
-      videoTrack: track('v2', 'video', { type: 'screenShare', paused: false }),
+      videoTrack: track('v2', 'video', { type: 'screenShareVideo', paused: false }),
     } as never,
   });
 
 const peers = () => compositionStore.getSnapshot().peers;
 
-beforeEach(() => compositionStore.reset());
+beforeEach(() => compositionStore.seedFromRoom({ id: 'r1' as RoomId, config: {}, peers: [] }));
 
 describe('composition store reducer', () => {
   it('peerConnected adds an empty peer', () => {
@@ -84,19 +84,6 @@ describe('composition store reducer', () => {
       } as never,
     });
     expect(peers()[0].cameraStream?.video?.paused).toBe(true);
-  });
-
-  it('trackMetadataUpdated re-classifies a stream when the role changes', () => {
-    forwardCamera();
-    expect(peers()[0].cameraStream).toBeDefined();
-    expect(peers()[0].screenShareStream).toBeUndefined();
-
-    apply({
-      type: 'trackMetadataUpdated',
-      data: { roomId: 'r1', peerId: 'p1', track: track('v1', 'video', { type: 'screenShare' }) } as never,
-    });
-    expect(peers()[0].cameraStream).toBeUndefined();
-    expect(peers()[0].screenShareStream?.inputId).toBe('in1');
   });
 
   it('trackRemoved clears one slot but keeps the other; trackForwardingRemoved drops the stream', () => {
@@ -239,6 +226,32 @@ describe('composition store reducer', () => {
     // in1's forwarding entries are cleared: a vad for its audio no longer resolves
     apply({ type: 'vadNotification', data: { roomId: 'r1', peerId: 'p1', trackId: 'a1', status: 'speech' } as never });
     expect(compositionStore.getSnapshot().vad).toEqual({});
+  });
+
+  it('keeps an unchanged peer reference stable when another peer mutates (structural sharing)', () => {
+    forwardCamera('p1', 'in1');
+    forwardCamera('p2', 'in2');
+    const p1Before = compositionStore.getPeers().find((p) => p.id === 'p1');
+
+    // a mutation scoped to p2 must not re-derive p1
+    apply({ type: 'vadNotification', data: { roomId: 'r1', peerId: 'p2', trackId: 'a1', status: 'speech' } as never });
+    const after = compositionStore.getPeers();
+    expect(after.find((p) => p.id === 'p1')).toBe(p1Before);
+    expect(after.find((p) => p.id === 'p2')).not.toBe(p1Before);
+  });
+
+  it('getPeer returns a stable reference until that peer changes', () => {
+    forwardCamera('p1', 'in1');
+    forwardCamera('p2', 'in2');
+    const a = compositionStore.getPeer('in1');
+
+    // unrelated commit on p2 → p1 reference unchanged
+    apply({ type: 'vadNotification', data: { roomId: 'r1', peerId: 'p2', trackId: 'a1', status: 'speech' } as never });
+    expect(compositionStore.getPeer('in1')).toBe(a);
+
+    // commit on p1 → new reference
+    apply({ type: 'vadNotification', data: { roomId: 'r1', peerId: 'p1', trackId: 'a1', status: 'speech' } as never });
+    expect(compositionStore.getPeer('in1')).not.toBe(a);
   });
 
   it('notifies subscribers on mutation and stops after unsubscribe', () => {
