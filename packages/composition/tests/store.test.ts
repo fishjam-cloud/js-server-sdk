@@ -103,11 +103,11 @@ describe('composition store reducer', () => {
     expect(peers()[0].cameraStream).toBeUndefined();
   });
 
-  it('VAD is keyed by (peerId, trackId) → inputId and surfaces on the audio track', () => {
+  it('VAD is keyed by (peerId, trackId) → inputId and surfaces per peer via getVadStatus', () => {
     forwardCamera();
     apply({ type: 'vadNotification', data: { roomId: 'r1', peerId: 'p1', trackId: 'a1', status: 'speech' } as never });
     expect(compositionStore.getSnapshot().vad).toEqual({ in1: 'speech' });
-    expect(peers()[0].cameraStream?.audio?.vadStatus).toBe('speech');
+    expect(compositionStore.getVadStatus('p1')).toBe('speech');
   });
 
   it('ignores a VAD notification for an unknown (peerId, trackId)', () => {
@@ -213,6 +213,31 @@ describe('composition store reducer', () => {
     expect(peer.customStreams.map((s) => s.inputId)).toEqual(['in3']);
   });
 
+  it('classifies audio-only streams by audio track metadata', () => {
+    const forwardAudio = (inputId: string, type: string, audioId: string) =>
+      apply({
+        type: 'trackForwarding',
+        data: {
+          roomId: 'r1',
+          peerId: 'p1',
+          compositionUrl: 'url',
+          inputId,
+          audioTrack: track(audioId, 'audio', { type }),
+        } as never,
+      });
+
+    forwardAudio('in1', 'microphone', 'a1');
+    forwardAudio('in2', 'screenShareAudio', 'a2');
+    forwardAudio('in3', 'customAudio', 'a3');
+
+    const peer = peers()[0];
+    expect(peer.cameraStream?.inputId).toBe('in1');
+    expect(peer.cameraStream?.audio?.id).toBe('a1');
+    expect(peer.screenShareStream?.inputId).toBe('in2');
+    expect(peer.screenShareStream?.audio?.id).toBe('a2');
+    expect(peer.customStreams.map((s) => s.inputId)).toEqual(['in3']);
+  });
+
   it('trackForwardingRemoved drops only the removed input, leaving the peer other stream routable', () => {
     forwardCamera('p1', 'in1');
     forwardScreenShare('p1', 'in2');
@@ -232,26 +257,73 @@ describe('composition store reducer', () => {
     forwardCamera('p1', 'in1');
     forwardCamera('p2', 'in2');
     const p1Before = compositionStore.getPeers().find((p) => p.id === 'p1');
+    const p2Before = compositionStore.getPeers().find((p) => p.id === 'p2');
 
     // a mutation scoped to p2 must not re-derive p1
-    apply({ type: 'vadNotification', data: { roomId: 'r1', peerId: 'p2', trackId: 'a1', status: 'speech' } as never });
+    apply({
+      type: 'trackMetadataUpdated',
+      data: { roomId: 'r1', peerId: 'p2', track: track('a1', 'audio', { type: 'camera', paused: true }) } as never,
+    });
     const after = compositionStore.getPeers();
     expect(after.find((p) => p.id === 'p1')).toBe(p1Before);
-    expect(after.find((p) => p.id === 'p2')).not.toBe(p1Before);
+    expect(after.find((p) => p.id === 'p2')).not.toBe(p2Before);
   });
 
   it('getPeer returns a stable reference until that peer changes', () => {
     forwardCamera('p1', 'in1');
     forwardCamera('p2', 'in2');
-    const a = compositionStore.getPeer('in1');
+    const a = compositionStore.getPeer('p1');
 
     // unrelated commit on p2 → p1 reference unchanged
-    apply({ type: 'vadNotification', data: { roomId: 'r1', peerId: 'p2', trackId: 'a1', status: 'speech' } as never });
-    expect(compositionStore.getPeer('in1')).toBe(a);
+    apply({
+      type: 'trackMetadataUpdated',
+      data: { roomId: 'r1', peerId: 'p2', track: track('a1', 'audio', { type: 'camera', paused: true }) } as never,
+    });
+    expect(compositionStore.getPeer('p1')).toBe(a);
 
     // commit on p1 → new reference
+    apply({
+      type: 'trackMetadataUpdated',
+      data: { roomId: 'r1', peerId: 'p1', track: track('a1', 'audio', { type: 'camera', paused: true }) } as never,
+    });
+    expect(compositionStore.getPeer('p1')).not.toBe(a);
+  });
+
+  it('VAD change does not re-derive peers but still notifies subscribers', () => {
+    forwardCamera('p1', 'in1');
+    const peersBefore = compositionStore.getPeers();
+    const p1Before = peersBefore[0];
+
+    let calls = 0;
+    const unsubscribe = compositionStore.subscribe(() => calls++);
     apply({ type: 'vadNotification', data: { roomId: 'r1', peerId: 'p1', trackId: 'a1', status: 'speech' } as never });
-    expect(compositionStore.getPeer('in1')).not.toBe(a);
+    unsubscribe();
+
+    // peer list and the peer object keep their references: no peer re-render
+    expect(compositionStore.getPeers()).toBe(peersBefore);
+    expect(compositionStore.getPeers()[0]).toBe(p1Before);
+    // but useSpeakingState's source updated and subscribers were notified
+    expect(compositionStore.getVadStatus('p1')).toBe('speech');
+    expect(calls).toBe(1);
+  });
+
+  it('VAD change leaves getPeer references stable for the speaking peer', () => {
+    forwardCamera('p1', 'in1');
+    const before = compositionStore.getPeer('p1');
+    apply({ type: 'vadNotification', data: { roomId: 'r1', peerId: 'p1', trackId: 'a1', status: 'speech' } as never });
+    expect(compositionStore.getPeer('p1')).toBe(before);
+  });
+
+  it('a repeated VAD status does not notify subscribers', () => {
+    forwardCamera('p1', 'in1');
+    apply({ type: 'vadNotification', data: { roomId: 'r1', peerId: 'p1', trackId: 'a1', status: 'speech' } as never });
+
+    let calls = 0;
+    const unsubscribe = compositionStore.subscribe(() => calls++);
+    apply({ type: 'vadNotification', data: { roomId: 'r1', peerId: 'p1', trackId: 'a1', status: 'speech' } as never });
+    unsubscribe();
+
+    expect(calls).toBe(0);
   });
 
   it('notifies subscribers on mutation and stops after unsubscribe', () => {

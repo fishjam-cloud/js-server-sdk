@@ -31,7 +31,7 @@ describe('composition hooks', () => {
         'div',
         null,
         usePeers()
-          .peers.map((p) => p.id)
+          .map((p) => p.id)
           .join(',')
       );
     expect(render(Probe)).toBe('<div></div>');
@@ -39,8 +39,8 @@ describe('composition hooks', () => {
     expect(render(Probe)).toBe('<div>p1</div>');
   });
 
-  it('usePeer selects the peer owning the inputId', () => {
-    const Probe: FunctionComponent = () => createElement('div', null, usePeer('in1')?.id ?? 'none');
+  it('usePeer selects the peer by id', () => {
+    const Probe: FunctionComponent = () => createElement('div', null, usePeer('p1')?.id ?? 'none');
     expect(render(Probe)).toBe('<div>none</div>');
     forwardCamera();
     expect(render(Probe)).toBe('<div>p1</div>');
@@ -54,8 +54,8 @@ describe('composition hooks', () => {
     expect(render(Probe)).toBe('<div>r1</div>');
   });
 
-  it('useSpeakingState tracks VAD per input', () => {
-    const Probe: FunctionComponent = () => createElement('div', null, String(useSpeakingState('in1')));
+  it('useSpeakingState tracks VAD per peer', () => {
+    const Probe: FunctionComponent = () => createElement('div', null, String(useSpeakingState('p1')));
     forwardCamera();
     expect(render(Probe)).toBe('<div>silence</div>');
     apply({ type: 'vadNotification', data: { roomId: 'r1', peerId: 'p1', trackId: 'a1', status: 'speech' } as never });
@@ -63,9 +63,9 @@ describe('composition hooks', () => {
   });
 
   it('flows the metadata generics through the return types', () => {
-    expectTypeOf<ReturnType<typeof usePeers<{ name: string }, { trusted: boolean }>>>().toEqualTypeOf<{
-      peers: PeerWithStreams<{ name: string }, { trusted: boolean }>[];
-    }>();
+    expectTypeOf<ReturnType<typeof usePeers<{ name: string }, { trusted: boolean }>>>().toEqualTypeOf<
+      PeerWithStreams<{ name: string }, { trusted: boolean }>[]
+    >();
     expectTypeOf<ReturnType<typeof usePeer<{ name: string }>>>().toEqualTypeOf<
       PeerWithStreams<{ name: string }, unknown> | undefined
     >();

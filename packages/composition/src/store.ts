@@ -35,7 +35,7 @@ export type CompositionEvent =
 export type RoomSnapshot = {
   peers: PeerWithStreams[];
   roomId?: string;
-  /** per-`inputId` voice activity, consumed by `useSpeakingState`. */
+  /** per-`inputId` voice activity, resolved per peer by `useSpeakingState`. */
   vad: Record<string, VadStatus>;
 };
 
@@ -83,7 +83,6 @@ const roleOf = (stream: Stream): 'camera' | 'screenShare' | 'custom' => {
 class CompositionStore {
   private peers = new Map<string, InternalPeer>();
   private roomId: string | undefined;
-  /** trackId -> inputId, used to resolve VAD/metadata events to a stream. */
   private vad = new Map<string, VadStatus>();
 
   private listeners = new Set<() => void>();
@@ -104,14 +103,18 @@ class CompositionStore {
 
   readonly getPeers = (): PeerWithStreams[] => this.cachedPeers;
 
-  readonly getPeer = (inputId: string): PeerWithStreams | undefined =>
-    this.getPeers().find((peer) => peer.streams.some((stream) => stream.inputId === inputId));
+  readonly getPeer = (peerId: string): PeerWithStreams | undefined =>
+    this.getPeers().find((peer) => peer.id === peerId);
 
   readonly getRoomId = (): string | undefined => this.roomId;
 
-  readonly getVadStatus = (inputId: string): VadStatus => this.vad.get(inputId) ?? 'silence';
-
-  // -- backward-facing feed API ------------------------------------------------
+  readonly getVadStatus = (peerId: string): VadStatus => {
+    const peer = this.peers.get(peerId);
+    if (!peer) return 'silence';
+    for (const track of peer.tracks.values())
+      if (track.type === 'audio' && track.inputId && this.vad.get(track.inputId) === 'speech') return 'speech';
+    return 'silence';
+  };
 
   reset(): void {
     this.peers.clear();
@@ -305,7 +308,7 @@ class CompositionStore {
     if (this.vad.get(track.inputId) === data.status) return false;
 
     this.vad.set(track.inputId, data.status);
-    this.replacePeer(data.peerId);
+    this.cachedSnapshot = null;
     return true;
   }
 
@@ -313,9 +316,6 @@ class CompositionStore {
     for (const cb of this.listeners) cb();
   }
 
-  /**
-   * Update `cachedPeers` array, reusing every other peer's reference.
-   */
   private replacePeer(peerId: string): void {
     const internal = this.peers.get(peerId);
     const next = this.cachedPeers.slice();
@@ -323,17 +323,16 @@ class CompositionStore {
     if (!internal) {
       if (idx >= 0) next.splice(idx, 1);
     } else if (idx >= 0) {
-      next[idx] = this.derivePeer(internal, this.vadRecord());
+      next[idx] = this.derivePeer(internal);
     } else {
-      next.push(this.derivePeer(internal, this.vadRecord()));
+      next.push(this.derivePeer(internal));
     }
     this.cachedPeers = next;
     this.cachedSnapshot = null;
   }
 
   private rebuildPeers(): void {
-    const vad = this.vadRecord();
-    this.cachedPeers = Array.from(this.peers.values(), (peer) => this.derivePeer(peer, vad));
+    this.cachedPeers = Array.from(this.peers.values(), (peer) => this.derivePeer(peer));
     this.cachedSnapshot = null;
   }
 
@@ -343,7 +342,7 @@ class CompositionStore {
     return vad;
   }
 
-  private derivePeer(peer: InternalPeer, vad: Record<string, VadStatus>): PeerWithStreams {
+  private derivePeer(peer: InternalPeer): PeerWithStreams {
     const streams = new Map<string, Stream>();
     let cameraStream: Stream | undefined;
     let screenShareStream: Stream | undefined;
@@ -358,7 +357,6 @@ class CompositionStore {
           paused: Boolean(track.metadata.paused),
           metadata: track.metadata,
           type: 'audio',
-          vadStatus: vad[track.inputId],
         };
       else
         stream.video = {

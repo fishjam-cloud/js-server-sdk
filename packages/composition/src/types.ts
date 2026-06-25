@@ -15,7 +15,7 @@ export type TrackState = {
 };
 
 export type VideoTrackState = TrackState & { type: 'video' };
-export type AudioTrackState = TrackState & { type: 'audio'; vadStatus?: VadStatus };
+export type AudioTrackState = TrackState & { type: 'audio' };
 
 /**
  * A forwarded input.

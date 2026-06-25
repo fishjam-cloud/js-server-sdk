@@ -7324,7 +7324,6 @@ __metadata:
     fastify-healthcheck: "npm:^5.1.0"
     fluent-json-schema: "npm:^5.0.0"
     pino-pretty: "npm:^13.0.0"
-    tsc: "npm:^2.0.4"
     tsx: "npm:^4.19.3"
     typescript: "npm:~5.8.2"
   languageName: unknown
@@ -8054,15 +8053,6 @@ __metadata:
   bin:
     protoc-gen-ts_proto: protoc-gen-ts_proto
   checksum: 10c0/5054335ea0cb6dc386de510bfd12d17593e2777593855b14802d83718a3872758b50dd2fbe517bc198847e18e2308d49689031136829939b267a35cb03b25d87
-  languageName: node
-  linkType: hard
-
-"tsc@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "tsc@npm:2.0.4"
-  bin:
-    tsc: bin/tsc
-  checksum: 10c0/4651d344891d995e62ab7ca64ce0a8597bbdc2d392886c9956d15caab4dc9bfe86e759d3385b3f97c49fb5294194a161d6812673e3f51e46357c82482f32c3ab
   languageName: node
   linkType: hard
 
