@@ -3,5 +3,8 @@ export interface CompositionEventBus {
 }
 
 declare global {
-  const eventBus: CompositionEventBus;
+  // eslint-disable-next-line no-var
+  var eventBus: CompositionEventBus;
 }
+
+export const eventBus = globalThis.eventBus;
