@@ -251,7 +251,11 @@ class CompositionStore {
 
     const peer = this.peers.get(data.peerId);
     if (!peer) return false;
-    if (!peer.tracks.delete(data.track.id)) return false;
+
+    const track = peer.tracks.get(data.track.id);
+    if (!track) return false;
+    peer.tracks.delete(data.track.id);
+    if (track.type === 'audio' && track.inputId) this.vad.delete(track.inputId);
 
     this.replacePeer(data.peerId);
     return true;

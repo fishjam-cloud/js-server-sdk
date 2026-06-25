@@ -119,6 +119,20 @@ describe('composition store reducer', () => {
     expect(compositionStore.getSnapshot().vad).toEqual({});
   });
 
+  it('trackRemoved clears the audio input vad so a re-forward does not resurface speech', () => {
+    forwardCamera();
+    apply({ type: 'vadNotification', data: { roomId: 'r1', peerId: 'p1', trackId: 'a1', status: 'speech' } as never });
+    expect(compositionStore.getVadStatus('p1')).toBe('speech');
+
+    apply({ type: 'trackRemoved', data: { roomId: 'r1', peerId: 'p1', track: track('a1', 'audio', {}) } as never });
+    expect(compositionStore.getSnapshot().vad).toEqual({});
+    expect(compositionStore.getVadStatus('p1')).toBe('silence');
+
+    // re-forwarding the same input must start silent, not inherit the stale status
+    forwardCamera();
+    expect(compositionStore.getVadStatus('p1')).toBe('silence');
+  });
+
   it('peerMetadataUpdated splits into { peer, server }', () => {
     apply({ type: 'peerConnected', data: { roomId: 'r1', peerId: 'p1', peerType: 'webrtc' } as never });
     apply({
