@@ -35,7 +35,9 @@ export const createClient = (options: GoogleGenAIOptions): GoogleGenAI => {
 
 /**
  * Verifies the API key by making a single lightweight authenticated call
- * (`models.list`). Resolves on success, throws on a rejected key.
+ * (`models.list`). Resolves on success; throws if the call fails — either
+ * because the key was rejected or because the request itself failed (e.g.
+ * network/connectivity). The original error is preserved as `cause`.
  *
  * Note: this catches the common cases (invalid / unauthorized / wrong-project /
  * region-blocked keys). It does not guarantee the key can use a specific Live
@@ -49,7 +51,9 @@ export const checkCredentials = async (client: GoogleGenAI): Promise<void> => {
     await client.models.list();
   } catch (error) {
     throw new Error(
-      'Gemini API key was rejected. Check the key and that the Gemini API is enabled for its project/region.',
+      'Could not verify the Gemini API key. The key may be invalid/unauthorized (check the key and that ' +
+        'the Gemini API is enabled for its project/region), or the request to Gemini failed (e.g. network ' +
+        'connectivity). See the cause for details.',
       { cause: error }
     );
   }

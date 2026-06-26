@@ -10,7 +10,7 @@ describe('checkCredentials', () => {
     await expect(checkCredentials(fakeClient(async () => ({})))).resolves.toBeUndefined();
   });
 
-  it('throws a clear error wrapping the cause when the key is rejected', async () => {
+  it('throws a clear error wrapping the cause when verification fails', async () => {
     const cause = new Error('401 API key not valid');
     await expect(
       checkCredentials(
@@ -18,6 +18,6 @@ describe('checkCredentials', () => {
           throw cause;
         })
       )
-    ).rejects.toMatchObject({ message: expect.stringContaining('Gemini API key was rejected'), cause });
+    ).rejects.toMatchObject({ message: expect.stringContaining('Could not verify the Gemini API key'), cause });
   });
 });
