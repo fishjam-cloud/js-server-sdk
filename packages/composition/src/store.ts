@@ -49,6 +49,12 @@ type InternalPeer = {
   tracks: Map<string, InternalTrack>;
 };
 
+export interface CompositionStoreFeed {
+  seedFromRoom(room: Room): void;
+  applyNotification(event: CompositionEvent): void;
+  reset(): void;
+}
+
 const EMPTY_SNAPSHOT: RoomSnapshot = { peers: [], vad: {} };
 
 const assertNever = (event: never): never => {
@@ -80,7 +86,7 @@ const roleOf = (stream: Stream): 'camera' | 'screenShare' | 'custom' => {
   return 'custom';
 };
 
-class CompositionStore {
+class CompositionStore implements CompositionStoreFeed {
   private peers = new Map<string, InternalPeer>();
   private roomId: string | undefined;
   private vad = new Map<string, VadStatus>();
