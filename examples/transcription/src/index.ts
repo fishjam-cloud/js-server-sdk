@@ -1,4 +1,5 @@
 import { Elysia } from 'elysia';
+import * as GeminiIntegration from '@fishjam-cloud/js-server-sdk/gemini';
 import { peerController } from './controllers/peers';
 import { FishjamService } from './service/fishjam';
 import { TranscriptionService } from './service/transcription';
@@ -14,7 +15,9 @@ const fishjamConfig = {
 
 const fishjam = await FishjamService.create(fishjamConfig);
 
-new TranscriptionService(fishjamConfig, process.env.GEMINI_API_KEY);
+const ai = await GeminiIntegration.createClientAndValidate({ apiKey: process.env.GEMINI_API_KEY });
+
+new TranscriptionService(fishjamConfig, ai);
 
 const app = new Elysia().use(peerController(fishjam)).listen(3000);
 

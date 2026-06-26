@@ -31,8 +31,8 @@ export class MultimodalService {
   fishjamConfig: FishjamConfig;
   fishjamClient: FishjamClient;
 
-  constructor(fishjamConfig: FishjamConfig, geminiKey: string) {
-    this.ai = GeminiIntegration.createClient({ apiKey: geminiKey });
+  constructor(fishjamConfig: FishjamConfig, ai: GoogleGenAI) {
+    this.ai = ai;
     this.fishjamConfig = fishjamConfig;
     this.fishjamClient = new FishjamClient(fishjamConfig);
     this.initFishjam();
