@@ -1579,6 +1579,7 @@ __metadata:
     tsup: "npm:^8.4.0"
     vitest: "npm:^3.0.0"
   peerDependencies:
+    "@fishjam-cloud/js-server-sdk": "workspace:^"
     react: ">=18"
   languageName: unknown
   linkType: soft

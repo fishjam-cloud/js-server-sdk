@@ -40,7 +40,7 @@
     }
   },
   "scripts": {
-    "build": "tsup --dts-resolve",
+    "build": "tsup",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
@@ -59,9 +59,11 @@
       "esm"
     ],
     "outDir": "dist",
-    "dts": true
+    "dts": true,
+    "clean": true
   },
   "peerDependencies": {
+    "@fishjam-cloud/js-server-sdk": "workspace:^",
     "react": ">=18"
   },
   "devDependencies": {
