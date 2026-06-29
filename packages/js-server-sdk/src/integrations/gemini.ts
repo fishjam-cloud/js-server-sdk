@@ -12,6 +12,9 @@ const SDK_NAME = 'fishjam-js-server-sdk';
  * This module is a separate entry point (`@fishjam-cloud/js-server-sdk/gemini`),
  * so `@google/genai` is only loaded when the consumer imports this module.
  *
+ * Does not verify the API key against Google — use {@link createClientAndValidate}
+ * or call {@link checkCredentials} afterwards for that.
+ *
  * @param options Configuration for the GoogleGenAI client.
  * @returns A GoogleGenAI instance.
  */
@@ -28,6 +31,47 @@ export const createClient = (options: GoogleGenAIOptions): GoogleGenAI => {
     },
   };
   return new GoogleGenAI(finalOptions);
+};
+
+/**
+ * Verifies the API key by making a single lightweight authenticated call
+ * (`models.list`). Resolves on success; throws if the call fails — either
+ * because the key was rejected or because the request itself failed (e.g.
+ * network/connectivity). The original error is preserved as `cause`.
+ *
+ * Note: this catches the common cases (invalid / unauthorized / wrong-project /
+ * region-blocked keys). It does not guarantee the key can use a specific Live
+ * native-audio model — such model-specific rejections still surface only via the
+ * `live.connect` session callbacks (`onerror`/`onclose`).
+ *
+ * @param client A GoogleGenAI instance, e.g. from {@link createClient}.
+ */
+export const checkCredentials = async (client: GoogleGenAI): Promise<void> => {
+  try {
+    await client.models.list();
+  } catch (error) {
+    throw new Error(
+      'Could not verify the Gemini API key. The key may be invalid/unauthorized (check the key and that ' +
+        'the Gemini API is enabled for its project/region), or the request to Gemini failed (e.g. network ' +
+        'connectivity). See the cause for details.',
+      { cause: error }
+    );
+  }
+};
+
+/**
+ * Creates a GoogleGenAI client and verifies the API key before returning it,
+ * so misconfiguration fails fast.
+ *
+ * Throws if the key is rejected (see {@link checkCredentials}).
+ *
+ * @param options Configuration for the GoogleGenAI client.
+ * @returns A validated GoogleGenAI instance.
+ */
+export const createClientAndValidate = async (options: GoogleGenAIOptions): Promise<GoogleGenAI> => {
+  const client = createClient(options);
+  await checkCredentials(client);
+  return client;
 };
 
 /**
