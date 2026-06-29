@@ -15,9 +15,9 @@ const fishjamConfig = {
 
 const fishjam = await FishjamService.create(fishjamConfig);
 
-const ai = await GeminiIntegration.createClientAndValidate({ apiKey: process.env.GEMINI_API_KEY });
+const genAi = await GeminiIntegration.createClientAndValidate({ apiKey: process.env.GEMINI_API_KEY });
 
-new TranscriptionService(fishjamConfig, ai);
+new TranscriptionService(fishjamConfig, genAi);
 
 const app = new Elysia().use(peerController(fishjam)).listen(3000);
 
