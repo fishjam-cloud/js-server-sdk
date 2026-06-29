@@ -1569,10 +1569,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fishjam-cloud/composition@workspace:packages/composition"
   dependencies:
+    "@fishjam-cloud/js-server-sdk": "workspace:*"
+    "@types/react": "npm:^19.0.0"
+    "@types/react-dom": "npm:^19.1.9"
     eslint: "npm:^9.33.0"
     prettier: "npm:^3.6.2"
+    react: "npm:^19.0.0"
+    react-dom: "npm:^19.0.0"
     tsup: "npm:^8.4.0"
     vitest: "npm:^3.0.0"
+  peerDependencies:
+    "@fishjam-cloud/js-server-sdk": "workspace:^"
+    react: ">=18"
   languageName: unknown
   linkType: soft
 
@@ -2599,6 +2607,15 @@ __metadata:
   peerDependencies:
     "@types/react": ^19.2.0
   checksum: 10c0/0dbbc5b7ecd74681bfac95a413133b26118a70b8840748277abafa47e5c7a037beae6a660e6a21fb53f5cbdb0b2d33e117ea7bbd976a888c298392a8a96bc68f
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^19.0.0":
+  version: 19.2.17
+  resolution: "@types/react@npm:19.2.17"
+  dependencies:
+    csstype: "npm:^3.2.2"
+  checksum: 10c0/bc2c4af96b3e480604424de70d5ebda90c5f4b485df471858c0bc2d7d70364b606ec3c4d8579f94f01aa0c6c0591f56bcf14cba5689f5eea4b74250ccdc3a232
   languageName: node
   linkType: hard
 
@@ -3851,6 +3868,13 @@ __metadata:
   version: 3.1.3
   resolution: "csstype@npm:3.1.3"
   checksum: 10c0/80c089d6f7e0c5b2bd83cf0539ab41474198579584fa10d86d0cafe0642202343cbc119e076a0b1aece191989477081415d66c9fefbf3c957fc2fc4b7009f248
+  languageName: node
+  linkType: hard
+
+"csstype@npm:^3.2.2":
+  version: 3.2.3
+  resolution: "csstype@npm:3.2.3"
+  checksum: 10c0/cd29c51e70fa822f1cecd8641a1445bed7063697469d35633b516e60fe8c1bde04b08f6c5b6022136bb669b64c63d4173af54864510fbb4ee23281801841a3ce
   languageName: node
   linkType: hard
 
@@ -6953,6 +6977,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-dom@npm:^19.0.0":
+  version: 19.2.7
+  resolution: "react-dom@npm:19.2.7"
+  dependencies:
+    scheduler: "npm:^0.27.0"
+  peerDependencies:
+    react: ^19.2.7
+  checksum: 10c0/970ff600f6e80d47d39e2f226f12f226173b3cba3382efc97c5f0cd663de9af38c7a4c11c213fb936094faeac83060d660247accaa96b752180d5b951b9cfecb
+  languageName: node
+  linkType: hard
+
 "react-dom@npm:^19.1.1":
   version: 19.2.0
   resolution: "react-dom@npm:19.2.0"
@@ -6968,6 +7003,13 @@ __metadata:
   version: 0.17.0
   resolution: "react-refresh@npm:0.17.0"
   checksum: 10c0/002cba940384c9930008c0bce26cac97a9d5682bc623112c2268ba0c155127d9c178a9a5cc2212d560088d60dfd503edd808669a25f9b377f316a32361d0b23c
+  languageName: node
+  linkType: hard
+
+"react@npm:^19.0.0":
+  version: 19.2.7
+  resolution: "react@npm:19.2.7"
+  checksum: 10c0/0bd0e2f1bbd4ba97561c6597bf8a5fec05e6476fe61e165c1065598d16668efc6715205599c94d3ddd49d36cb0f21cbf1b9bcc18ee840b805ce222c3e8d558ac
   languageName: node
   linkType: hard
 
@@ -7283,7 +7325,6 @@ __metadata:
     fastify-healthcheck: "npm:^5.1.0"
     fluent-json-schema: "npm:^5.0.0"
     pino-pretty: "npm:^13.0.0"
-    tsc: "npm:^2.0.4"
     tsx: "npm:^4.19.3"
     typescript: "npm:~5.8.2"
   languageName: unknown
@@ -8013,15 +8054,6 @@ __metadata:
   bin:
     protoc-gen-ts_proto: protoc-gen-ts_proto
   checksum: 10c0/5054335ea0cb6dc386de510bfd12d17593e2777593855b14802d83718a3872758b50dd2fbe517bc198847e18e2308d49689031136829939b267a35cb03b25d87
-  languageName: node
-  linkType: hard
-
-"tsc@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "tsc@npm:2.0.4"
-  bin:
-    tsc: bin/tsc
-  checksum: 10c0/4651d344891d995e62ab7ca64ce0a8597bbdc2d392886c9956d15caab4dc9bfe86e759d3385b3f97c49fb5294194a161d6812673e3f51e46357c82482f32c3ab
   languageName: node
   linkType: hard
 

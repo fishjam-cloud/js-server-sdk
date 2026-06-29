@@ -1,7 +1,24 @@
 import { describe, it, expect, expectTypeOf } from 'vitest';
-import type { ServerMessage } from '@fishjam-cloud/fishjam-proto';
-import { expectedEventsList, ignoredEventsList, peerEventsWithPeerType, trackEvents } from '../src/notifications';
-import type { ExpectedEvents, IgnoredEvents, Notifications, ServerNotification } from '../src/notifications';
+import {
+  ServerMessage,
+  ServerMessage_VadNotification_Status,
+  TrackType as ProtoTrackType,
+} from '@fishjam-cloud/fishjam-proto';
+import {
+  expectedEventsList,
+  ignoredEventsList,
+  mapNotification,
+  peerEventsWithPeerType,
+  trackEvents,
+} from '../src/notifications';
+import type {
+  ExpectedEvents,
+  IgnoredEvents,
+  Notifications,
+  TrackForwarding,
+  ServerNotification,
+  VadNotification,
+} from '../src/notifications';
 import type * as SDK from '../src';
 
 //    Compile-time completeness: every `ServerMessage` oneof must be classified
@@ -51,6 +68,83 @@ describe('notifications module', () => {
     expectTypeOf<SDK.TrackMetadataUpdated>().toEqualTypeOf<Notifications['trackMetadataUpdated']>();
     expectTypeOf<SDK.ChannelAdded>().toEqualTypeOf<Notifications['channelAdded']>();
     expectTypeOf<SDK.ChannelRemoved>().toEqualTypeOf<Notifications['channelRemoved']>();
+    expectTypeOf<SDK.TrackForwarding>().toEqualTypeOf<Notifications['trackForwarding']>();
+    expectTypeOf<SDK.TrackForwardingRemoved>().toEqualTypeOf<Notifications['trackForwardingRemoved']>();
+    expectTypeOf<SDK.VadNotification>().toEqualTypeOf<Notifications['vadNotification']>();
+  });
+
+  it('trackForwarding and vadNotification are expected, not ignored', () => {
+    for (const event of ['trackForwarding', 'trackForwardingRemoved', 'vadNotification'] as const) {
+      expect(expectedEventsList).toContain(event);
+      expect(ignoredEventsList as readonly string[]).not.toContain(event);
+    }
+  });
+
+  it('maps trackForwarding tracks to friendly track types, keeping metadata as a JSON string', () => {
+    const encoded = ServerMessage.encode({
+      trackForwarding: {
+        roomId: 'r1',
+        peerId: 'p1',
+        compositionUrl: 'url',
+        inputId: 'in1',
+        audioTrack: { id: 'a1', type: ProtoTrackType.TRACK_TYPE_AUDIO, metadata: '{"type":"camera"}' },
+        videoTrack: { id: 'v1', type: ProtoTrackType.TRACK_TYPE_VIDEO, metadata: '{"type":"camera"}' },
+      },
+    }).finish();
+    const { trackForwarding } = ServerMessage.decode(encoded);
+    const mapped = mapNotification('trackForwarding', trackForwarding) as TrackForwarding;
+
+    expect(mapped.audioTrack).toEqual({ id: 'a1', type: 'audio', metadata: '{"type":"camera"}' });
+    expect(mapped.videoTrack).toEqual({ id: 'v1', type: 'video', metadata: '{"type":"camera"}' });
+    expect(mapped.inputId).toBe('in1');
+  });
+
+  it('maps vadNotification status to the friendly union', () => {
+    const speech = ServerMessage.decode(
+      ServerMessage.encode({
+        vadNotification: {
+          roomId: 'r1',
+          peerId: 'p1',
+          trackId: 'a1',
+          status: ServerMessage_VadNotification_Status.STATUS_SPEECH,
+        },
+      }).finish()
+    ).vadNotification;
+    expect((mapNotification('vadNotification', speech) as VadNotification).status).toBe('speech');
+
+    const silence = ServerMessage.decode(
+      ServerMessage.encode({
+        vadNotification: {
+          roomId: 'r1',
+          peerId: 'p1',
+          trackId: 'a1',
+          status: ServerMessage_VadNotification_Status.STATUS_SILENCE,
+        },
+      }).finish()
+    ).vadNotification;
+    expect((mapNotification('vadNotification', silence) as VadNotification).status).toBe('silence');
+  });
+
+  it('maps unspecified and unrecognized vad statuses to silence', () => {
+    const unspecified = ServerMessage.decode(
+      ServerMessage.encode({
+        vadNotification: {
+          roomId: 'r1',
+          peerId: 'p1',
+          trackId: 'a1',
+          status: ServerMessage_VadNotification_Status.STATUS_UNSPECIFIED,
+        },
+      }).finish()
+    ).vadNotification;
+    expect((mapNotification('vadNotification', unspecified) as VadNotification).status).toBe('silence');
+
+    const unrecognized = {
+      roomId: 'r1',
+      peerId: 'p1',
+      trackId: 'a1',
+      status: ServerMessage_VadNotification_Status.UNRECOGNIZED,
+    };
+    expect((mapNotification('vadNotification', unrecognized) as VadNotification).status).toBe('silence');
   });
 
   it('peerEventsWithPeerType covers all ExpectedEvents with a peerType field', () => {

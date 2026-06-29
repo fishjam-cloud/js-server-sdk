@@ -28,6 +28,14 @@ export class FishjamWSNotifier extends (EventEmitter as new () => TypedEmitter<N
     this.client.onopen = () => this.setupConnection(config.managementToken);
   }
 
+  /**
+   * Close the underlying WebSocket and stop emitting notifications.
+   */
+  public disconnect(): void {
+    this.removeAllListeners();
+    this.client.close();
+  }
+
   private dispatchNotification(message: MessageEvent) {
     try {
       const decodedMessage = ServerMessage.decode(new Uint8Array(message.data));

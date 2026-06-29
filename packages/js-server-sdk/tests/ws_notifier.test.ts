@@ -7,20 +7,24 @@ const encode = (message: Parameters<typeof ServerMessage.encode>[0]): Uint8Array
 
 type MessageLike = { data: Uint8Array | ArrayBuffer };
 
-/**
- * Minimal stand-in for the global `WebSocket`: records constructed instances and
- * exposes the handlers the notifier assigns, so a test can drive inbound messages
- * through `dispatchNotification` without a live server.
- */
 class FakeWebSocket {
   static instances: FakeWebSocket[] = [];
 
+  static readonly CONNECTING = 0;
+  static readonly OPEN = 1;
+  static readonly CLOSING = 2;
+  static readonly CLOSED = 3;
+
   binaryType = 'blob';
+  readyState: number = FakeWebSocket.OPEN;
   onopen: (() => void) | null = null;
   onclose: ((event: { code: number; reason: string }) => void) | null = null;
   onerror: ((event: unknown) => void) | null = null;
   onmessage: ((event: MessageLike) => void) | null = null;
   readonly sent: unknown[] = [];
+  close = vi.fn(() => {
+    this.readyState = FakeWebSocket.CLOSED;
+  });
 
   constructor(public readonly url: string) {
     FakeWebSocket.instances.push(this);
@@ -146,5 +150,29 @@ describe('FishjamWSNotifier.dispatchNotification', () => {
     });
 
     expect(events).toEqual(['roomCreated', 'peerConnected', 'roomDeleted']);
+  });
+});
+
+describe('FishjamWSNotifier.disconnect', () => {
+  beforeEach(() => {
+    FakeWebSocket.instances = [];
+    vi.stubGlobal('WebSocket', FakeWebSocket);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it('closes the socket and stops emitting notifications', () => {
+    const { notifier, socket } = createNotifier();
+    const handler = vi.fn();
+    notifier.on('peerConnected', handler);
+
+    notifier.disconnect();
+
+    expect(socket.close).toHaveBeenCalledTimes(1);
+    socket.onmessage?.({ data: encode(peerConnected) });
+    expect(handler).not.toHaveBeenCalled();
   });
 });
