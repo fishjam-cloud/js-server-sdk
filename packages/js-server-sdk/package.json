@@ -1,6 +1,6 @@
 {
   "name": "@fishjam-cloud/js-server-sdk",
-  "version": "0.28.1",
+  "version": "0.29.0-rc.1",
   "description": "Fishjam server SDK for JavaScript",
   "homepage": "https://github.com/fishjam-cloud/js-server-sdk",
   "author": "Fishjam Team",
@@ -89,5 +89,6 @@
     "*.{js,ts,tsx,mjs,cjs}": [
       "eslint --fix --config eslint.config.mjs"
     ]
-  }
+  },
+  "stableVersion": "0.28.1"
 }
