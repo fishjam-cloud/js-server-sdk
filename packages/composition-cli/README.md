@@ -1,8 +1,8 @@
+<img src="../../.github/images/fishjam-card.png" width="100%">
+
 # @fishjam-cloud/composition-cli
 
-CLI for building [Fishjam](https://fishjam.io) composition template bundles.
-
-A composition template is a React component that defines a video composition layout. The platform runs it server-side and keeps the composition output in sync with the component for the lifetime of the output. This CLI scaffolds template projects and compiles them into the single-file bundle the platform accepts, validating the result locally so upload errors are caught at build time.
+CLI for scaffolding and building [Fishjam](https://fishjam.io) composition templates.
 
 ## Usage
 
@@ -20,58 +20,16 @@ Build the template into an uploadable bundle:
 npm run build
 ```
 
-This compiles `src/App.tsx` into `dist/App.js` and validates it against the platform contract. Upload the bundle as the `template` field when registering a composition output.
+This compiles `src/App.tsx` into `dist/App.js` and validates it against the platform contract, failing with named reasons for anything the platform would reject: imports outside the allowed set (`react`, `@swmansion/smelter`, `@fishjam-cloud/composition`), `import.meta`, a missing or non-component default export, or exceeding the upload size limit. The bundle is also loaded once with platform packages stubbed to verify it evaluates cleanly, so module-level code in the template runs during the build.
 
-## Commands
-
-### `composition-cli init <dir>`
-
-Creates a template project: `package.json` with the supported dependency versions, `tsconfig.json`, and a hello-world `src/App.tsx`.
-
-### `composition-cli build [entry]`
-
-Bundles the template (default entry `src/App.tsx`) and validates the output.
-
-| Option               | Default       | Description                            |
-| -------------------- | ------------- | -------------------------------------- |
-| `-o, --out <file>`   | `dist/App.js` | Output bundle path                     |
-| `--target <version>` | `v1`          | Platform template version to build for |
-
-The build fails (and writes no output) if the bundle violates the platform contract:
-
-- Only these imports may remain external: `react`, `react/jsx-runtime`, `react/jsx-dev-runtime`, `@swmansion/smelter`, `@fishjam-cloud/composition`. Everything else is bundled in.
-- No `import.meta` and no dynamic imports with non-literal specifiers.
-- The default export must be a React component.
-- The bundle must fit within the platform upload limit, including headroom for request overhead.
-
-The build also loads the bundle once (with platform-provided packages stubbed out) to verify it evaluates cleanly — module-level code in your template runs during this check.
-
-## Writing templates
-
-Templates default-export a React component built from [`@swmansion/smelter`](https://smelter.dev) components. Room state and events are available through [`@fishjam-cloud/composition`](https://www.npmjs.com/package/@fishjam-cloud/composition) hooks:
-
-```tsx
-import { InputStream, Rescaler, Tiles } from '@swmansion/smelter';
-import { usePeers } from '@fishjam-cloud/composition';
-
-export default function App() {
-  const peers = usePeers();
-  return (
-    <Tiles>
-      {peers.flatMap((peer) =>
-        peer.cameraStream ? (
-          <Rescaler key={peer.cameraStream.inputId}>
-            <InputStream inputId={peer.cameraStream.inputId} />
-          </Rescaler>
-        ) : (
-          []
-        )
-      )}
-    </Tiles>
-  );
-}
-```
+Upload the built bundle as the `template` field when registering a composition output.
 
 ## License
 
 Licensed under the [Apache License, Version 2.0](./LICENSE).
+
+## Fishjam is created by Software Mansion
+
+Since 2012 [Software Mansion](https://swmansion.com) is a software agency with experience in building web and mobile apps. We are Core React Native Contributors and experts in dealing with all kinds of React Native issues. We can help you build your next dream product – [Hire us](https://swmansion.com/contact/projects?utm_source=fishjam&utm_medium=js-server-readme).
+
+[![Software Mansion](https://logo.swmansion.com/logo?color=white&variant=desktop&width=200&tag=react-client)](https://swmansion.com/contact/projects?utm_source=fishjam&utm_medium=js-server-readme)
