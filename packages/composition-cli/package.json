@@ -1,0 +1,55 @@
+{
+  "name": "@fishjam-cloud/composition-cli",
+  "version": "0.29.0-rc.2",
+  "description": "Utilites to build, validate composition React code",
+  "homepage": "https://github.com/fishjam-cloud/js-server-sdk",
+  "author": "Fishjam Team",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fishjam-cloud/js-server-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fishjam-cloud/js-server-sdk/issues"
+  },
+  "bin": "./dist/index.mjs",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --fix",
+    "lint:check": "eslint .",
+    "test": "vitest run"
+  },
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "format": [
+      "esm"
+    ],
+    "outDir": "dist",
+    "clean": true
+  },
+  "dependencies": {
+    "commander": "^15.0.0",
+    "es-module-lexer": "^2.3.0",
+    "esbuild": "^0.28.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "eslint": "^9.33.0",
+    "prettier": "^3.6.2",
+    "tsup": "^8.5.1",
+    "vitest": "^3.0.0"
+  }
+}
