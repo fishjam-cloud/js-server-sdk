@@ -1,11 +1,11 @@
-import { init, parse } from 'es-module-lexer';
+import { type ExportSpecifier, type ImportSpecifier, init, parse } from 'es-module-lexer';
 import type { Manifest } from './manifests';
 
 export async function validateBundle(source: string, manifest: Manifest): Promise<string[]> {
   await init;
 
-  let imports;
-  let exports;
+  let imports: readonly ImportSpecifier[];
+  let exports: readonly ExportSpecifier[];
   try {
     [imports, exports] = parse(source);
   } catch {

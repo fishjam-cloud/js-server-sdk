@@ -47,7 +47,7 @@ export async function buildTemplate(entry: string, outfile: string, manifest: Ma
   const violations = await validateBundle(bundle.text, manifest);
 
   const bytes = bundle.contents.byteLength;
-  const maxBundleBytes = manifest.maxUploadBytes - UPLOAD_OVERHEAD_RESERVE_BYTES;
+  const maxBundleBytes = Math.max(0, manifest.maxUploadBytes - UPLOAD_OVERHEAD_RESERVE_BYTES);
   if (bytes > maxBundleBytes) {
     violations.push(
       `bundle is ${bytes} bytes; the upload limit is ${manifest.maxUploadBytes} bytes and ${UPLOAD_OVERHEAD_RESERVE_BYTES} bytes are reserved for registration config and multipart overhead, so bundles must stay under ${maxBundleBytes} bytes`

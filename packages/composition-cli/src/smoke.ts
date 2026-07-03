@@ -8,28 +8,34 @@ export async function smokeLoadBundle(source: string, manifest: Manifest): Promi
   const escaped = manifest.allowedImports.map((spec) => spec.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
   const allowedFilter = new RegExp(`^(${escaped.join('|')})$`);
 
-  const result = await build({
-    stdin: { contents: source, loader: 'js' },
-    bundle: true,
-    write: false,
-    format: 'esm',
-    logLevel: 'silent',
-    plugins: [
-      {
-        name: 'stub-allowed-imports',
-        setup(builder) {
-          builder.onResolve({ filter: allowedFilter }, (args) => ({
-            path: args.path,
-            namespace: 'stub',
-          }));
-          builder.onLoad({ filter: /.*/, namespace: 'stub' }, () => ({
-            contents: stubModule,
-            loader: 'js',
-          }));
+  let result;
+  try {
+    result = await build({
+      stdin: { contents: source, loader: 'js' },
+      bundle: true,
+      write: false,
+      format: 'esm',
+      logLevel: 'silent',
+      plugins: [
+        {
+          name: 'stub-allowed-imports',
+          setup(builder) {
+            builder.onResolve({ filter: allowedFilter }, (args) => ({
+              path: args.path,
+              namespace: 'stub',
+            }));
+            builder.onLoad({ filter: /.*/, namespace: 'stub' }, () => ({
+              contents: stubModule,
+              loader: 'js',
+            }));
+          },
         },
-      },
-    ],
-  });
+      ],
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return [`bundle could not be prepared for loading: ${message}`];
+  }
 
   const encoded = Buffer.from(result.outputFiles[0].contents).toString('base64');
   let mod: { default?: unknown };
