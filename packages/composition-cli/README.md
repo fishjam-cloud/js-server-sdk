@@ -20,9 +20,7 @@ Build the template into an uploadable bundle:
 npm run build
 ```
 
-This compiles `src/App.tsx` into `dist/App.js` and validates it against the platform contract, failing with named reasons for anything the platform would reject: imports outside the allowed set (`react`, `@swmansion/smelter`, `@fishjam-cloud/composition`), `import.meta`, a missing or non-component default export, or exceeding the upload size limit. The bundle is also loaded once with platform packages stubbed to verify it evaluates cleanly, so module-level code in the template runs during the build.
-
-Upload the built bundle as the `template` field when registering a composition output.
+Edit `src/App.tsx` to define your composition layout, then run the build again. The bundle is written to `dist/App.js` — upload it as the `template` field when registering a composition output.
 
 ## License
 
