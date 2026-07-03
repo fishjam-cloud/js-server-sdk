@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        package: [js-server-sdk, composition]
+        package: [js-server-sdk, composition, composition-cli]
 
     permissions:
       contents: read

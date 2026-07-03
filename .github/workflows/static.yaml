@@ -39,6 +39,11 @@ jobs:
       - name: Check typing
         run: yarn typecheck
 
+      - name: Unit tests
+        run: |
+          yarn workspace @fishjam-cloud/composition test
+          yarn workspace @fishjam-cloud/composition-cli test
+
       - name: Check TypeDoc generation
         run: yarn docs
 
