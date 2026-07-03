@@ -13,17 +13,17 @@ export async function validateBundle(source: string, manifest: Manifest): Promis
   }
 
   const allowed = new Set(manifest.allowedImports);
+  const allowedList = manifest.allowedImports.join(', ');
   const violations: string[] = [];
 
   for (const imp of imports) {
-    const line = lineOf(source, imp.ss);
     if (imp.d === -2) {
-      violations.push(`import.meta is not allowed (line ${line})`);
+      violations.push(`import.meta is not allowed (line ${lineOf(source, imp.ss)})`);
     } else if (imp.n === undefined) {
-      violations.push(`dynamic import with a non-literal specifier is not allowed (line ${line})`);
+      violations.push(`dynamic import with a non-literal specifier is not allowed (line ${lineOf(source, imp.ss)})`);
     } else if (!allowed.has(imp.n)) {
       violations.push(
-        `import of "${imp.n}" is not allowed (line ${line}); allowed imports: ${manifest.allowedImports.join(', ')}`
+        `import of "${imp.n}" is not allowed (line ${lineOf(source, imp.ss)}); allowed imports: ${allowedList}`
       );
     }
   }

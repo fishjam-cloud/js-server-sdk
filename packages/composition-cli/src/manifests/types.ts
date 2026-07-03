@@ -1,7 +1,7 @@
 export interface Manifest {
   version: string;
   allowedImports: string[];
-  maxBundleBytes: number;
+  maxUploadBytes: number;
   build: {
     format: 'esm';
     target: string;

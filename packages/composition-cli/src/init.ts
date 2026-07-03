@@ -35,7 +35,7 @@ export async function scaffoldTemplate(dir: string, manifest: Manifest, cliVersi
   await ensureEmpty(dir);
 
   const pkg = {
-    name: basename(dir),
+    name: packageNameFrom(dir),
     version: '0.0.1',
     private: true,
     type: 'module',
@@ -67,12 +67,23 @@ async function ensureEmpty(dir: string): Promise<void> {
   let entries: string[];
   try {
     entries = await readdir(dir);
-  } catch {
-    return;
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
+      return;
+    }
+    throw err;
   }
   if (entries.length > 0) {
     throw new Error(`directory ${dir} is not empty`);
   }
+}
+
+function packageNameFrom(dir: string): string {
+  const name = basename(dir)
+    .toLowerCase()
+    .replace(/[^a-z0-9-._~]/g, '-')
+    .replace(/^[-._]+/, '');
+  return name.length > 0 ? name : 'composition-template';
 }
 
 function sortKeys(record: Record<string, string>): Record<string, string> {

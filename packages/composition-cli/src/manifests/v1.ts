@@ -9,7 +9,7 @@ export const v1: Manifest = {
     '@swmansion/smelter',
     '@fishjam-cloud/composition',
   ],
-  maxBundleBytes: 1_000_000,
+  maxUploadBytes: 1_000_000,
   build: {
     format: 'esm',
     target: 'esnext',

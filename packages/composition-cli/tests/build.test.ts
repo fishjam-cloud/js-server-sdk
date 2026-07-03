@@ -67,15 +67,64 @@ describe('buildTemplate', () => {
   });
 
   it('rejects a bundle exceeding the size limit', async () => {
-    const tinyManifest = { ...manifest, maxBundleBytes: 16 };
+    const tinyManifest = { ...manifest, maxUploadBytes: 16 };
 
     await expect(buildTemplate(join(dir, 'src', 'App.tsx'), join(dir, 'dist', 'App.js'), tinyManifest)).rejects.toThrow(
       /16/
     );
   });
 
+  it('reserves headroom for multipart upload overhead', async () => {
+    const nearLimitManifest = { ...manifest, maxUploadBytes: 50_016 };
+
+    await expect(
+      buildTemplate(join(dir, 'src', 'App.tsx'), join(dir, 'dist', 'App.js'), nearLimitManifest)
+    ).rejects.toThrow(/overhead|upload/i);
+  });
+
+  it('rejects a build that emits more than one output file', async () => {
+    await writeFile(join(dir, 'src', 'styles.css'), '.x { color: red; }\n');
+    await writeFile(
+      join(dir, 'src', 'App.tsx'),
+      `import './styles.css';\nexport default function App() {\n  return null;\n}\n`
+    );
+
+    await expect(buildTemplate(join(dir, 'src', 'App.tsx'), join(dir, 'dist', 'App.js'), manifest)).rejects.toThrow(
+      /single/i
+    );
+  });
+
+  it('rejects a bundle whose default export is not a React component', async () => {
+    await writeFile(join(dir, 'src', 'App.tsx'), `const answer = 42;\nexport default answer;\n`);
+
+    await expect(buildTemplate(join(dir, 'src', 'App.tsx'), join(dir, 'dist', 'App.js'), manifest)).rejects.toThrow(
+      /React component/
+    );
+  });
+
+  it('rejects a bundle that throws while loading', async () => {
+    await writeFile(
+      join(dir, 'src', 'App.tsx'),
+      `if (globalThis) {\n  throw new Error('boom');\n}\nexport default function App() {\n  return null;\n}\n`
+    );
+
+    await expect(buildTemplate(join(dir, 'src', 'App.tsx'), join(dir, 'dist', 'App.js'), manifest)).rejects.toThrow(
+      /loading/
+    );
+  });
+
+  it('accepts a component that uses allowed imports at module top level', async () => {
+    await writeFile(
+      join(dir, 'src', 'App.tsx'),
+      `import { useState } from 'react';\nimport { View } from '@swmansion/smelter';\n\nexport default function App() {\n  const [on] = useState(false);\n  return on ? <View /> : null;\n}\n`
+    );
+
+    const { bytes } = await buildTemplate(join(dir, 'src', 'App.tsx'), join(dir, 'dist', 'App.js'), manifest);
+    expect(bytes).toBeGreaterThan(0);
+  });
+
   it('does not write the outfile when validation fails', async () => {
-    const tinyManifest = { ...manifest, maxBundleBytes: 16 };
+    const tinyManifest = { ...manifest, maxUploadBytes: 16 };
     const outfile = join(dir, 'dist', 'App.js');
 
     await expect(buildTemplate(join(dir, 'src', 'App.tsx'), outfile, tinyManifest)).rejects.toThrow();

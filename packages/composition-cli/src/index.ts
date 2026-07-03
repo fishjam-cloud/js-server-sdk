@@ -56,3 +56,4 @@ function fail(err: unknown): void {
 }
 
 await program.parseAsync(process.argv);
+process.exit(process.exitCode ?? 0);

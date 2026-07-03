@@ -39,6 +39,22 @@ describe('scaffoldTemplate', () => {
     expect(gitignore).toContain('dist');
   });
 
+  it('normalizes the directory name into a valid npm package name', async () => {
+    const target = join(dir, 'My Template');
+    await scaffoldTemplate(target, manifest, '1.2.3');
+
+    const pkg = JSON.parse(await readFile(join(target, 'package.json'), 'utf8'));
+    expect(pkg.name).toBe('my-template');
+  });
+
+  it('fails clearly when the target is an existing file', async () => {
+    const target = join(dir, 'occupied.txt');
+    await writeFile(target, 'a file, not a directory');
+
+    await expect(scaffoldTemplate(target, manifest, '1.2.3')).rejects.toThrow();
+    expect(await readFile(target, 'utf8')).toBe('a file, not a directory');
+  });
+
   it('refuses to scaffold into a non-empty directory', async () => {
     const target = join(dir, 'occupied');
     await mkdir(target);
