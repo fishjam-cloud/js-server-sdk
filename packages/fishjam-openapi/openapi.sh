@@ -22,7 +22,7 @@ else
     echo "Missing github token as the second argument" 1>&2
     exit 1
   fi
-  SPEC="https://raw.githubusercontent.com/fishjam-cloud/fishjam/refs/heads/$1/openapi.yaml?token=$2"
+  SPEC="https://raw.githubusercontent.com/fishjam-cloud/fishjam/$1/openapi.yaml?token=$2"
   echo "Generating code for $1...\n"
 fi
 

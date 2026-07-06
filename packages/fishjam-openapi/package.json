@@ -42,5 +42,8 @@
     "@openapitools/openapi-generator-cli": "^2.18.4",
     "tsup": "^8.4.0"
   },
+  "engines": {
+    "node": ">=18"
+  },
   "stableVersion": "0.28.1"
 }

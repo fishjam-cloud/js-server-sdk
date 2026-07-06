@@ -29,7 +29,7 @@ const notFoundException = (info: FishjamExceptionInfo, entity?: Entity) => {
 
 export const mapException = async (error: unknown, entity?: Entity): Promise<unknown> => {
   if (error instanceof FetchError) {
-    return new UnknownException({ message: error.cause.message, statusCode: 500 });
+    return new UnknownException({ message: error.cause.message, statusCode: 500, details: error.cause.message });
   }
   if (!(error instanceof ResponseError)) {
     return error;

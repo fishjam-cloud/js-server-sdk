@@ -70,6 +70,7 @@ describe('mapException non-response errors', () => {
     expect(mapped).toBeInstanceOf(UnknownException);
     expect(mapped.statusCode).toBe(500);
     expect(mapped.message).toBe('connect ECONNREFUSED');
+    expect(mapped.details).toBe('connect ECONNREFUSED');
   });
 
   it('passes non-SDK errors through unchanged', async () => {
