@@ -1,5 +1,5 @@
-import axios, { RawAxiosResponseHeaders } from 'axios';
 import {
+  Configuration,
   MoQApi,
   RoomsApi,
   ViewersApi,
@@ -10,6 +10,7 @@ import {
   PeerOptionsVapi,
   PeerOptionsAgent,
   MoqAccessConfig,
+  type Middleware,
 } from '@fishjam-cloud/fishjam-openapi';
 import type { AgentCallbacks, FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
 import { mapException } from './exceptions/mapper';
@@ -47,25 +48,27 @@ export class FishjamClient {
    * ```
    */
   constructor(config: FishjamConfig) {
-    const client = axios.create({
+    const deprecationMiddleware: Middleware = {
+      post: async ({ response }) => {
+        this.handleDeprecationHeader(response.headers);
+        return response;
+      },
+    };
+
+    const apiConfig = new Configuration({
+      basePath: getFishjamUrl(config),
       headers: {
         Authorization: `Bearer ${config.managementToken}`,
         'x-fishjam-api-client': `js-server/${packageJson.version}`,
       },
+      middleware: [deprecationMiddleware],
     });
 
-    client.interceptors.response.use((response) => {
-      this.handleDeprecationHeader(response.headers);
-      return response;
-    });
-
-    const fishjamUrl = getFishjamUrl(config);
-
-    this.moqApi = new MoQApi(undefined, fishjamUrl, client);
-    this.roomApi = new RoomsApi(undefined, fishjamUrl, client);
-    this.viewerApi = new ViewersApi(undefined, fishjamUrl, client);
-    this.streamerApi = new StreamersApi(undefined, fishjamUrl, client);
-    this.credentialsApi = new CredentialsApi(undefined, fishjamUrl, client);
+    this.moqApi = new MoQApi(apiConfig);
+    this.roomApi = new RoomsApi(apiConfig);
+    this.viewerApi = new ViewersApi(apiConfig);
+    this.streamerApi = new StreamersApi(apiConfig);
+    this.credentialsApi = new CredentialsApi(apiConfig);
     this.fishjamConfig = config;
   }
 
@@ -100,15 +103,15 @@ export class FishjamClient {
     try {
       await this.credentialsApi.validateCredentials();
     } catch (error) {
-      throw mapException(error);
+      throw await mapException(error, 'credentials');
     }
   }
 
-  private handleDeprecationHeader(headers: RawAxiosResponseHeaders): void {
+  private handleDeprecationHeader(headers: Headers): void {
     try {
-      const deprecationHeader = headers['x-fishjam-api-deprecated'];
+      const deprecationHeader = headers.get('x-fishjam-api-deprecated');
       if (!deprecationHeader || this.deprecationWarningShown) return;
-      const deprecationStatus = JSON.parse(deprecationHeader as string);
+      const deprecationStatus = JSON.parse(deprecationHeader);
 
       if (deprecationStatus.status === 'unsupported') {
         console.error(deprecationStatus.message);
@@ -126,17 +129,10 @@ export class FishjamClient {
    */
   async createRoom(config: RoomConfig = {}): Promise<Room> {
     try {
-      const response = await this.roomApi.createRoom(config);
-
-      const {
-        data: {
-          data: { room },
-        },
-      } = response;
-
-      return room as Room;
+      const { data } = await this.roomApi.createRoom({ roomConfig: config });
+      return data.room as Room;
     } catch (error) {
-      throw mapException(error);
+      throw await mapException(error);
     }
   }
 
@@ -145,9 +141,9 @@ export class FishjamClient {
    */
   async deleteRoom(roomId: RoomId): Promise<void> {
     try {
-      await this.roomApi.deleteRoom(roomId);
+      await this.roomApi.deleteRoom({ roomId });
     } catch (error) {
-      throw mapException(error, 'room');
+      throw await mapException(error, 'room');
     }
   }
 
@@ -156,10 +152,10 @@ export class FishjamClient {
    */
   async getAllRooms(): Promise<Room[]> {
     try {
-      const getAllRoomsResponse = await this.roomApi.getAllRooms();
-      return (getAllRoomsResponse.data.data as Room[]) ?? [];
+      const { data } = await this.roomApi.getAllRooms();
+      return (data as Room[]) ?? [];
     } catch (error) {
-      throw mapException(error);
+      throw await mapException(error);
     }
   }
 
@@ -168,18 +164,14 @@ export class FishjamClient {
    */
   async createPeer(roomId: RoomId, options: PeerOptionsWebRTC = {}): Promise<{ peer: Peer; peerToken: string }> {
     try {
-      const response = await this.roomApi.addPeer(roomId, {
-        type: 'webrtc',
-        options,
+      const { data } = await this.roomApi.addPeer({
+        roomId,
+        peerConfig: { type: 'webrtc', options },
       });
-
-      const {
-        data: { data },
-      } = response;
 
       return { peer: data.peer as Peer, peerToken: data.token };
     } catch (error) {
-      throw mapException(error);
+      throw await mapException(error);
     }
   }
 
@@ -192,20 +184,17 @@ export class FishjamClient {
     callbacks?: AgentCallbacks
   ): Promise<{ agent: FishjamAgent; peer: Peer }> {
     try {
-      const response = await this.roomApi.addPeer(roomId, {
-        type: 'agent',
-        options,
+      const { data } = await this.roomApi.addPeer({
+        roomId,
+        peerConfig: { type: 'agent', options },
       });
 
-      const {
-        data: { data },
-      } = response;
       const agent = new FishjamAgent(this.fishjamConfig, data.token, callbacks);
       await agent.awaitConnected();
 
       return { agent: agent, peer: data.peer as Peer };
     } catch (error) {
-      throw mapException(error);
+      throw await mapException(error);
     }
   }
 
@@ -214,18 +203,14 @@ export class FishjamClient {
    */
   async createVapiAgent(roomId: RoomId, options: PeerOptionsVapi): Promise<{ peer: Peer }> {
     try {
-      const response = await this.roomApi.addPeer(roomId, {
-        type: 'vapi',
-        options,
+      const { data } = await this.roomApi.addPeer({
+        roomId,
+        peerConfig: { type: 'vapi', options },
       });
-
-      const {
-        data: { data },
-      } = response;
 
       return { peer: data.peer as Peer };
     } catch (error) {
-      throw mapException(error);
+      throw await mapException(error);
     }
   }
 
@@ -234,10 +219,10 @@ export class FishjamClient {
    */
   async getRoom(roomId: RoomId): Promise<Room> {
     try {
-      const getRoomResponse = await this.roomApi.getRoom(roomId);
-      return getRoomResponse.data.data as Room;
+      const { data } = await this.roomApi.getRoom({ roomId });
+      return data as Room;
     } catch (error) {
-      throw mapException(error, 'room');
+      throw await mapException(error, 'room');
     }
   }
 
@@ -246,9 +231,9 @@ export class FishjamClient {
    */
   async deletePeer(roomId: RoomId, peerId: PeerId): Promise<void> {
     try {
-      await this.roomApi.deletePeer(roomId, peerId);
+      await this.roomApi.deletePeer({ roomId, id: peerId });
     } catch (error) {
-      throw mapException(error, 'peer');
+      throw await mapException(error, 'peer');
     }
   }
 
@@ -258,9 +243,9 @@ export class FishjamClient {
    */
   async subscribePeer(roomId: RoomId, subscriberPeerId: PeerId, publisherPeerId: PeerId): Promise<void> {
     try {
-      await this.roomApi.subscribePeer(roomId, subscriberPeerId, publisherPeerId);
+      await this.roomApi.subscribePeer({ roomId, id: subscriberPeerId, peerId: publisherPeerId });
     } catch (error) {
-      throw mapException(error, 'peer');
+      throw await mapException(error, 'peer');
     }
   }
 
@@ -270,9 +255,13 @@ export class FishjamClient {
    */
   async subscribeTracks(roomId: RoomId, subscriberPeerId: PeerId, tracks: TrackId[]): Promise<void> {
     try {
-      await this.roomApi.subscribeTracks(roomId, subscriberPeerId, { track_ids: tracks });
+      await this.roomApi.subscribeTracks({
+        roomId,
+        id: subscriberPeerId,
+        subscribeTracksRequest: { track_ids: tracks },
+      });
     } catch (error) {
-      throw mapException(error, 'peer');
+      throw await mapException(error, 'peer');
     }
   }
 
@@ -283,10 +272,10 @@ export class FishjamClient {
    */
   async refreshPeerToken(roomId: RoomId, peerId: PeerId): Promise<string> {
     try {
-      const refreshTokenResponse = await this.roomApi.refreshToken(roomId, peerId);
-      return refreshTokenResponse.data.data.token;
+      const { data } = await this.roomApi.refreshToken({ roomId, id: peerId });
+      return data.token;
     } catch (error) {
-      throw mapException(error, 'peer');
+      throw await mapException(error, 'peer');
     }
   }
 
@@ -296,10 +285,9 @@ export class FishjamClient {
    */
   async createLivestreamViewerToken(roomId: RoomId) {
     try {
-      const tokenResponse = await this.viewerApi.generateViewerToken(roomId);
-      return tokenResponse.data;
+      return await this.viewerApi.generateViewerToken({ roomId });
     } catch (error) {
-      throw mapException(error);
+      throw await mapException(error);
     }
   }
 
@@ -309,10 +297,9 @@ export class FishjamClient {
    */
   async createLivestreamStreamerToken(roomId: RoomId) {
     try {
-      const tokenResponse = await this.streamerApi.generateStreamerToken(roomId);
-      return tokenResponse.data;
+      return await this.streamerApi.generateStreamerToken({ roomId });
     } catch (error) {
-      throw mapException(error);
+      throw await mapException(error);
     }
   }
 
@@ -322,10 +309,9 @@ export class FishjamClient {
    */
   async createMoqAccess(config?: MoqAccessConfig) {
     try {
-      const accessResponse = await this.moqApi.createMoqAccess(config);
-      return accessResponse.data;
+      return await this.moqApi.createMoqAccess({ moqAccessConfig: config });
     } catch (error) {
-      throw mapException(error);
+      throw await mapException(error);
     }
   }
 }
