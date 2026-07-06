@@ -70,10 +70,7 @@ curl -H "Authorization: token $GH_TOKEN" \
 -L "https://raw.githubusercontent.com/fishjam-cloud/fishjam/main/openapi.yaml" \
 -o openapi.yaml
 
-npx @openapitools/openapi-generator-cli generate \
--i ./openapi.yaml \
--g typescript-axios \
--o ./src/generated
+sh openapi.sh ./openapi.yaml
 
 rm openapi.yaml
 cd ../../
