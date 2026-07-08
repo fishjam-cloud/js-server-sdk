@@ -5,8 +5,6 @@ import type { Manifest } from './manifests';
 import { smokeLoadBundle } from './smoke';
 import { validateBundle } from './validate';
 
-const UPLOAD_OVERHEAD_RESERVE_BYTES = 50_000;
-
 export class ValidationError extends Error {
   readonly violations: string[];
 
@@ -47,10 +45,10 @@ export async function buildTemplate(entry: string, outfile: string, manifest: Ma
   const violations = await validateBundle(bundle.text, manifest);
 
   const bytes = bundle.contents.byteLength;
-  const maxBundleBytes = Math.max(0, manifest.maxUploadBytes - UPLOAD_OVERHEAD_RESERVE_BYTES);
+  const maxBundleBytes = Math.max(0, manifest.maxUploadBytes - manifest.uploadOverheadReserveBytes);
   if (bytes > maxBundleBytes) {
     violations.push(
-      `bundle is ${bytes} bytes; the upload limit is ${manifest.maxUploadBytes} bytes and ${UPLOAD_OVERHEAD_RESERVE_BYTES} bytes are reserved for registration config and multipart overhead, so bundles must stay under ${maxBundleBytes} bytes`
+      `bundle is ${bytes} bytes; the upload limit is ${manifest.maxUploadBytes} bytes and ${manifest.uploadOverheadReserveBytes} bytes are reserved for registration config and multipart overhead, so bundles must stay under ${maxBundleBytes} bytes`
     );
   }
 

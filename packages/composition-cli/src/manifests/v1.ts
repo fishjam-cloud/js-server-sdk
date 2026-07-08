@@ -10,6 +10,7 @@ export const v1: Manifest = {
     '@fishjam-cloud/composition',
   ],
   maxUploadBytes: 1_000_000,
+  uploadOverheadReserveBytes: 50_000,
   build: {
     format: 'esm',
     target: 'esnext',
