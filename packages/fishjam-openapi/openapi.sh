@@ -22,13 +22,15 @@ else
     echo "Missing github token as the second argument" 1>&2
     exit 1
   fi
-  SPEC=$(mktemp).yaml
-  trap 'rm -f "$SPEC"' EXIT
+  SPEC_DIR=$(mktemp -d)
+  trap 'rm -rf "$SPEC_DIR"' EXIT
+  SPEC="$SPEC_DIR/openapi.yaml"
   curl -sfL \
     -H "Authorization: token $2" \
     -H "Accept: application/vnd.github.v3.raw" \
     "https://raw.githubusercontent.com/fishjam-cloud/fishjam/$1/openapi.yaml" \
-    -o "$SPEC"
+    -o "$SPEC" \
+  || { echo "Failed to download openapi.yaml for ref '$1'" 1>&2; exit 1; }
   echo "Generating code for $1...\n"
 fi
 
