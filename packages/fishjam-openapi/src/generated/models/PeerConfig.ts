@@ -12,52 +12,34 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
-import type { PeerType } from './PeerType';
+import type { PeerConfigAgent } from './PeerConfigAgent';
 import {
-    PeerTypeFromJSON,
-    PeerTypeFromJSONTyped,
-    PeerTypeToJSON,
-    PeerTypeToJSONTyped,
-} from './PeerType';
-import type { PeerOptions } from './PeerOptions';
+    instanceOfPeerConfigAgent,
+    PeerConfigAgentFromJSON,
+    PeerConfigAgentFromJSONTyped,
+    PeerConfigAgentToJSON,
+} from './PeerConfigAgent';
+import type { PeerConfigVAPI } from './PeerConfigVAPI';
 import {
-    PeerOptionsFromJSON,
-    PeerOptionsFromJSONTyped,
-    PeerOptionsToJSON,
-    PeerOptionsToJSONTyped,
-} from './PeerOptions';
+    instanceOfPeerConfigVAPI,
+    PeerConfigVAPIFromJSON,
+    PeerConfigVAPIFromJSONTyped,
+    PeerConfigVAPIToJSON,
+} from './PeerConfigVAPI';
+import type { PeerConfigWebRTC } from './PeerConfigWebRTC';
+import {
+    instanceOfPeerConfigWebRTC,
+    PeerConfigWebRTCFromJSON,
+    PeerConfigWebRTCFromJSONTyped,
+    PeerConfigWebRTCToJSON,
+} from './PeerConfigWebRTC';
 
 /**
+ * @type PeerConfig
  * Peer configuration
  * @export
- * @interface PeerConfig
  */
-export interface PeerConfig {
-    /**
-     * 
-     * @type {PeerOptions}
-     * @memberof PeerConfig
-     */
-    options: PeerOptions;
-    /**
-     * 
-     * @type {PeerType}
-     * @memberof PeerConfig
-     */
-    type: PeerType;
-}
-
-
-
-/**
- * Check if a given object implements the PeerConfig interface.
- */
-export function instanceOfPeerConfig(value: object): value is PeerConfig {
-    if (!('options' in value) || value['options'] === undefined) return false;
-    if (!('type' in value) || value['type'] === undefined) return false;
-    return true;
-}
+export type PeerConfig = { type: 'agent' } & PeerConfigAgent | { type: 'vapi' } & PeerConfigVAPI | { type: 'webrtc' } & PeerConfigWebRTC;
 
 export function PeerConfigFromJSON(json: any): PeerConfig {
     return PeerConfigFromJSONTyped(json, false);
@@ -67,14 +49,19 @@ export function PeerConfigFromJSONTyped(json: any, ignoreDiscriminator: boolean)
     if (json == null) {
         return json;
     }
-    return {
-        
-        'options': PeerOptionsFromJSON(json['options']),
-        'type': PeerTypeFromJSON(json['type']),
-    };
+    switch (json['type']) {
+        case 'agent':
+            return Object.assign({}, PeerConfigAgentFromJSONTyped(json, true), { type: 'agent' } as const);
+        case 'vapi':
+            return Object.assign({}, PeerConfigVAPIFromJSONTyped(json, true), { type: 'vapi' } as const);
+        case 'webrtc':
+            return Object.assign({}, PeerConfigWebRTCFromJSONTyped(json, true), { type: 'webrtc' } as const);
+        default:
+            return json;
+    }
 }
 
-export function PeerConfigToJSON(json: any): PeerConfig {
+export function PeerConfigToJSON(json: any): any {
     return PeerConfigToJSONTyped(json, false);
 }
 
@@ -82,11 +69,15 @@ export function PeerConfigToJSONTyped(value?: PeerConfig | null, ignoreDiscrimin
     if (value == null) {
         return value;
     }
-
-    return {
-        
-        'options': PeerOptionsToJSON(value['options']),
-        'type': PeerTypeToJSON(value['type']),
-    };
+    switch (value['type']) {
+        case 'agent':
+            return Object.assign({}, PeerConfigAgentToJSON(value), { 'type': 'agent' } as const);
+        case 'vapi':
+            return Object.assign({}, PeerConfigVAPIToJSON(value), { 'type': 'vapi' } as const);
+        case 'webrtc':
+            return Object.assign({}, PeerConfigWebRTCToJSON(value), { 'type': 'webrtc' } as const);
+        default:
+            return value;
+    }
 }
 

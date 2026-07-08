@@ -12,15 +12,12 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  TrackForwarding,
-} from '../models/index';
 import {
+    type TrackForwarding,
     TrackForwardingFromJSON,
     TrackForwardingToJSON,
-} from '../models/index';
+} from '../models/TrackForwarding';
 
 export interface CreateTrackForwardingRequest {
     roomId: string;
@@ -33,10 +30,9 @@ export interface CreateTrackForwardingRequest {
 export class TrackForwardingsApi extends runtime.BaseAPI {
 
     /**
-     * Forward a room\'s tracks into an external composition.
-     * Create a track forwarding
+     * Creates request options for createTrackForwarding without sending the request
      */
-    async createTrackForwardingRaw(requestParameters: CreateTrackForwardingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async createTrackForwardingRequestOpts(requestParameters: CreateTrackForwardingRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['roomId'] == null) {
             throw new runtime.RequiredError(
                 'roomId',
@@ -67,15 +63,24 @@ export class TrackForwardingsApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/room/{room_id}/track_forwardings`;
-        urlPath = urlPath.replace(`{${"room_id"}}`, encodeURIComponent(String(requestParameters['roomId'])));
+        urlPath = urlPath.replace('{room_id}', encodeURIComponent(String(requestParameters['roomId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: TrackForwardingToJSON(requestParameters['trackForwarding']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Forward a room\'s tracks into an external composition.
+     * Create a track forwarding
+     */
+    async createTrackForwardingRaw(requestParameters: CreateTrackForwardingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.createTrackForwardingRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.VoidApiResponse(response);
     }

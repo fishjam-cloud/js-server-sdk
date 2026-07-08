@@ -12,18 +12,17 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  StreamerDetailsResponse,
-  StreamerToken,
-} from '../models/index';
 import {
+    type StreamerDetailsResponse,
     StreamerDetailsResponseFromJSON,
     StreamerDetailsResponseToJSON,
+} from '../models/StreamerDetailsResponse';
+import {
+    type StreamerToken,
     StreamerTokenFromJSON,
     StreamerTokenToJSON,
-} from '../models/index';
+} from '../models/StreamerToken';
 
 export interface CreateStreamerRequest {
     streamId: string;
@@ -44,10 +43,9 @@ export interface GenerateStreamerTokenRequest {
 export class StreamersApi extends runtime.BaseAPI {
 
     /**
-     * Create a streamer for a stream and return its credentials.
-     * Create a streamer
+     * Creates request options for createStreamer without sending the request
      */
-    async createStreamerRaw(requestParameters: CreateStreamerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StreamerDetailsResponse>> {
+    async createStreamerRequestOpts(requestParameters: CreateStreamerRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['streamId'] == null) {
             throw new runtime.RequiredError(
                 'streamId',
@@ -69,14 +67,23 @@ export class StreamersApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/livestream/{stream_id}/streamer`;
-        urlPath = urlPath.replace(`{${"stream_id"}}`, encodeURIComponent(String(requestParameters['streamId'])));
+        urlPath = urlPath.replace('{stream_id}', encodeURIComponent(String(requestParameters['streamId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Create a streamer for a stream and return its credentials.
+     * Create a streamer
+     */
+    async createStreamerRaw(requestParameters: CreateStreamerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StreamerDetailsResponse>> {
+        const requestOptions = await this.createStreamerRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => StreamerDetailsResponseFromJSON(jsonValue));
     }
@@ -91,10 +98,9 @@ export class StreamersApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete a streamer from a stream and revoke its token.
-     * Delete a streamer
+     * Creates request options for deleteStreamer without sending the request
      */
-    async deleteStreamerRaw(requestParameters: DeleteStreamerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async deleteStreamerRequestOpts(requestParameters: DeleteStreamerRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['streamId'] == null) {
             throw new runtime.RequiredError(
                 'streamId',
@@ -123,15 +129,24 @@ export class StreamersApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/livestream/{stream_id}/streamer/{streamer_id}`;
-        urlPath = urlPath.replace(`{${"stream_id"}}`, encodeURIComponent(String(requestParameters['streamId'])));
-        urlPath = urlPath.replace(`{${"streamer_id"}}`, encodeURIComponent(String(requestParameters['streamerId'])));
+        urlPath = urlPath.replace('{stream_id}', encodeURIComponent(String(requestParameters['streamId'])));
+        urlPath = urlPath.replace('{streamer_id}', encodeURIComponent(String(requestParameters['streamerId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Delete a streamer from a stream and revoke its token.
+     * Delete a streamer
+     */
+    async deleteStreamerRaw(requestParameters: DeleteStreamerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.deleteStreamerRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.VoidApiResponse(response);
     }
@@ -145,10 +160,9 @@ export class StreamersApi extends runtime.BaseAPI {
     }
 
     /**
-     * Issue a fresh streamer token.
-     * Create a streamer token
+     * Creates request options for generateStreamerToken without sending the request
      */
-    async generateStreamerTokenRaw(requestParameters: GenerateStreamerTokenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StreamerToken>> {
+    async generateStreamerTokenRequestOpts(requestParameters: GenerateStreamerTokenRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['roomId'] == null) {
             throw new runtime.RequiredError(
                 'roomId',
@@ -170,14 +184,23 @@ export class StreamersApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/room/{room_id}/streamer`;
-        urlPath = urlPath.replace(`{${"room_id"}}`, encodeURIComponent(String(requestParameters['roomId'])));
+        urlPath = urlPath.replace('{room_id}', encodeURIComponent(String(requestParameters['roomId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Issue a fresh streamer token.
+     * Create a streamer token
+     */
+    async generateStreamerTokenRaw(requestParameters: GenerateStreamerTokenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StreamerToken>> {
+        const requestOptions = await this.generateStreamerTokenRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => StreamerTokenFromJSON(jsonValue));
     }

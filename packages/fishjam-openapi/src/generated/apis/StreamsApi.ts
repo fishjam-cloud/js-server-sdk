@@ -12,21 +12,22 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  StreamConfig,
-  StreamDetailsResponse,
-  StreamsListingResponse,
-} from '../models/index';
 import {
+    type StreamConfig,
     StreamConfigFromJSON,
     StreamConfigToJSON,
+} from '../models/StreamConfig';
+import {
+    type StreamDetailsResponse,
     StreamDetailsResponseFromJSON,
     StreamDetailsResponseToJSON,
+} from '../models/StreamDetailsResponse';
+import {
+    type StreamsListingResponse,
     StreamsListingResponseFromJSON,
     StreamsListingResponseToJSON,
-} from '../models/index';
+} from '../models/StreamsListingResponse';
 
 export interface CreateStreamRequest {
     streamConfig?: StreamConfig;
@@ -46,10 +47,9 @@ export interface GetStreamRequest {
 export class StreamsApi extends runtime.BaseAPI {
 
     /**
-     * Create a new livestream with the given configuration.
-     * Create a stream
+     * Creates request options for createStream without sending the request
      */
-    async createStreamRaw(requestParameters: CreateStreamRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StreamDetailsResponse>> {
+    async createStreamRequestOpts(requestParameters: CreateStreamRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -67,13 +67,22 @@ export class StreamsApi extends runtime.BaseAPI {
 
         let urlPath = `/livestream`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: StreamConfigToJSON(requestParameters['streamConfig']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Create a new livestream with the given configuration.
+     * Create a stream
+     */
+    async createStreamRaw(requestParameters: CreateStreamRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StreamDetailsResponse>> {
+        const requestOptions = await this.createStreamRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => StreamDetailsResponseFromJSON(jsonValue));
     }
@@ -88,10 +97,9 @@ export class StreamsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete a stream by id and disconnect all of its streamers and viewers.
-     * Delete a stream
+     * Creates request options for deleteStream without sending the request
      */
-    async deleteStreamRaw(requestParameters: DeleteStreamRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async deleteStreamRequestOpts(requestParameters: DeleteStreamRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['streamId'] == null) {
             throw new runtime.RequiredError(
                 'streamId',
@@ -113,14 +121,23 @@ export class StreamsApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/livestream/{stream_id}`;
-        urlPath = urlPath.replace(`{${"stream_id"}}`, encodeURIComponent(String(requestParameters['streamId'])));
+        urlPath = urlPath.replace('{stream_id}', encodeURIComponent(String(requestParameters['streamId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Delete a stream by id and disconnect all of its streamers and viewers.
+     * Delete a stream
+     */
+    async deleteStreamRaw(requestParameters: DeleteStreamRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.deleteStreamRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.VoidApiResponse(response);
     }
@@ -134,10 +151,9 @@ export class StreamsApi extends runtime.BaseAPI {
     }
 
     /**
-     * List all livestreams.
-     * List all streams
+     * Creates request options for getAllStreams without sending the request
      */
-    async getAllStreamsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StreamsListingResponse>> {
+    async getAllStreamsRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -153,12 +169,21 @@ export class StreamsApi extends runtime.BaseAPI {
 
         let urlPath = `/livestream`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List all livestreams.
+     * List all streams
+     */
+    async getAllStreamsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StreamsListingResponse>> {
+        const requestOptions = await this.getAllStreamsRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => StreamsListingResponseFromJSON(jsonValue));
     }
@@ -173,10 +198,9 @@ export class StreamsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get a stream by id.
-     * Get a stream
+     * Creates request options for getStream without sending the request
      */
-    async getStreamRaw(requestParameters: GetStreamRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StreamDetailsResponse>> {
+    async getStreamRequestOpts(requestParameters: GetStreamRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['streamId'] == null) {
             throw new runtime.RequiredError(
                 'streamId',
@@ -198,14 +222,23 @@ export class StreamsApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/livestream/{stream_id}`;
-        urlPath = urlPath.replace(`{${"stream_id"}}`, encodeURIComponent(String(requestParameters['streamId'])));
+        urlPath = urlPath.replace('{stream_id}', encodeURIComponent(String(requestParameters['streamId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get a stream by id.
+     * Get a stream
+     */
+    async getStreamRaw(requestParameters: GetStreamRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StreamDetailsResponse>> {
+        const requestOptions = await this.getStreamRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => StreamDetailsResponseFromJSON(jsonValue));
     }

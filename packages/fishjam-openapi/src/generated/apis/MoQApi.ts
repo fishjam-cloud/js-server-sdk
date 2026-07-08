@@ -12,18 +12,17 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  MoqAccess,
-  MoqAccessConfig,
-} from '../models/index';
 import {
+    type MoqAccess,
     MoqAccessFromJSON,
     MoqAccessToJSON,
+} from '../models/MoqAccess';
+import {
+    type MoqAccessConfig,
     MoqAccessConfigFromJSON,
     MoqAccessConfigToJSON,
-} from '../models/index';
+} from '../models/MoqAccessConfig';
 
 export interface CreateMoqAccessRequest {
     moqAccessConfig?: MoqAccessConfig;
@@ -35,10 +34,9 @@ export interface CreateMoqAccessRequest {
 export class MoQApi extends runtime.BaseAPI {
 
     /**
-     * Issue a short-lived JWT for a Media over QUIC client.
-     * Create MoQ access
+     * Creates request options for createMoqAccess without sending the request
      */
-    async createMoqAccessRaw(requestParameters: CreateMoqAccessRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MoqAccess>> {
+    async createMoqAccessRequestOpts(requestParameters: CreateMoqAccessRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -56,13 +54,22 @@ export class MoQApi extends runtime.BaseAPI {
 
         let urlPath = `/moq/access`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: MoqAccessConfigToJSON(requestParameters['moqAccessConfig']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Issue a short-lived JWT for a Media over QUIC client.
+     * Create MoQ access
+     */
+    async createMoqAccessRaw(requestParameters: CreateMoqAccessRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MoqAccess>> {
+        const requestOptions = await this.createMoqAccessRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MoqAccessFromJSON(jsonValue));
     }

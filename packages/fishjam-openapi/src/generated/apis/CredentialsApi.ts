@@ -12,7 +12,6 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
 
 /**
@@ -21,10 +20,9 @@ import * as runtime from '../runtime';
 export class CredentialsApi extends runtime.BaseAPI {
 
     /**
-     * Returns 200 if the provided Fishjam Management Token is valid, 404 otherwise.
-     * Validate Fishjam Management Token
+     * Creates request options for validateCredentials without sending the request
      */
-    async validateCredentialsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async validateCredentialsRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -40,12 +38,21 @@ export class CredentialsApi extends runtime.BaseAPI {
 
         let urlPath = `/validate`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Returns 200 if the provided Fishjam Management Token is valid, 404 otherwise.
+     * Validate Fishjam Management Token
+     */
+    async validateCredentialsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.validateCredentialsRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.VoidApiResponse(response);
     }

@@ -12,18 +12,17 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ViewerDetailsResponse,
-  ViewerToken,
-} from '../models/index';
 import {
+    type ViewerDetailsResponse,
     ViewerDetailsResponseFromJSON,
     ViewerDetailsResponseToJSON,
+} from '../models/ViewerDetailsResponse';
+import {
+    type ViewerToken,
     ViewerTokenFromJSON,
     ViewerTokenToJSON,
-} from '../models/index';
+} from '../models/ViewerToken';
 
 export interface CreateViewerRequest {
     streamId: string;
@@ -44,10 +43,9 @@ export interface GenerateViewerTokenRequest {
 export class ViewersApi extends runtime.BaseAPI {
 
     /**
-     * Create a viewer for a stream and return its credentials.
-     * Create a viewer
+     * Creates request options for createViewer without sending the request
      */
-    async createViewerRaw(requestParameters: CreateViewerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ViewerDetailsResponse>> {
+    async createViewerRequestOpts(requestParameters: CreateViewerRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['streamId'] == null) {
             throw new runtime.RequiredError(
                 'streamId',
@@ -69,14 +67,23 @@ export class ViewersApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/livestream/{stream_id}/viewer`;
-        urlPath = urlPath.replace(`{${"stream_id"}}`, encodeURIComponent(String(requestParameters['streamId'])));
+        urlPath = urlPath.replace('{stream_id}', encodeURIComponent(String(requestParameters['streamId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Create a viewer for a stream and return its credentials.
+     * Create a viewer
+     */
+    async createViewerRaw(requestParameters: CreateViewerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ViewerDetailsResponse>> {
+        const requestOptions = await this.createViewerRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => ViewerDetailsResponseFromJSON(jsonValue));
     }
@@ -91,10 +98,9 @@ export class ViewersApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete a viewer from a stream and revoke its token.
-     * Delete a viewer
+     * Creates request options for deleteViewer without sending the request
      */
-    async deleteViewerRaw(requestParameters: DeleteViewerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async deleteViewerRequestOpts(requestParameters: DeleteViewerRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['streamId'] == null) {
             throw new runtime.RequiredError(
                 'streamId',
@@ -123,15 +129,24 @@ export class ViewersApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/livestream/{stream_id}/viewer/{viewer_id}`;
-        urlPath = urlPath.replace(`{${"stream_id"}}`, encodeURIComponent(String(requestParameters['streamId'])));
-        urlPath = urlPath.replace(`{${"viewer_id"}}`, encodeURIComponent(String(requestParameters['viewerId'])));
+        urlPath = urlPath.replace('{stream_id}', encodeURIComponent(String(requestParameters['streamId'])));
+        urlPath = urlPath.replace('{viewer_id}', encodeURIComponent(String(requestParameters['viewerId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Delete a viewer from a stream and revoke its token.
+     * Delete a viewer
+     */
+    async deleteViewerRaw(requestParameters: DeleteViewerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.deleteViewerRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.VoidApiResponse(response);
     }
@@ -145,10 +160,9 @@ export class ViewersApi extends runtime.BaseAPI {
     }
 
     /**
-     * Issue a fresh viewer token.
-     * Create a viewer token
+     * Creates request options for generateViewerToken without sending the request
      */
-    async generateViewerTokenRaw(requestParameters: GenerateViewerTokenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ViewerToken>> {
+    async generateViewerTokenRequestOpts(requestParameters: GenerateViewerTokenRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['roomId'] == null) {
             throw new runtime.RequiredError(
                 'roomId',
@@ -170,14 +184,23 @@ export class ViewersApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/room/{room_id}/viewer`;
-        urlPath = urlPath.replace(`{${"room_id"}}`, encodeURIComponent(String(requestParameters['roomId'])));
+        urlPath = urlPath.replace('{room_id}', encodeURIComponent(String(requestParameters['roomId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Issue a fresh viewer token.
+     * Create a viewer token
+     */
+    async generateViewerTokenRaw(requestParameters: GenerateViewerTokenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ViewerToken>> {
+        const requestOptions = await this.generateViewerTokenRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => ViewerTokenFromJSON(jsonValue));
     }

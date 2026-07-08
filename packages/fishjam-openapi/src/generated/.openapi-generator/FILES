@@ -17,9 +17,11 @@ models/MoqAccess.ts
 models/MoqAccessConfig.ts
 models/Peer.ts
 models/PeerConfig.ts
+models/PeerConfigAgent.ts
+models/PeerConfigVAPI.ts
+models/PeerConfigWebRTC.ts
 models/PeerDetailsResponse.ts
 models/PeerDetailsResponseData.ts
-models/PeerOptions.ts
 models/PeerOptionsAgent.ts
 models/PeerOptionsVapi.ts
 models/PeerOptionsWebRTC.ts

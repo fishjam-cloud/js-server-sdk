@@ -27,7 +27,7 @@ export interface Streamer {
     id: string;
     /**
      * Streamer connection status
-     * @type {string}
+     * @type {StreamerStatusEnum}
      * @memberof Streamer
      */
     status: StreamerStatusEnum;

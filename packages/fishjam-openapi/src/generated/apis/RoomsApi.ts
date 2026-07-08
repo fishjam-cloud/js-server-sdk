@@ -12,36 +12,47 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  PeerConfig,
-  PeerDetailsResponse,
-  PeerRefreshTokenResponse,
-  RoomConfig,
-  RoomCreateDetailsResponse,
-  RoomDetailsResponse,
-  RoomsListingResponse,
-  SubscribeTracksRequest,
-} from '../models/index';
 import {
+    type PeerConfig,
     PeerConfigFromJSON,
     PeerConfigToJSON,
+} from '../models/PeerConfig';
+import {
+    type PeerDetailsResponse,
     PeerDetailsResponseFromJSON,
     PeerDetailsResponseToJSON,
+} from '../models/PeerDetailsResponse';
+import {
+    type PeerRefreshTokenResponse,
     PeerRefreshTokenResponseFromJSON,
     PeerRefreshTokenResponseToJSON,
+} from '../models/PeerRefreshTokenResponse';
+import {
+    type RoomConfig,
     RoomConfigFromJSON,
     RoomConfigToJSON,
+} from '../models/RoomConfig';
+import {
+    type RoomCreateDetailsResponse,
     RoomCreateDetailsResponseFromJSON,
     RoomCreateDetailsResponseToJSON,
+} from '../models/RoomCreateDetailsResponse';
+import {
+    type RoomDetailsResponse,
     RoomDetailsResponseFromJSON,
     RoomDetailsResponseToJSON,
+} from '../models/RoomDetailsResponse';
+import {
+    type RoomsListingResponse,
     RoomsListingResponseFromJSON,
     RoomsListingResponseToJSON,
+} from '../models/RoomsListingResponse';
+import {
+    type SubscribeTracksRequest,
     SubscribeTracksRequestFromJSON,
     SubscribeTracksRequestToJSON,
-} from '../models/index';
+} from '../models/SubscribeTracksRequest';
 
 export interface AddPeerRequest {
     roomId: string;
@@ -88,10 +99,9 @@ export interface SubscribeTracksOperationRequest {
 export class RoomsApi extends runtime.BaseAPI {
 
     /**
-     * Add a peer to a room and return its connection token.
-     * Create a peer
+     * Creates request options for addPeer without sending the request
      */
-    async addPeerRaw(requestParameters: AddPeerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PeerDetailsResponse>> {
+    async addPeerRequestOpts(requestParameters: AddPeerRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['roomId'] == null) {
             throw new runtime.RequiredError(
                 'roomId',
@@ -115,15 +125,24 @@ export class RoomsApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/room/{room_id}/peer`;
-        urlPath = urlPath.replace(`{${"room_id"}}`, encodeURIComponent(String(requestParameters['roomId'])));
+        urlPath = urlPath.replace('{room_id}', encodeURIComponent(String(requestParameters['roomId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: PeerConfigToJSON(requestParameters['peerConfig']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Add a peer to a room and return its connection token.
+     * Create a peer
+     */
+    async addPeerRaw(requestParameters: AddPeerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PeerDetailsResponse>> {
+        const requestOptions = await this.addPeerRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => PeerDetailsResponseFromJSON(jsonValue));
     }
@@ -138,10 +157,9 @@ export class RoomsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a new room with the given configuration.
-     * Create a room
+     * Creates request options for createRoom without sending the request
      */
-    async createRoomRaw(requestParameters: CreateRoomRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<RoomCreateDetailsResponse>> {
+    async createRoomRequestOpts(requestParameters: CreateRoomRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -159,13 +177,22 @@ export class RoomsApi extends runtime.BaseAPI {
 
         let urlPath = `/room`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: RoomConfigToJSON(requestParameters['roomConfig']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Create a new room with the given configuration.
+     * Create a room
+     */
+    async createRoomRaw(requestParameters: CreateRoomRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<RoomCreateDetailsResponse>> {
+        const requestOptions = await this.createRoomRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => RoomCreateDetailsResponseFromJSON(jsonValue));
     }
@@ -180,10 +207,9 @@ export class RoomsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Remove a peer from a room and disconnect it.
-     * Delete a peer
+     * Creates request options for deletePeer without sending the request
      */
-    async deletePeerRaw(requestParameters: DeletePeerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async deletePeerRequestOpts(requestParameters: DeletePeerRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['roomId'] == null) {
             throw new runtime.RequiredError(
                 'roomId',
@@ -212,15 +238,24 @@ export class RoomsApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/room/{room_id}/peer/{id}`;
-        urlPath = urlPath.replace(`{${"room_id"}}`, encodeURIComponent(String(requestParameters['roomId'])));
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+        urlPath = urlPath.replace('{room_id}', encodeURIComponent(String(requestParameters['roomId'])));
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Remove a peer from a room and disconnect it.
+     * Delete a peer
+     */
+    async deletePeerRaw(requestParameters: DeletePeerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.deletePeerRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.VoidApiResponse(response);
     }
@@ -234,10 +269,9 @@ export class RoomsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete a room by id and disconnect all of its peers.
-     * Delete a room
+     * Creates request options for deleteRoom without sending the request
      */
-    async deleteRoomRaw(requestParameters: DeleteRoomRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async deleteRoomRequestOpts(requestParameters: DeleteRoomRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['roomId'] == null) {
             throw new runtime.RequiredError(
                 'roomId',
@@ -259,14 +293,23 @@ export class RoomsApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/room/{room_id}`;
-        urlPath = urlPath.replace(`{${"room_id"}}`, encodeURIComponent(String(requestParameters['roomId'])));
+        urlPath = urlPath.replace('{room_id}', encodeURIComponent(String(requestParameters['roomId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Delete a room by id and disconnect all of its peers.
+     * Delete a room
+     */
+    async deleteRoomRaw(requestParameters: DeleteRoomRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.deleteRoomRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.VoidApiResponse(response);
     }
@@ -280,10 +323,9 @@ export class RoomsApi extends runtime.BaseAPI {
     }
 
     /**
-     * List all rooms and livestreams.
-     * List all rooms
+     * Creates request options for getAllRooms without sending the request
      */
-    async getAllRoomsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<RoomsListingResponse>> {
+    async getAllRoomsRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -299,12 +341,21 @@ export class RoomsApi extends runtime.BaseAPI {
 
         let urlPath = `/room`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List all rooms and livestreams.
+     * List all rooms
+     */
+    async getAllRoomsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<RoomsListingResponse>> {
+        const requestOptions = await this.getAllRoomsRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => RoomsListingResponseFromJSON(jsonValue));
     }
@@ -319,10 +370,9 @@ export class RoomsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get a room by id.
-     * Get a room
+     * Creates request options for getRoom without sending the request
      */
-    async getRoomRaw(requestParameters: GetRoomRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<RoomDetailsResponse>> {
+    async getRoomRequestOpts(requestParameters: GetRoomRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['roomId'] == null) {
             throw new runtime.RequiredError(
                 'roomId',
@@ -344,14 +394,23 @@ export class RoomsApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/room/{room_id}`;
-        urlPath = urlPath.replace(`{${"room_id"}}`, encodeURIComponent(String(requestParameters['roomId'])));
+        urlPath = urlPath.replace('{room_id}', encodeURIComponent(String(requestParameters['roomId'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get a room by id.
+     * Get a room
+     */
+    async getRoomRaw(requestParameters: GetRoomRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<RoomDetailsResponse>> {
+        const requestOptions = await this.getRoomRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => RoomDetailsResponseFromJSON(jsonValue));
     }
@@ -366,10 +425,9 @@ export class RoomsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Issue a fresh connection token for an existing peer.
-     * Refresh a peer token
+     * Creates request options for refreshToken without sending the request
      */
-    async refreshTokenRaw(requestParameters: RefreshTokenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PeerRefreshTokenResponse>> {
+    async refreshTokenRequestOpts(requestParameters: RefreshTokenRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['roomId'] == null) {
             throw new runtime.RequiredError(
                 'roomId',
@@ -398,15 +456,24 @@ export class RoomsApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/room/{room_id}/peer/{id}/refresh_token`;
-        urlPath = urlPath.replace(`{${"room_id"}}`, encodeURIComponent(String(requestParameters['roomId'])));
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+        urlPath = urlPath.replace('{room_id}', encodeURIComponent(String(requestParameters['roomId'])));
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Issue a fresh connection token for an existing peer.
+     * Refresh a peer token
+     */
+    async refreshTokenRaw(requestParameters: RefreshTokenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PeerRefreshTokenResponse>> {
+        const requestOptions = await this.refreshTokenRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => PeerRefreshTokenResponseFromJSON(jsonValue));
     }
@@ -421,10 +488,9 @@ export class RoomsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Subscribe a peer to all current and future tracks published by another peer in the same room.
-     * Subscribe a peer to another peer\'s tracks
+     * Creates request options for subscribePeer without sending the request
      */
-    async subscribePeerRaw(requestParameters: SubscribePeerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async subscribePeerRequestOpts(requestParameters: SubscribePeerRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['roomId'] == null) {
             throw new runtime.RequiredError(
                 'roomId',
@@ -457,15 +523,24 @@ export class RoomsApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/room/{room_id}/peer/{id}/subscribe_peer`;
-        urlPath = urlPath.replace(`{${"room_id"}}`, encodeURIComponent(String(requestParameters['roomId'])));
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+        urlPath = urlPath.replace('{room_id}', encodeURIComponent(String(requestParameters['roomId'])));
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Subscribe a peer to all current and future tracks published by another peer in the same room.
+     * Subscribe a peer to another peer\'s tracks
+     */
+    async subscribePeerRaw(requestParameters: SubscribePeerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.subscribePeerRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.VoidApiResponse(response);
     }
@@ -479,10 +554,9 @@ export class RoomsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Subscribe a peer to a specific list of track IDs in the same room.
-     * Subscribe a peer to specific tracks
+     * Creates request options for subscribeTracks without sending the request
      */
-    async subscribeTracksRaw(requestParameters: SubscribeTracksOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async subscribeTracksRequestOpts(requestParameters: SubscribeTracksOperationRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['roomId'] == null) {
             throw new runtime.RequiredError(
                 'roomId',
@@ -513,16 +587,25 @@ export class RoomsApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/room/{room_id}/peer/{id}/subscribe_tracks`;
-        urlPath = urlPath.replace(`{${"room_id"}}`, encodeURIComponent(String(requestParameters['roomId'])));
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+        urlPath = urlPath.replace('{room_id}', encodeURIComponent(String(requestParameters['roomId'])));
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SubscribeTracksRequestToJSON(requestParameters['subscribeTracksRequest']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Subscribe a peer to a specific list of track IDs in the same room.
+     * Subscribe a peer to specific tracks
+     */
+    async subscribeTracksRaw(requestParameters: SubscribeTracksOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.subscribeTracksRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.VoidApiResponse(response);
     }
