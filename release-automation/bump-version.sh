@@ -65,14 +65,8 @@ fi
 # Run openapi codegen in fishjam-openapi
 cd packages/fishjam-openapi
 
-curl -H "Authorization: token $GH_TOKEN" \
--H "Accept: application/vnd.github.v3.raw" \
--L "https://raw.githubusercontent.com/fishjam-cloud/fishjam/main/openapi.yaml" \
--o openapi.yaml
+sh openapi.sh main "$GH_TOKEN"
 
-sh openapi.sh ./openapi.yaml
-
-rm openapi.yaml
 cd ../../
 
 echo "✅ Version bump complete for $VERSION"
