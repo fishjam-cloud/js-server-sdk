@@ -1,4 +1,4 @@
-import type { AxiosError as BaseAxiosError } from 'axios';
+import { ResponseError, FetchError } from '@fishjam-cloud/fishjam-openapi';
 import {
   BadRequestException,
   FishjamNotFoundException,
@@ -9,41 +9,52 @@ import {
   ServiceUnavailableException,
   UnauthorizedException,
   UnknownException,
+  type FishjamExceptionInfo,
 } from '.';
-type AxiosError = BaseAxiosError<Record<string, string>>;
-function isAxiosException(error: unknown): error is AxiosError {
-  return !!error && typeof error === 'object' && 'isAxiosError' in error && !!error.isAxiosError;
-}
 
-export const mapException = (error: unknown, entity?: 'peer' | 'room') => {
-  if (isAxiosException(error)) {
-    switch (error.response?.status) {
-      case 400:
-        return new BadRequestException(error);
-      case 402:
-        return new QuotaExceededException(error);
-      case 401:
-        throw new UnauthorizedException(error);
-      case 404:
-        if (error.request.path.includes('validate')) {
-          return new InvalidFishjamCredentialsException(error);
-        }
+type Entity = 'peer' | 'room' | 'credentials';
 
-        switch (entity) {
-          case 'peer':
-            return new PeerNotFoundException(error);
-          case 'room':
-            return new RoomNotFoundException(error);
-          default:
-            return new FishjamNotFoundException(error);
-        }
+const notFoundException = (info: FishjamExceptionInfo, entity?: Entity) => {
+  switch (entity) {
+    case 'credentials':
+      return new InvalidFishjamCredentialsException(info);
+    case 'peer':
+      return new PeerNotFoundException(info);
+    case 'room':
+      return new RoomNotFoundException(info);
+    default:
+      return new FishjamNotFoundException(info);
+  }
+};
 
-      case 503:
-        return new ServiceUnavailableException(error);
-      default:
-        return new UnknownException(error);
-    }
-  } else {
+export const mapException = async (error: unknown, entity?: Entity): Promise<unknown> => {
+  if (error instanceof FetchError) {
+    return new UnknownException({ message: error.cause.message, statusCode: 500, details: error.cause.message });
+  }
+  if (!(error instanceof ResponseError)) {
     return error;
+  }
+
+  const status = error.response.status;
+  const body = (await error.response.json().catch(() => ({}))) as Record<string, string>;
+  const info: FishjamExceptionInfo = {
+    message: `Request failed with status code ${status}`,
+    statusCode: status,
+    details: body['detail'] ?? body['errors'] ?? 'Unknown error',
+  };
+
+  switch (status) {
+    case 400:
+      return new BadRequestException(info);
+    case 402:
+      return new QuotaExceededException(info);
+    case 401:
+      return new UnauthorizedException(info);
+    case 404:
+      return notFoundException(info, entity);
+    case 503:
+      return new ServiceUnavailableException(info);
+    default:
+      return new UnknownException(info);
   }
 };

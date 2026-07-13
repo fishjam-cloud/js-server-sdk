@@ -1,20 +1,22 @@
-import type { AxiosError } from 'axios';
-
 export class MissingFishjamIdException extends Error {
   constructor() {
     super('Fishjam ID is required');
   }
 }
 
+export interface FishjamExceptionInfo {
+  message: string;
+  statusCode?: number;
+  details?: string;
+}
+
 export class FishjamBaseException extends Error {
   statusCode: number;
-  axiosCode?: string;
   details?: string;
-  constructor(error: AxiosError<Record<string, string>>) {
-    super(error.message);
-    this.statusCode = error.response?.status ?? 500;
-    this.axiosCode = error.code;
-    this.details = error.response?.data['detail'] ?? error.response?.data['errors'] ?? 'Unknown error';
+  constructor(info: FishjamExceptionInfo) {
+    super(info.message);
+    this.statusCode = info.statusCode ?? 500;
+    this.details = info.details;
   }
 }
 

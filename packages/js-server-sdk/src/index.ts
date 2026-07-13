@@ -3,10 +3,13 @@
  *
  * @packageDocumentation
  */
+import type { PeerOptionsWebRTC, PeerOptionsAgent, PeerOptionsVapi } from '@fishjam-cloud/fishjam-openapi';
+
+export type PeerOptions = PeerOptionsWebRTC | PeerOptionsAgent | PeerOptionsVapi;
+
 export {
   PeerStatus,
   RoomConfig,
-  PeerOptions,
   PeerOptionsWebRTC,
   PeerOptionsAgent,
   PeerOptionsVapi,
