@@ -23,7 +23,7 @@ export {
 
 export { ServerMessage } from '@fishjam-cloud/fishjam-proto';
 export { FishjamWSNotifier } from './ws_notifier';
-export { decodeServerNotifications } from './webhook';
+export { decodeServerNotifications, verifyWebhookSignature } from './webhook';
 export type {
   Track,
   ServerNotification,
