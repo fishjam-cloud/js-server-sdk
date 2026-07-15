@@ -38,8 +38,8 @@ export const decodeServerNotifications = (data: Uint8Array | ArrayBuffer): Serve
  *
  * Fishjam signs each webhook delivery with the room's signing secret and sends
  * the result in the `x-fishjam-signature-256` header as
- * `sha256=<lowercase hex HMAC-SHA256 of the raw body>`. Pass the raw
- * (undecoded) request body, the header value, and your secret; the comparison
+ * `sha256=<lowercase hex HMAC-SHA256 of the raw body>`. Pass the raw,
+ * not-yet-decoded request body, the header value, and your secret; the comparison
  * is constant-time (signatures of the wrong length are rejected early, which
  * leaks only the expected signature length — public knowledge for SHA-256).
  * Verify before calling {@link decodeServerNotifications}.
