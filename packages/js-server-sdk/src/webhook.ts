@@ -58,11 +58,7 @@ export const decodeServerNotifications = (data: Uint8Array | ArrayBuffer): Serve
  * ```
  * @category Notifications
  */
-export const verifyWebhookSignature = (
-  body: Uint8Array | ArrayBuffer,
-  signature: string,
-  secret: string,
-): boolean => {
+export const verifyWebhookSignature = (body: Uint8Array | ArrayBuffer, signature: string, secret: string): boolean => {
   const expected = createHmac('sha256', secret)
     .update(body instanceof Uint8Array ? body : new Uint8Array(body))
     .digest('hex');
