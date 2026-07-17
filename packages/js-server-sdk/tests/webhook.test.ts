@@ -1,6 +1,8 @@
+import { createHmac } from 'node:crypto';
+
 import { describe, it, expect } from 'vitest';
 import { ServerMessage, ServerMessage_PeerType, TrackType } from '@fishjam-cloud/fishjam-proto';
-import { decodeServerNotifications } from '../src/webhook';
+import { decodeServerNotifications, verifyWebhookSignature } from '../src/webhook';
 
 const encode = (message: Parameters<typeof ServerMessage.encode>[0]): Uint8Array =>
   ServerMessage.encode(message).finish();
@@ -92,5 +94,35 @@ describe('decodeServerNotifications', () => {
     expect(decodeServerNotifications(bytes)).toHaveLength(1); // Uint8Array
     expect(decodeServerNotifications(Buffer.from(bytes))).toHaveLength(1); // Buffer (Uint8Array subclass)
     expect(decodeServerNotifications(arrayBuffer)).toHaveLength(1); // ArrayBuffer
+  });
+});
+
+describe('verifyWebhookSignature', () => {
+  const secret = 'test-secret';
+  const body = encode(peerConnected);
+  // Mirrors the server: Base.encode16(:crypto.mac(:hmac, :sha256, secret, body), case: :lower)
+  const validHex = createHmac('sha256', secret).update(body).digest('hex');
+
+  it('accepts the sha256=<hex> header format sent by the server', () => {
+    expect(verifyWebhookSignature(body, `sha256=${validHex}`, secret)).toBe(true);
+  });
+
+  it('accepts a bare hex signature and an ArrayBuffer body', () => {
+    const arrayBuffer = new Uint8Array(body).buffer as ArrayBuffer;
+    expect(verifyWebhookSignature(arrayBuffer, validHex, secret)).toBe(true);
+  });
+
+  it('rejects a signature computed with a different secret', () => {
+    const other = createHmac('sha256', 'other-secret').update(body).digest('hex');
+    expect(verifyWebhookSignature(body, `sha256=${other}`, secret)).toBe(false);
+  });
+
+  it('rejects a tampered body', () => {
+    expect(verifyWebhookSignature(encode(trackAdded), `sha256=${validHex}`, secret)).toBe(false);
+  });
+
+  it('rejects malformed signatures without throwing', () => {
+    expect(verifyWebhookSignature(body, '', secret)).toBe(false);
+    expect(verifyWebhookSignature(body, 'sha256=deadbeef', secret)).toBe(false);
   });
 });
