@@ -13,7 +13,7 @@ import {
   TrackEncoding,
 } from '@fishjam-cloud/fishjam-proto';
 import { AgentCallbacks, Brand, FishjamConfig, Override, PeerId } from './types';
-import { getFishjamUrl, httpToWebsocket } from './utils';
+import { getAgentWebsocketUrl } from './utils';
 
 const expectedEventsList = ['trackData'] as const;
 /**
@@ -47,15 +47,15 @@ export type AgentEvents = {
 export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentEvents>) {
   private readonly client: WebSocket;
 
-  private resolveConnectionPromise: ((value: void | PromiseLike<void>) => void) | null = null;
+  private resolveConnectionPromise: (() => void) | null = null;
+  private rejectConnectionPromise: ((reason: Error) => void) | null = null;
   private readonly connectionPromise: Promise<void>;
   private readonly pendingImageCaptures = new Map<string, PendingImageCapture>();
 
-  constructor(config: FishjamConfig, agentToken: string, callbacks?: AgentCallbacks) {
+  constructor(config: FishjamConfig, agentToken: string, callbacks?: AgentCallbacks, peerWebsocketUrl?: string) {
     super();
 
-    const fishjamUrl = getFishjamUrl(config);
-    const websocketUrl = `${httpToWebsocket(fishjamUrl)}/socket/agent/websocket`;
+    const websocketUrl = getAgentWebsocketUrl(config, peerWebsocketUrl);
 
     this.client = new WebSocket(websocketUrl);
 
@@ -63,6 +63,15 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
 
     this.client.onclose = (message) => {
       this.rejectPendingCaptures('WebSocket closed');
+      // A close before the socket ever opened (e.g. a 404 on a cluster that no
+      // longer hosts the agent socket) must reject `awaitConnected`, otherwise it
+      // hangs forever.
+      this.rejectConnectionPromise?.(
+        new Error(
+          `Agent websocket closed before connecting (code ${message.code}${message.reason ? `: ${message.reason}` : ''})`
+        )
+      );
+      this.settleConnection();
       callbacks?.onClose?.(message.code, message.reason);
     };
     this.client.onerror = (message) => callbacks?.onError?.(message);
@@ -70,9 +79,13 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
     this.client.onmessage = (message) => this.dispatchNotification(message);
     this.client.onopen = () => this.setupConnection(agentToken);
 
-    this.connectionPromise = new Promise<void>((resolve) => {
+    this.connectionPromise = new Promise<void>((resolve, reject) => {
       this.resolveConnectionPromise = resolve;
+      this.rejectConnectionPromise = reject;
     });
+    // Guard against an unhandled rejection when the agent is constructed directly
+    // without awaiting `awaitConnected`; callers that do await still see the error.
+    this.connectionPromise.catch(() => {});
   }
 
   /**
@@ -210,10 +223,13 @@ export class FishjamAgent extends (EventEmitter as new () => TypedEmitter<AgentE
 
     this.client.send(auth);
 
-    if (this.resolveConnectionPromise) {
-      this.resolveConnectionPromise();
-      this.resolveConnectionPromise = null;
-    }
+    this.resolveConnectionPromise?.();
+    this.settleConnection();
+  }
+
+  private settleConnection(): void {
+    this.resolveConnectionPromise = null;
+    this.rejectConnectionPromise = null;
   }
 
   private isExpectedEvent(notification: string): notification is ExpectedAgentEvents {
