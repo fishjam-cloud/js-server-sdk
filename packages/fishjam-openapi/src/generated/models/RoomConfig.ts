@@ -65,9 +65,10 @@ export interface RoomConfig {
      */
     videoCodec?: VideoCodec;
     /**
-     * URL where Fishjam notifications will be sent
+     * Deprecated: configure the webhook in the Dashboard instead. URL where Fishjam notifications will be sent; overrides the Dashboard-configured webhook URL
      * @type {string}
      * @memberof RoomConfig
+     * @deprecated
      */
     webhookUrl?: string | null;
 }

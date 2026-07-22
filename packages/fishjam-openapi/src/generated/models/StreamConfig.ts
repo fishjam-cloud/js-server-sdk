@@ -38,9 +38,10 @@ export interface StreamConfig {
      */
     public?: boolean;
     /**
-     * Webhook URL for receiving server notifications
+     * Deprecated: configure the webhook in the Dashboard instead. Webhook URL for receiving server notifications; overrides the Dashboard-configured webhook URL
      * @type {string}
      * @memberof StreamConfig
+     * @deprecated
      */
     webhookUrl?: string | null;
 }
