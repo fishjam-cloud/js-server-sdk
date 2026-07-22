@@ -1,5 +1,6 @@
 apis/CredentialsApi.ts
 apis/MoQApi.ts
+apis/RecordingsApi.ts
 apis/RoomsApi.ts
 apis/StreamersApi.ts
 apis/StreamsApi.ts
@@ -11,6 +12,7 @@ models/AgentOutput.ts
 models/AudioFormat.ts
 models/AudioSampleRate.ts
 models/CompositionInfo.ts
+models/CompositionSource.ts
 models/ModelError.ts
 models/MoqAccess.ts
 models/MoqAccessConfig.ts
@@ -28,6 +30,12 @@ models/PeerRefreshTokenResponse.ts
 models/PeerRefreshTokenResponseData.ts
 models/PeerStatus.ts
 models/PeerType.ts
+models/Recording.ts
+models/RecordingConfig.ts
+models/RecordingDetailsResponse.ts
+models/RecordingListResponse.ts
+models/RecordingSource.ts
+models/RecordingStatus.ts
 models/Room.ts
 models/RoomConfig.ts
 models/RoomCreateDetailsResponse.ts
