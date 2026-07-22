@@ -189,7 +189,7 @@ export class FishjamClient {
         peerConfig: { type: 'agent', options },
       });
 
-      const agent = new FishjamAgent(this.fishjamConfig, data.token, callbacks);
+      const agent = new FishjamAgent(this.fishjamConfig, data.token, callbacks, data.peer_websocket_url);
       await agent.awaitConnected();
 
       return { agent: agent, peer: data.peer as Peer };

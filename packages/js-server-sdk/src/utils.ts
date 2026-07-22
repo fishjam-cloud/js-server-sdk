@@ -18,3 +18,16 @@ export const getFishjamUrl = (config: FishjamConfig) => {
     return `https://fishjam.io/api/v1/connect/${config.fishjamId}`;
   }
 };
+
+const AGENT_SOCKET_PATH = '/socket/agent/websocket';
+
+export const getAgentWebsocketUrl = (config: FishjamConfig, peerWebsocketUrl?: string): string => {
+  if (peerWebsocketUrl) {
+    // The server may return the address without a scheme (e.g. `host/socket/peer/websocket`).
+    const url = new URL(peerWebsocketUrl.includes('://') ? peerWebsocketUrl : `https://${peerWebsocketUrl}`);
+    url.protocol = url.protocol.replace('http', 'ws');
+    url.pathname = url.pathname.replace(/\/socket\/peer\/websocket$/, AGENT_SOCKET_PATH);
+    return url.href;
+  }
+  return `${httpToWebsocket(getFishjamUrl(config))}${AGENT_SOCKET_PATH}`;
+};
