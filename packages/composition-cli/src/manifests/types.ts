@@ -10,4 +10,5 @@ export interface Manifest {
     jsxImportSource: string;
   };
   scaffoldDevDependencies: Record<string, string>;
+  scaffoldCliVersionDevDependencies: string[];
 }

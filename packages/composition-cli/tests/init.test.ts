@@ -25,6 +25,7 @@ describe('scaffoldTemplate', () => {
     expect(pkg.scripts.build).toContain('composition-cli build');
     expect(pkg.devDependencies).toMatchObject(manifest.scaffoldDevDependencies);
     expect(pkg.devDependencies['@fishjam-cloud/composition-cli']).toBe('1.2.3');
+    expect(pkg.devDependencies['@fishjam-cloud/composition']).toBe('1.2.3');
 
     const tsconfig = JSON.parse(await readFile(join(target, 'tsconfig.json'), 'utf8'));
     expect(tsconfig.compilerOptions.jsx).toBe('react-jsx');
@@ -37,6 +38,12 @@ describe('scaffoldTemplate', () => {
     const gitignore = await readFile(join(target, '.gitignore'), 'utf8');
     expect(gitignore).toContain('node_modules');
     expect(gitignore).toContain('dist');
+  });
+
+  it('never pins a fishjam package to a hardcoded version', async () => {
+    expect(Object.keys(manifest.scaffoldDevDependencies).filter((name) => name.startsWith('@fishjam-cloud/'))).toEqual(
+      []
+    );
   });
 
   it('normalizes the directory name into a valid npm package name', async () => {
