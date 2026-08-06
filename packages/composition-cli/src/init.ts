@@ -45,7 +45,7 @@ export async function scaffoldTemplate(dir: string, manifest: Manifest, cliVersi
     },
     devDependencies: sortKeys({
       ...manifest.scaffoldDevDependencies,
-      '@fishjam-cloud/composition-cli': cliVersion,
+      ...Object.fromEntries(manifest.scaffoldCliVersionDevDependencies.map((name) => [name, cliVersion])),
     }),
   };
 

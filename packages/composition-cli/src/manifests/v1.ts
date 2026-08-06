@@ -18,10 +18,10 @@ export const v1: Manifest = {
     jsxImportSource: 'react',
   },
   scaffoldDevDependencies: {
-    '@fishjam-cloud/composition': '0.29.0-rc.2',
     '@swmansion/smelter': '0.3.0',
     '@types/react': '^18.3.0',
     react: '^18.3.1',
     typescript: '^5.6.0',
   },
+  scaffoldCliVersionDevDependencies: ['@fishjam-cloud/composition', '@fishjam-cloud/composition-cli'],
 };
