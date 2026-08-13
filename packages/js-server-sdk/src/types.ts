@@ -57,6 +57,16 @@ export type TrackType = OpenApiTrackType | 'unspecified';
  */
 export type VadStatus = 'speech' | 'silence';
 
+/**
+ * ID of a recording.
+ */
+export type RecordingId = Brand<string, 'RecordingId'>;
+
+/**
+ * Status of a recording as emitted by {@link FishjamWSNotifier}.
+ */
+export type RecordingStatus = 'active' | 'finished' | 'available' | 'failed';
+
 export type Room = {
   id: RoomId;
   peers: Peer[];

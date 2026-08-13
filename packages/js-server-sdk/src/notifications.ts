@@ -1,13 +1,15 @@
 import {
   ServerMessage,
   ServerMessage_PeerType,
+  ServerMessage_RecordingStatusChanged,
+  ServerMessage_RecordingStatusChanged_Status,
   ServerMessage_TrackForwarding,
   ServerMessage_VadNotification,
   ServerMessage_VadNotification_Status,
   TrackType as ProtoTrackType,
   Track as ProtoTrack,
 } from '@fishjam-cloud/fishjam-proto';
-import { Override, PeerId, PeerType, RoomId, TrackType, VadStatus } from './types';
+import { Override, PeerId, PeerType, RecordingId, RecordingStatus, RoomId, TrackType, VadStatus } from './types';
 
 /**
  * Track payload embedded in {@link TrackAdded}, {@link TrackRemoved}, {@link TrackMetadataUpdated}.
@@ -40,6 +42,14 @@ const vadStatusMap: Record<ServerMessage_VadNotification_Status, VadStatus> = {
   [ServerMessage_VadNotification_Status.UNRECOGNIZED]: 'silence',
 };
 
+const recordingStatusMap: Record<ServerMessage_RecordingStatusChanged_Status, RecordingStatus> = {
+  [ServerMessage_RecordingStatusChanged_Status.STATUS_ACTIVE]: 'active',
+  [ServerMessage_RecordingStatusChanged_Status.STATUS_FINISHED]: 'finished',
+  [ServerMessage_RecordingStatusChanged_Status.STATUS_AVAILABLE]: 'available',
+  [ServerMessage_RecordingStatusChanged_Status.STATUS_FAILED]: 'failed',
+  [ServerMessage_RecordingStatusChanged_Status.UNRECOGNIZED]: 'active',
+};
+
 export const expectedEventsList = [
   'roomCreated',
   'roomDeleted',
@@ -62,6 +72,7 @@ export const expectedEventsList = [
   'vadNotification',
   'channelAdded',
   'channelRemoved',
+  'recordingStatusChanged',
 ] as const;
 
 export type ExpectedEvents = (typeof expectedEventsList)[number];
@@ -93,7 +104,9 @@ export type IgnoredEvents = (typeof ignoredEventsList)[number];
 /**
  * Field-level overrides applied to every notification payload: branded ID types
  * and the user-facing enums replace their raw protobuf counterparts. {@link Override}
- * only swaps keys that exist on the source type, so a single map covers all variants.
+ * only swaps keys that exist on the source type, so a single map covers all variants
+ * except `recordingStatusChanged`, whose `status` has its own meaning
+ * (see {@link RecordingOverrides}).
  *
  * @inline
  */
@@ -107,8 +120,23 @@ type NotificationOverrides = {
   status: VadStatus;
 };
 
+/**
+ * Overrides for {@link Notifications.recordingStatusChanged}, kept separate from
+ * {@link NotificationOverrides} because its `status` field is a {@link RecordingStatus},
+ * not a {@link VadStatus}.
+ *
+ * @inline
+ */
+type RecordingOverrides = {
+  recordingId: RecordingId;
+  status: RecordingStatus;
+};
+
 /** @inline */
-type Notification<K extends keyof ServerMessage> = Override<NonNullable<ServerMessage[K]>, NotificationOverrides>;
+type Notification<K extends keyof ServerMessage, TOverrides = NotificationOverrides> = Override<
+  NonNullable<ServerMessage[K]>,
+  TOverrides
+>;
 
 /**
  * @inline
@@ -135,6 +163,7 @@ export type Notifications = {
   vadNotification: Notification<'vadNotification'>;
   channelAdded: Notification<'channelAdded'>;
   channelRemoved: Notification<'channelRemoved'>;
+  recordingStatusChanged: Notification<'recordingStatusChanged', RecordingOverrides>;
 };
 
 export type RoomCreated = Notifications['roomCreated'];
@@ -158,6 +187,7 @@ export type TrackForwardingRemoved = Notifications['trackForwardingRemoved'];
 export type VadNotification = Notifications['vadNotification'];
 export type ChannelAdded = Notifications['channelAdded'];
 export type ChannelRemoved = Notifications['channelRemoved'];
+export type RecordingStatusChanged = Notifications['recordingStatusChanged'];
 
 export const peerEventsWithPeerType = new Set<ExpectedEvents>([
   'peerAdded',
@@ -189,6 +219,10 @@ export const mapNotification = (event: ExpectedEvents, msg: unknown): unknown =>
   if (event === 'vadNotification') {
     const vad = msg as ServerMessage_VadNotification;
     return { ...vad, status: vadStatusMap[vad.status] };
+  }
+  if (event === 'recordingStatusChanged') {
+    const recording = msg as ServerMessage_RecordingStatusChanged;
+    return { ...recording, status: recordingStatusMap[recording.status] };
   }
   return msg;
 };

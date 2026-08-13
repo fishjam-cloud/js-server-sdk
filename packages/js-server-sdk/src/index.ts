@@ -50,6 +50,7 @@ export type {
   VadNotification,
   ChannelAdded,
   ChannelRemoved,
+  RecordingStatusChanged,
   NotificationEvents,
 } from './notifications';
 export { FishjamAgent } from './agent';
