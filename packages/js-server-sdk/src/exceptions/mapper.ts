@@ -5,6 +5,7 @@ import {
   InvalidFishjamCredentialsException,
   PeerNotFoundException,
   QuotaExceededException,
+  RecordingNotFoundException,
   RoomNotFoundException,
   ServiceUnavailableException,
   UnauthorizedException,
@@ -12,7 +13,7 @@ import {
   type FishjamExceptionInfo,
 } from '.';
 
-type Entity = 'peer' | 'room' | 'credentials';
+type Entity = 'peer' | 'room' | 'credentials' | 'recording';
 
 const notFoundException = (info: FishjamExceptionInfo, entity?: Entity) => {
   switch (entity) {
@@ -20,6 +21,8 @@ const notFoundException = (info: FishjamExceptionInfo, entity?: Entity) => {
       return new InvalidFishjamCredentialsException(info);
     case 'peer':
       return new PeerNotFoundException(info);
+    case 'recording':
+      return new RecordingNotFoundException(info);
     case 'room':
       return new RoomNotFoundException(info);
     default:

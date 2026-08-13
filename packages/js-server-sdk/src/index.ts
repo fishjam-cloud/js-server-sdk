@@ -19,6 +19,8 @@ export {
   StreamerToken,
   MoqAccess,
   MoqAccessConfig,
+  RecordingConfig,
+  RecordingSource,
 } from '@fishjam-cloud/fishjam-openapi';
 
 export { ServerMessage } from '@fishjam-cloud/fishjam-proto';

@@ -1,6 +1,7 @@
 import {
   Peer as OpenApiPeer,
   PeerType as OpenApiPeerType,
+  Recording as OpenApiRecording,
   RoomConfig,
   TrackType as OpenApiTrackType,
 } from '@fishjam-cloud/fishjam-openapi';
@@ -59,13 +60,19 @@ export type VadStatus = 'speech' | 'silence';
 
 /**
  * ID of a recording.
+ * Recording can be started with {@link FishjamClient.createRecording}.
  */
 export type RecordingId = Brand<string, 'RecordingId'>;
 
 /**
- * Status of a recording as emitted by {@link FishjamWSNotifier}.
+ * Lifecycle status of a recording, as returned by the REST API and emitted by {@link FishjamWSNotifier}.
  */
 export type RecordingStatus = 'active' | 'finished' | 'available' | 'failed';
+
+/**
+ * A recording and its current lifecycle status.
+ */
+export type Recording = Override<OpenApiRecording, { id: RecordingId; status: RecordingStatus }>;
 
 export type Room = {
   id: RoomId;

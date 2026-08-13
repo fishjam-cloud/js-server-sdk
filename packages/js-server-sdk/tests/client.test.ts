@@ -5,9 +5,10 @@ import {
   RoomNotFoundException,
   PeerNotFoundException,
   FishjamNotFoundException,
+  RecordingNotFoundException,
 } from '../src/exceptions';
 import { RoomType } from '@fishjam-cloud/fishjam-openapi';
-import type { RoomId, PeerId } from '../src/types';
+import type { RoomId, PeerId, RecordingId } from '../src/types';
 
 const FISHJAM_ID = process.env.FISHJAM_ID!;
 const FISHJAM_MANAGEMENT_TOKEN = process.env.FISHJAM_MANAGEMENT_TOKEN!;
@@ -189,6 +190,41 @@ describe('createLivestreamViewerToken', () => {
     const room = await client.createRoom();
 
     await expect(client.createLivestreamViewerToken(room.id)).rejects.toThrow(FishjamNotFoundException);
+  });
+});
+
+describe('getAllRecordings', () => {
+  it('returns an array', async () => {
+    const client = createClient();
+    const recordings = await client.getAllRecordings();
+
+    expect(Array.isArray(recordings)).toBe(true);
+  });
+
+  it('throws UnauthorizedException with invalid management token', async () => {
+    const client = createClient('invalid');
+
+    await expect(client.getAllRecordings()).rejects.toThrow(UnauthorizedException);
+  });
+});
+
+describe('getRecording', () => {
+  it('throws RecordingNotFoundException for a non-existent recording id', async () => {
+    const client = createClient();
+
+    await expect(client.getRecording('515c8b52-168b-4b39-a227-4d6b4f102a56' as unknown as RecordingId)).rejects.toThrow(
+      RecordingNotFoundException
+    );
+  });
+});
+
+describe('stopRecording', () => {
+  it('throws RecordingNotFoundException for a non-existent recording id', async () => {
+    const client = createClient();
+
+    await expect(
+      client.stopRecording('515c8b52-168b-4b39-a227-4d6b4f102a56' as unknown as RecordingId)
+    ).rejects.toThrow(RecordingNotFoundException);
   });
 });
 

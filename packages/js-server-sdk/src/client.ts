@@ -11,8 +11,10 @@ import {
   PeerOptionsAgent,
   MoqAccessConfig,
   type Middleware,
+  RecordingsApi,
+  RecordingConfig,
 } from '@fishjam-cloud/fishjam-openapi';
-import type { AgentCallbacks, FishjamConfig, PeerId, Room, RoomId, Peer } from './types';
+import type { AgentCallbacks, FishjamConfig, PeerId, Recording, RecordingId, Room, RoomId, Peer } from './types';
 import { mapException } from './exceptions/mapper';
 import { getFishjamUrl } from './utils';
 import { FishjamAgent, TrackId } from './agent';
@@ -29,6 +31,7 @@ export class FishjamClient {
   private readonly viewerApi: ViewersApi;
   private readonly streamerApi: StreamersApi;
   private readonly credentialsApi: CredentialsApi;
+  private readonly recordingsApi: RecordingsApi;
   private readonly fishjamConfig: FishjamConfig;
   private deprecationWarningShown: boolean = false;
 
@@ -69,6 +72,7 @@ export class FishjamClient {
     this.viewerApi = new ViewersApi(apiConfig);
     this.streamerApi = new StreamersApi(apiConfig);
     this.credentialsApi = new CredentialsApi(apiConfig);
+    this.recordingsApi = new RecordingsApi(apiConfig);
     this.fishjamConfig = config;
   }
 
@@ -312,6 +316,74 @@ export class FishjamClient {
       return await this.moqApi.createMoqAccess({ moqAccessConfig: config });
     } catch (error) {
       throw await mapException(error);
+    }
+  }
+
+  /**
+   * Create a new recording. Capturing starts synchronously, so the returned recording is `active`.
+   */
+  async createRecording(config: RecordingConfig): Promise<Recording> {
+    try {
+      const { data } = await this.recordingsApi.createRecording({ recordingConfig: config });
+      return data as Recording;
+    } catch (error) {
+      throw await mapException(error);
+    }
+  }
+
+  /**
+   * Get details about a given recording.
+   */
+  async getRecording(recordingId: RecordingId): Promise<Recording> {
+    try {
+      const { data } = await this.recordingsApi.getRecording({ recordingId });
+      return data as Recording;
+    } catch (error) {
+      throw await mapException(error, 'recording');
+    }
+  }
+
+  /**
+   * Get a list of all recordings, optionally filtered by metadata.
+   * Returns recordings whose metadata contains all the given key-value pairs.
+   */
+  async getAllRecordings(metadata?: Record<string, unknown>): Promise<Recording[]> {
+    // the API expects the deepObject query format (`metadata[key]=value`), but the generated
+    // client serializes the filter keys at the top level, so prefix them here
+    const metadataQuery = metadata
+      ? Object.fromEntries(Object.entries(metadata).map(([key, value]) => [`metadata[${key}]`, value]))
+      : undefined;
+
+    try {
+      const { data } = await this.recordingsApi.listRecordings({ metadata: metadataQuery });
+      return (data as Recording[]) ?? [];
+    } catch (error) {
+      throw await mapException(error);
+    }
+  }
+
+  /**
+   * Stop an active recording. Finalization is asynchronous: the recording stays `active` until
+   * the capture is finalized, then becomes `finished`. Stopping a recording that is no longer active is a no-op.
+   */
+  async stopRecording(recordingId: RecordingId): Promise<Recording> {
+    try {
+      const { data } = await this.recordingsApi.stopRecording({ recordingId });
+      return data as Recording;
+    } catch (error) {
+      throw await mapException(error, 'recording');
+    }
+  }
+
+  /**
+   * Delete a recording. Its stored media is removed asynchronously.
+   * A recording that is still `active` cannot be deleted — stop it first or wait for it to finish.
+   */
+  async deleteRecording(recordingId: RecordingId): Promise<void> {
+    try {
+      await this.recordingsApi.deleteRecording({ recordingId });
+    } catch (error) {
+      throw await mapException(error, 'recording');
     }
   }
 }
