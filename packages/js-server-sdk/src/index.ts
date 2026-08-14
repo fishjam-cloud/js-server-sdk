@@ -19,6 +19,8 @@ export {
   StreamerToken,
   MoqAccess,
   MoqAccessConfig,
+  RecordingConfig,
+  RecordingSource,
 } from '@fishjam-cloud/fishjam-openapi';
 
 export { ServerMessage } from '@fishjam-cloud/fishjam-proto';
@@ -50,6 +52,7 @@ export type {
   VadNotification,
   ChannelAdded,
   ChannelRemoved,
+  RecordingStatusChanged,
   NotificationEvents,
 } from './notifications';
 export { FishjamAgent } from './agent';

@@ -1,6 +1,7 @@
 import { describe, it, expect, expectTypeOf } from 'vitest';
 import {
   ServerMessage,
+  ServerMessage_RecordingStatusChanged_Status,
   ServerMessage_VadNotification_Status,
   TrackType as ProtoTrackType,
 } from '@fishjam-cloud/fishjam-proto';
@@ -11,10 +12,12 @@ import {
   peerEventsWithPeerType,
   trackEvents,
 } from '../src/notifications';
+import { StaleSdkException } from '../src/exceptions';
 import type {
   ExpectedEvents,
   IgnoredEvents,
   Notifications,
+  RecordingStatusChanged,
   TrackForwarding,
   ServerNotification,
   VadNotification,
@@ -71,6 +74,7 @@ describe('notifications module', () => {
     expectTypeOf<SDK.TrackForwarding>().toEqualTypeOf<Notifications['trackForwarding']>();
     expectTypeOf<SDK.TrackForwardingRemoved>().toEqualTypeOf<Notifications['trackForwardingRemoved']>();
     expectTypeOf<SDK.VadNotification>().toEqualTypeOf<Notifications['vadNotification']>();
+    expectTypeOf<SDK.RecordingStatusChanged>().toEqualTypeOf<Notifications['recordingStatusChanged']>();
   });
 
   it('trackForwarding and vadNotification are expected, not ignored', () => {
@@ -145,6 +149,54 @@ describe('notifications module', () => {
       status: ServerMessage_VadNotification_Status.UNRECOGNIZED,
     };
     expect((mapNotification('vadNotification', unrecognized) as VadNotification).status).toBe('silence');
+  });
+
+  it('maps recordingStatusChanged status to the friendly union, keeping metadata as a JSON string', () => {
+    const decode = (status: ServerMessage_RecordingStatusChanged_Status) =>
+      ServerMessage.decode(
+        ServerMessage.encode({
+          recordingStatusChanged: { recordingId: 'rec1', status, metadata: '{"session":"s1"}' },
+        }).finish()
+      ).recordingStatusChanged;
+
+    const finished = mapNotification(
+      'recordingStatusChanged',
+      decode(ServerMessage_RecordingStatusChanged_Status.STATUS_FINISHED)
+    ) as RecordingStatusChanged;
+    expect(finished.status).toBe('finished');
+    expect(finished.recordingId).toBe('rec1');
+    expect(finished.metadata).toBe('{"session":"s1"}');
+
+    const statuses = [
+      [ServerMessage_RecordingStatusChanged_Status.STATUS_ACTIVE, 'active'],
+      [ServerMessage_RecordingStatusChanged_Status.STATUS_AVAILABLE, 'available'],
+      [ServerMessage_RecordingStatusChanged_Status.STATUS_FAILED, 'failed'],
+    ] as const;
+    for (const [wireStatus, expected] of statuses) {
+      expect((mapNotification('recordingStatusChanged', decode(wireStatus)) as RecordingStatusChanged).status).toBe(
+        expected
+      );
+    }
+  });
+
+  it('throws StaleSdkException on statuses this SDK cannot parse', () => {
+    const decode = (status: ServerMessage_RecordingStatusChanged_Status) =>
+      ServerMessage.decode(
+        ServerMessage.encode({
+          recordingStatusChanged: { recordingId: 'rec1', status, metadata: '' },
+        }).finish()
+      ).recordingStatusChanged;
+
+    const unparsable = [
+      ServerMessage_RecordingStatusChanged_Status.STATUS_UNSPECIFIED,
+      ServerMessage_RecordingStatusChanged_Status.UNRECOGNIZED,
+      // A status added in a newer proto than this SDK was generated from
+      // arrives as its raw wire value.
+      42 as ServerMessage_RecordingStatusChanged_Status,
+    ];
+    for (const status of unparsable) {
+      expect(() => mapNotification('recordingStatusChanged', decode(status))).toThrow(StaleSdkException);
+    }
   });
 
   it('peerEventsWithPeerType covers all ExpectedEvents with a peerType field', () => {
