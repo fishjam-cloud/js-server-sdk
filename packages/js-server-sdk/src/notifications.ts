@@ -10,6 +10,7 @@ import {
   Track as ProtoTrack,
 } from '@fishjam-cloud/fishjam-proto';
 import { Override, PeerId, PeerType, RecordingId, RecordingStatus, RoomId, TrackType, VadStatus } from './types';
+import { StaleSdkException } from './exceptions';
 
 /**
  * Track payload embedded in {@link TrackAdded}, {@link TrackRemoved}, {@link TrackMetadataUpdated}.
@@ -42,12 +43,21 @@ const vadStatusMap: Record<ServerMessage_VadNotification_Status, VadStatus> = {
   [ServerMessage_VadNotification_Status.UNRECOGNIZED]: 'silence',
 };
 
-const recordingStatusMap: Record<ServerMessage_RecordingStatusChanged_Status, RecordingStatus> = {
-  [ServerMessage_RecordingStatusChanged_Status.STATUS_ACTIVE]: 'active',
-  [ServerMessage_RecordingStatusChanged_Status.STATUS_FINISHED]: 'finished',
-  [ServerMessage_RecordingStatusChanged_Status.STATUS_AVAILABLE]: 'available',
-  [ServerMessage_RecordingStatusChanged_Status.STATUS_FAILED]: 'failed',
-  [ServerMessage_RecordingStatusChanged_Status.UNRECOGNIZED]: 'active',
+// Throws instead of falling back: UNSPECIFIED, UNRECOGNIZED or an unknown wire value
+// all mean this SDK is likely too old to parse the statuses the server sends.
+const mapRecordingStatus = (status: ServerMessage_RecordingStatusChanged_Status): RecordingStatus => {
+  switch (status) {
+    case ServerMessage_RecordingStatusChanged_Status.STATUS_ACTIVE:
+      return 'active';
+    case ServerMessage_RecordingStatusChanged_Status.STATUS_FINISHED:
+      return 'finished';
+    case ServerMessage_RecordingStatusChanged_Status.STATUS_AVAILABLE:
+      return 'available';
+    case ServerMessage_RecordingStatusChanged_Status.STATUS_FAILED:
+      return 'failed';
+    default:
+      throw new StaleSdkException(status);
+  }
 };
 
 export const expectedEventsList = [
@@ -222,7 +232,7 @@ export const mapNotification = (event: ExpectedEvents, msg: unknown): unknown =>
   }
   if (event === 'recordingStatusChanged') {
     const recording = msg as ServerMessage_RecordingStatusChanged;
-    return { ...recording, status: recordingStatusMap[recording.status] };
+    return { ...recording, status: mapRecordingStatus(recording.status) };
   }
   return msg;
 };

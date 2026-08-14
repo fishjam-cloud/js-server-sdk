@@ -4,6 +4,17 @@ export class MissingFishjamIdException extends Error {
   }
 }
 
+export class StaleSdkException extends Error {
+  /** Raw wire value received from the server. */
+  status: number;
+  constructor(status: number) {
+    super(
+      `Received a recording status this SDK cannot parse (${status}). You are probably using an outdated version of @fishjam-cloud/js-server-sdk — please update it.`
+    );
+    this.status = status;
+  }
+}
+
 export interface FishjamExceptionInfo {
   message: string;
   statusCode?: number;

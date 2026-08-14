@@ -12,6 +12,7 @@ import {
   peerEventsWithPeerType,
   trackEvents,
 } from '../src/notifications';
+import { StaleSdkException } from '../src/exceptions';
 import type {
   ExpectedEvents,
   IgnoredEvents,
@@ -176,13 +177,26 @@ describe('notifications module', () => {
         expected
       );
     }
+  });
 
-    const unrecognized = {
-      recordingId: 'rec1',
-      status: ServerMessage_RecordingStatusChanged_Status.UNRECOGNIZED,
-      metadata: '',
-    };
-    expect((mapNotification('recordingStatusChanged', unrecognized) as RecordingStatusChanged).status).toBe('active');
+  it('throws StaleSdkException on statuses this SDK cannot parse', () => {
+    const decode = (status: ServerMessage_RecordingStatusChanged_Status) =>
+      ServerMessage.decode(
+        ServerMessage.encode({
+          recordingStatusChanged: { recordingId: 'rec1', status, metadata: '' },
+        }).finish()
+      ).recordingStatusChanged;
+
+    const unparsable = [
+      ServerMessage_RecordingStatusChanged_Status.STATUS_UNSPECIFIED,
+      ServerMessage_RecordingStatusChanged_Status.UNRECOGNIZED,
+      // A status added in a newer proto than this SDK was generated from
+      // arrives as its raw wire value.
+      42 as ServerMessage_RecordingStatusChanged_Status,
+    ];
+    for (const status of unparsable) {
+      expect(() => mapNotification('recordingStatusChanged', decode(status))).toThrow(StaleSdkException);
+    }
   });
 
   it('peerEventsWithPeerType covers all ExpectedEvents with a peerType field', () => {

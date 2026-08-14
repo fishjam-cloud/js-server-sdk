@@ -378,10 +378,11 @@ export interface ServerMessage_RecordingStatusChanged {
 }
 
 export enum ServerMessage_RecordingStatusChanged_Status {
-  STATUS_ACTIVE = 0,
-  STATUS_FINISHED = 1,
-  STATUS_AVAILABLE = 2,
-  STATUS_FAILED = 3,
+  STATUS_UNSPECIFIED = 0,
+  STATUS_ACTIVE = 1,
+  STATUS_FINISHED = 2,
+  STATUS_AVAILABLE = 3,
+  STATUS_FAILED = 4,
   UNRECOGNIZED = -1,
 }
 
@@ -390,15 +391,18 @@ export function serverMessage_RecordingStatusChanged_StatusFromJSON(
 ): ServerMessage_RecordingStatusChanged_Status {
   switch (object) {
     case 0:
+    case 'STATUS_UNSPECIFIED':
+      return ServerMessage_RecordingStatusChanged_Status.STATUS_UNSPECIFIED;
+    case 1:
     case 'STATUS_ACTIVE':
       return ServerMessage_RecordingStatusChanged_Status.STATUS_ACTIVE;
-    case 1:
+    case 2:
     case 'STATUS_FINISHED':
       return ServerMessage_RecordingStatusChanged_Status.STATUS_FINISHED;
-    case 2:
+    case 3:
     case 'STATUS_AVAILABLE':
       return ServerMessage_RecordingStatusChanged_Status.STATUS_AVAILABLE;
-    case 3:
+    case 4:
     case 'STATUS_FAILED':
       return ServerMessage_RecordingStatusChanged_Status.STATUS_FAILED;
     case -1:
@@ -412,6 +416,8 @@ export function serverMessage_RecordingStatusChanged_StatusToJSON(
   object: ServerMessage_RecordingStatusChanged_Status
 ): string {
   switch (object) {
+    case ServerMessage_RecordingStatusChanged_Status.STATUS_UNSPECIFIED:
+      return 'STATUS_UNSPECIFIED';
     case ServerMessage_RecordingStatusChanged_Status.STATUS_ACTIVE:
       return 'STATUS_ACTIVE';
     case ServerMessage_RecordingStatusChanged_Status.STATUS_FINISHED:
