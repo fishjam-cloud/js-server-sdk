@@ -115,13 +115,6 @@ export type Mp4InputDurations = {
   audioDurationMs?: number;
 };
 
-/**
- * The port an RTMP input registered with {@link CompositionClient.registerRtmpInput} listens on.
- */
-export type RtmpInputPort = {
-  port?: number;
-};
-
 export type Room = {
   id: RoomId;
   peers: Peer[];

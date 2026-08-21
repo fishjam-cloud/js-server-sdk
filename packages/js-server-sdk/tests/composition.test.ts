@@ -135,14 +135,6 @@ describe('input variants', () => {
       audioDurationMs: 2000,
     });
   });
-
-  it('returns the port of an RTMP input', async () => {
-    stubFetch({ port: 5004 });
-
-    await expect(client().registerRtmpInput(COMPOSITION_ID, INPUT_ID, { streamKey: 'k' })).resolves.toEqual({
-      port: 5004,
-    });
-  });
 });
 
 describe('output variants', () => {

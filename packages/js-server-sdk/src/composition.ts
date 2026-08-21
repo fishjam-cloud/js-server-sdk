@@ -32,7 +32,6 @@ import type {
   Mp4InputDurations,
   OutputId,
   RendererId,
-  RtmpInputPort,
   WhipInputTarget,
 } from './types';
 import { getCompositionUrl, toBlob } from './utils';
@@ -195,17 +194,15 @@ export class CompositionClient {
   }
 
   /**
-   * Register an input that an RTMP publisher pushes media into.
-   * @returns the port the input listens on, when the server assigns one
+   * Register an input that an RTMP publisher pushes media into. The stream key identifies the
+   * input; the address to publish to belongs to the composition, not to this call.
    */
   async registerRtmpInput(
     compositionId: CompositionId,
     inputId: InputId,
     options: Omit<RtmpInput, 'type'>
-  ): Promise<RtmpInputPort> {
-    const { port } = await this.registerInput(compositionId, inputId, { ...options, type: 'rtmp_server' });
-
-    return { port: port ?? undefined };
+  ): Promise<void> {
+    await this.registerInput(compositionId, inputId, { ...options, type: 'rtmp_server' });
   }
 
   /**
