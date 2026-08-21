@@ -47,6 +47,14 @@ export class PeerNotFoundException extends FishjamBaseException {}
 
 export class RecordingNotFoundException extends FishjamBaseException {}
 
+export class CompositionNotFoundException extends FishjamBaseException {}
+
+export class InputNotFoundException extends FishjamBaseException {}
+
+export class OutputNotFoundException extends FishjamBaseException {}
+
+export class RendererNotFoundException extends FishjamBaseException {}
+
 export class ServiceUnavailableException extends FishjamBaseException {}
 
 export class QuotaExceededException extends FishjamBaseException {}

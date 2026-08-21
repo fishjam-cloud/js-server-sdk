@@ -1,3 +1,4 @@
+import { CompositionCreatedResponse } from '@fishjam-cloud/composition-openapi';
 import {
   Peer as OpenApiPeer,
   PeerType as OpenApiPeerType,
@@ -74,19 +75,81 @@ export type RecordingStatus = 'active' | 'finished' | 'available' | 'failed';
  */
 export type Recording = Override<OpenApiRecording, { id: RecordingId; status: RecordingStatus }>;
 
+/**
+ * ID of a composition.
+ * Composition can be created with {@link CompositionClient.createComposition}.
+ */
+export type CompositionId = Brand<string, 'CompositionId'>;
+
+/**
+ * ID of an input registered on a composition with {@link CompositionClient.registerInput}.
+ */
+export type InputId = Brand<string, 'InputId'>;
+
+/**
+ * ID of an output registered on a composition with {@link CompositionClient.registerOutput}.
+ */
+export type OutputId = Brand<string, 'OutputId'>;
+
+/**
+ * ID of a renderer, such as an image registered with {@link CompositionClient.registerImage}.
+ */
+export type RendererId = Brand<string, 'RendererId'>;
+
+export type Composition = Override<CompositionCreatedResponse, { compositionId: CompositionId }>;
+
+/**
+ * Where to publish a WHIP input registered with {@link CompositionClient.registerWhipInput}.
+ * Hand these to a WHIP publisher, such as `useLivestreamStreamer` in the React client SDK.
+ */
+export type WhipInputTarget = {
+  url: string;
+  bearerToken: string;
+};
+
+/**
+ * How much media an MP4 input registered with {@link CompositionClient.registerMp4Input} holds.
+ */
+export type Mp4InputDurations = {
+  videoDurationMs?: number;
+  audioDurationMs?: number;
+};
+
+/**
+ * The port an RTMP input registered with {@link CompositionClient.registerRtmpInput} listens on.
+ */
+export type RtmpInputPort = {
+  port?: number;
+};
+
 export type Room = {
   id: RoomId;
   peers: Peer[];
   config: RoomConfig;
 };
 
+export type CompositionConfig = {
+  /**
+   * Management token is a secret token authorizing to perform actions on your account.
+   * It is the same token {@link FishjamClient} is configured with.
+   * Never share this token with anyone.
+   * Visit https://fishjam.io/app/ to get your Management Token.
+   */
+  managementToken: string;
+  /**
+   * Address of the Composition API. Only needs setting when running against a
+   * deployment other than production.
+   */
+  compositionUrl?: string;
+};
+
 export type FishjamConfig = {
-  /*
+  /**
    * Fishjam ID is a unique identifier for your account and environment.
    * Visit https://fishjam.io/app/ to get your Fishjam ID.
    */
   fishjamId: string;
-  /*
+  /**
    * Management token is a secret token authorizing to perform actions on your account.
    * Never share this token with anyone.
    * Visit https://fishjam.io/app/ to get your Management Token.
