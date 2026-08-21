@@ -1,0 +1,48 @@
+{
+  "name": "@fishjam-cloud/composition-openapi",
+  "version": "0.29.0",
+  "private": true,
+  "description": "Composition OpenAPI",
+  "homepage": "https://github.com/fishjam-cloud/js-server-sdk",
+  "author": "Fishjam Team",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fishjam-cloud/js-server-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fishjam-cloud/js-server-sdk/issues"
+  },
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "codegen": "sh openapi.sh",
+    "build": "tsup",
+    "typecheck": "tsc --noEmit"
+  },
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "dts": true,
+    "minify": false,
+    "format": [
+      "esm"
+    ],
+    "outDir": "dist"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.18.4",
+    "tsup": "^8.4.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,5 +1,8 @@
+import { readFile } from 'node:fs/promises';
 import { MissingFishjamIdException } from './exceptions';
-import type { FishjamConfig } from './types';
+import type { CompositionConfig, FishjamConfig } from './types';
+
+const FISHJAM_URL = 'https://fishjam.io';
 
 export const httpToWebsocket = (httpUrl: string) => {
   const url = new URL(httpUrl);
@@ -15,7 +18,7 @@ export const getFishjamUrl = (config: FishjamConfig) => {
   try {
     return new URL(config.fishjamId).href;
   } catch {
-    return `https://fishjam.io/api/v1/connect/${config.fishjamId}`;
+    return `${FISHJAM_URL}/api/v1/connect/${config.fishjamId}`;
   }
 };
 
@@ -31,3 +34,14 @@ export const getAgentWebsocketUrl = (config: FishjamConfig, peerWebsocketUrl?: s
   }
   return `${httpToWebsocket(getFishjamUrl(config))}${AGENT_SOCKET_PATH}`;
 };
+
+const COMPOSITION_URL = 'https://rtc.fishjam.io';
+
+export const getCompositionUrl = (config: CompositionConfig) =>
+  new URL(config.compositionUrl ?? COMPOSITION_URL).origin;
+
+export const toBlob = async (file: Blob | string): Promise<Blob> =>
+  typeof file === 'string' ? new Blob([await readFile(file)]) : file;
+
+export const getLivestreamWhipUrl = (config: FishjamConfig) =>
+  `${new URL(getFishjamUrl(config)).origin}/api/v1/live/api/whip`;

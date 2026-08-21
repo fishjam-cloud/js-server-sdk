@@ -3,6 +3,10 @@ import { ResponseError, FetchError } from '@fishjam-cloud/fishjam-openapi';
 import { mapException } from '../src/exceptions/mapper';
 import {
   BadRequestException,
+  CompositionNotFoundException,
+  InputNotFoundException,
+  OutputNotFoundException,
+  RendererNotFoundException,
   FishjamBaseException,
   FishjamNotFoundException,
   InvalidFishjamCredentialsException,
@@ -16,6 +20,17 @@ import {
 
 const responseError = (status: number, body?: Record<string, string>) =>
   new ResponseError(new Response(body === undefined ? null : JSON.stringify(body), { status }));
+
+describe('mapException entity mapping', () => {
+  it.each([
+    ['composition', CompositionNotFoundException],
+    ['input', InputNotFoundException],
+    ['output', OutputNotFoundException],
+    ['renderer', RendererNotFoundException],
+  ] as const)('maps a 404 for %s', async (entity, expected) => {
+    await expect(mapException(responseError(404), entity)).resolves.toBeInstanceOf(expected);
+  });
+});
 
 describe('mapException status mapping', () => {
   it.each([

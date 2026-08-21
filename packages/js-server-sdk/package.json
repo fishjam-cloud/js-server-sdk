@@ -51,6 +51,7 @@
       "src/proto.ts"
     ],
     "noExternal": [
+      "composition-openapi",
       "fishjam-openapi",
       "fishjam-proto"
     ],
@@ -76,6 +77,7 @@
     }
   },
   "devDependencies": {
+    "@fishjam-cloud/composition-openapi": "workspace:*",
     "@fishjam-cloud/fishjam-openapi": "workspace:*",
     "@fishjam-cloud/fishjam-proto": "workspace:*",
     "@openapitools/openapi-generator-cli": "^2.18.4",
