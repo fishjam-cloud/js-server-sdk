@@ -95,14 +95,14 @@ describe('input variants', () => {
     expect(target.url).toBe('http://localhost:8000/api/composition/comp-1/whip/cam');
   });
 
-  it('keeps a caller-supplied WHIP token', async () => {
-    stubFetch({ endpoint_route: '/whip/cam' });
+  it('returns the token the server echoes for a caller-supplied one', async () => {
+    stubFetch({ bearer_token: 'mine', endpoint_route: '/whip/cam' });
     const target = await client().registerWhipInput(COMPOSITION_ID, INPUT_ID, { bearerToken: 'mine' });
 
     expect(target.bearerToken).toBe('mine');
   });
 
-  it('throws when neither the caller nor the server provides a WHIP token', async () => {
+  it('throws when the server returns no WHIP token', async () => {
     stubFetch({ endpoint_route: '/whip/cam' });
 
     await expect(client().registerWhipInput(COMPOSITION_ID, INPUT_ID)).rejects.toThrow(UnknownException);

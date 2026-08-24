@@ -154,8 +154,7 @@ export class CompositionClient {
       type: 'whip_server',
     });
 
-    const token = bearerToken ?? options.bearerToken;
-    if (!token) {
+    if (!bearerToken) {
       throw new UnknownException({
         message: `Could not obtain a publishing token for input "${inputId}", retry or report it`,
       });
@@ -164,7 +163,7 @@ export class CompositionClient {
     const route = endpointRoute || `/whip/${encodeURIComponent(inputId)}`;
     const url = `${this.compositionUrl(compositionId)}/${route.replace(/^\//, '')}`;
 
-    return { url, bearerToken: token };
+    return { url, bearerToken };
   }
 
   /**
