@@ -56,6 +56,7 @@ export class CompositionService {
         endpointUrl,
         bearerToken,
         video: { resolution: OUTPUT_RESOLUTION, initial: { root: { type: 'view' } } },
+        audio: { initial: { inputs: [] } },
       },
       TEMPLATE_BUNDLE
     );
