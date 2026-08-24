@@ -15,9 +15,15 @@ export class FishjamService {
   static async create(config: FishjamConfig): Promise<FishjamService> {
     const fishjam = await FishjamClient.create(config);
     const room = await fishjam.createRoom();
-    const livestream = await fishjam.createRoom({ roomType: 'livestream' });
 
-    return new FishjamService(fishjam, room.id, livestream.id);
+    try {
+      const livestream = await fishjam.createRoom({ roomType: 'livestream' });
+
+      return new FishjamService(fishjam, room.id, livestream.id);
+    } catch (error) {
+      await fishjam.deleteRoom(room.id);
+      throw error;
+    }
   }
 
   async createPeer() {

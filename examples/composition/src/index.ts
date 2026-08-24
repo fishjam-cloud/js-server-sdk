@@ -19,8 +19,10 @@ const fishjam = await FishjamService.create({
 let composition: CompositionService | undefined;
 
 const cleanup = async () => {
-  await composition?.cleanup();
-  await fishjam.cleanup();
+  const results = await Promise.allSettled([composition?.cleanup(), fishjam.cleanup()]);
+  const failure = results.find((result) => result.status === 'rejected');
+
+  if (failure) throw failure.reason;
 };
 
 try {
@@ -45,9 +47,11 @@ console.log('press Enter to change the scene');
 const scenes = createInterface({ input: process.stdin });
 let sceneIndex = 0;
 
-scenes.on('line', async () => {
-  const { layout, background } = await composition!.showScene(++sceneIndex);
-  console.log(`scene: ${layout} on ${background}`);
+scenes.on('line', () => {
+  composition!
+    .showScene(++sceneIndex)
+    .then(({ layout, background }) => console.log(`scene: ${layout} on ${background}`))
+    .catch((error) => console.error('failed to change the scene:', error));
 });
 
 const teardown = () => {
