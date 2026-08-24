@@ -47,7 +47,12 @@ export class FishjamService {
   }
 
   async cleanup() {
-    await this.fishjam.deleteRoom(this.roomId);
-    await this.fishjam.deleteRoom(this.livestreamId);
+    const results = await Promise.allSettled([
+      this.fishjam.deleteRoom(this.roomId),
+      this.fishjam.deleteRoom(this.livestreamId),
+    ]);
+    const failure = results.find((result) => result.status === 'rejected');
+
+    if (failure) throw failure.reason;
   }
 }

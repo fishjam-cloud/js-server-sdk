@@ -2,6 +2,8 @@ import type { OutputId, RendererId } from '@fishjam-cloud/js-server-sdk';
 
 export const PORT = 3000;
 
+export const HOSTNAME = '127.0.0.1';
+
 export const PREVIEW_OUTPUT_ID = 'preview' as OutputId;
 
 export const FONT_ID = 'inter' as RendererId;

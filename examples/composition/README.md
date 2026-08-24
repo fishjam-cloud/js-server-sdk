@@ -24,8 +24,8 @@ yarn dev
 This bundles `template/App.tsx` into the template the composition renders, creates the room, the livestream
 and the composition, uploads the bundle with the composition's output, and then serves peer and viewer tokens. Requires Node 23 or newer, which runs the TypeScript sources directly.
 
-When the server is running, you can obtain peer tokens by going to <http://localhost:3000/peers>, and a
-livestream viewer token from <http://localhost:3000/viewer>.
+When the server is running, you can obtain peer tokens by going to <http://127.0.0.1:3000/peers>, and a
+livestream viewer token from <http://127.0.0.1:3000/viewer>.
 
 Connect peers with the [fishjam minimal-react example](https://github.com/fishjam-cloud/web-client-sdk/tree/main/examples/react-client)
 and watch the composed result with a livestream viewer. Press Ctrl+C to delete the composition and its rooms.

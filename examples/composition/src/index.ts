@@ -1,7 +1,7 @@
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { createInterface } from 'node:readline';
-import { PORT } from './const.ts';
+import { HOSTNAME, PORT } from './const.ts';
 import { peerController } from './controllers/peers.ts';
 import { viewerController } from './controllers/viewers.ts';
 import { CompositionService } from './service/composition.ts';
@@ -68,6 +68,6 @@ scenes.once('SIGINT', teardown);
 
 const app = new Hono().route('/', peerController(fishjam)).route('/', viewerController(fishjam));
 
-serve({ fetch: app.fetch, port: PORT }, ({ port }) => {
-  console.log(`peer tokens on http://localhost:${port}/peers, viewer token on http://localhost:${port}/viewer`);
+serve({ fetch: app.fetch, port: PORT, hostname: HOSTNAME }, ({ port }) => {
+  console.log(`peer tokens on http://${HOSTNAME}:${port}/peers, viewer token on http://${HOSTNAME}:${port}/viewer`);
 });
