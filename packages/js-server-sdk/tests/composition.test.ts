@@ -224,3 +224,13 @@ describe('WHIP url building', () => {
     expect(target.url).toBe(expected);
   });
 });
+
+describe('WHIP url without a server route', () => {
+  it('falls back to the generated path and encodes the id', async () => {
+    stubFetch({ bearer_token: 'tok' });
+
+    const target = await client('http://localhost:8000').registerWhipInput(COMPOSITION_ID, 'odd/id' as InputId);
+
+    expect(target.url).toBe('http://localhost:8000/api/composition/comp-1/whip/odd%2Fid');
+  });
+});

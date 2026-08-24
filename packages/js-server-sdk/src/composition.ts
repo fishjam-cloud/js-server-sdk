@@ -3,6 +3,7 @@ import {
   CompositionsApi,
   EventsApi,
   InputsApi,
+  MediaTransportApi,
   OutputsApi,
   RenderersApi,
   type CreateCompositionRequest,
@@ -53,6 +54,7 @@ export class CompositionClient {
   private readonly compositionsApi: CompositionsApi;
   private readonly eventsApi: EventsApi;
   private readonly inputsApi: InputsApi;
+  private readonly mediaTransportApi: MediaTransportApi;
   private readonly outputsApi: OutputsApi;
   private readonly renderersApi: RenderersApi;
   private readonly baseUrl: string;
@@ -68,6 +70,7 @@ export class CompositionClient {
     this.compositionsApi = new CompositionsApi(apiConfig);
     this.eventsApi = new EventsApi(apiConfig);
     this.inputsApi = new InputsApi(apiConfig);
+    this.mediaTransportApi = new MediaTransportApi(apiConfig);
     this.outputsApi = new OutputsApi(apiConfig);
     this.renderersApi = new RenderersApi(apiConfig);
   }
@@ -160,10 +163,20 @@ export class CompositionClient {
       });
     }
 
-    const route = endpointRoute || `/whip/${encodeURIComponent(inputId)}`;
-    const url = `${this.compositionUrl(compositionId)}/${route.replace(/^\//, '')}`;
+    const url = endpointRoute
+      ? `${this.compositionUrl(compositionId)}/${endpointRoute.replace(/^\//, '')}`
+      : await this.whipPath(compositionId, inputId);
 
     return { url, bearerToken };
+  }
+
+  /**
+   * Where WHIP publishing is served, for servers that do not report the route themselves.
+   */
+  private async whipPath(compositionId: CompositionId, inputId: InputId): Promise<string> {
+    const { path } = await this.mediaTransportApi.whipOfferRequestOpts({ compositionId, inputId, body: '' });
+
+    return new URL(path, this.baseUrl).href;
   }
 
   /**
