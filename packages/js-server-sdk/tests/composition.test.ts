@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CompositionClient } from '../src/composition';
 import { InputNotFoundException, RendererNotFoundException, UnknownException } from '../src/exceptions';
-import { getCompositionUrl } from '../src/utils';
+import { getCompositionOrigin } from '../src/utils';
 import type { CompositionId, InputId, OutputId } from '../src/types';
 
 const COMPOSITION_ID = 'comp-1' as CompositionId;
@@ -24,19 +24,19 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe('getCompositionUrl', () => {
+describe('getCompositionOrigin', () => {
   it('defaults to the production Composition API', () => {
-    expect(getCompositionUrl({ managementToken: 't' })).toBe('https://rtc.fishjam.io');
+    expect(getCompositionOrigin({ managementToken: 't' })).toBe('https://rtc.fishjam.io');
   });
 
   it('uses the configured address when given one', () => {
-    expect(getCompositionUrl({ managementToken: 't', compositionUrl: 'http://localhost:8000' })).toBe(
+    expect(getCompositionOrigin({ managementToken: 't', compositionUrl: 'http://localhost:8000' })).toBe(
       'http://localhost:8000'
     );
   });
 
   it('keeps the origin only, so paths do not end up doubled', () => {
-    expect(getCompositionUrl({ managementToken: 't', compositionUrl: 'http://localhost:8000/' })).toBe(
+    expect(getCompositionOrigin({ managementToken: 't', compositionUrl: 'http://localhost:8000/' })).toBe(
       'http://localhost:8000'
     );
   });
@@ -208,5 +208,19 @@ describe('missing resources', () => {
     await expect(client().unregisterImage(COMPOSITION_ID, 'logo' as never)).rejects.toBeInstanceOf(
       RendererNotFoundException
     );
+  });
+});
+
+describe('WHIP url building', () => {
+  it.each([
+    ['/whip/from-server', 'http://localhost:8000/api/composition/comp-1/whip/from-server'],
+    ['whip/no-leading-slash', 'http://localhost:8000/api/composition/comp-1/whip/no-leading-slash'],
+    ['', 'http://localhost:8000/api/composition/comp-1/whip/cam'],
+  ])('normalises the route %s', async (endpoint_route, expected) => {
+    stubFetch({ bearer_token: 'tok', endpoint_route });
+
+    const target = await client('http://localhost:8000').registerWhipInput(COMPOSITION_ID, INPUT_ID);
+
+    expect(target.url).toBe(expected);
   });
 });

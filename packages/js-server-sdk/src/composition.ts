@@ -34,7 +34,7 @@ import type {
   RendererId,
   WhipInputTarget,
 } from './types';
-import { getCompositionUrl, toBlob } from './utils';
+import { getCompositionOrigin, toBlob } from './utils';
 
 /**
  * Client class that allows to manage compositions, the real-time video compositing sessions
@@ -58,7 +58,7 @@ export class CompositionClient {
   private readonly baseUrl: string;
 
   constructor(config: CompositionConfig) {
-    this.baseUrl = getCompositionUrl(config);
+    this.baseUrl = getCompositionOrigin(config);
 
     const apiConfig = new Configuration({
       basePath: this.baseUrl,
@@ -157,12 +157,14 @@ export class CompositionClient {
     const token = bearerToken ?? options.bearerToken;
     if (!token) {
       throw new UnknownException({
-        message: `Registering WHIP input "${inputId}" returned no bearer token, so it cannot be published to`,
+        message: `Could not obtain a publishing token for input "${inputId}", retry or report it`,
       });
     }
 
-    const route = endpointRoute ?? `/whip/${encodeURIComponent(inputId)}`;
-    return { url: `${this.compositionUrl(compositionId)}${route}`, bearerToken: token };
+    const route = endpointRoute || `/whip/${encodeURIComponent(inputId)}`;
+    const url = `${this.compositionUrl(compositionId)}/${route.replace(/^\//, '')}`;
+
+    return { url, bearerToken: token };
   }
 
   /**

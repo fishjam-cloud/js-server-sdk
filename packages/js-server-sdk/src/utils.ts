@@ -37,7 +37,7 @@ export const getAgentWebsocketUrl = (config: FishjamConfig, peerWebsocketUrl?: s
 
 const COMPOSITION_URL = 'https://rtc.fishjam.io';
 
-export const getCompositionUrl = (config: CompositionConfig) =>
+export const getCompositionOrigin = (config: CompositionConfig) =>
   new URL(config.compositionUrl ?? COMPOSITION_URL).origin;
 
 export const toBlob = async (file: Blob | string): Promise<Blob> =>
