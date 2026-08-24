@@ -12,7 +12,8 @@ Then you need to set the following variables:
 
 - `FISHJAM_ID`: your Fishjam ID, which you can get at <https://fishjam.io>
 - `FISHJAM_TOKEN`: your Fishjam management token, which you can get at <https://fishjam.io>
-- `COMPOSITION_URL`: only when running against a deployment other than production
+- `COMPOSITION_URL`: address of the Composition API, only needed to point the example at something other
+  than production, such as a local cluster. Leave it unset otherwise.
 
 Once you've set up your environment variables, all you need to do is run the following command:
 
@@ -20,8 +21,8 @@ Once you've set up your environment variables, all you need to do is run the fol
 yarn dev
 ```
 
-This bundles `template/App.tsx`, creates the room, the livestream and the composition, and then serves peer
-and viewer tokens. Requires Node 23 or newer, which runs the TypeScript sources directly.
+This bundles `template/App.tsx` into the template the composition renders, creates the room, the livestream
+and the composition, uploads the bundle with the composition's output, and then serves peer and viewer tokens. Requires Node 23 or newer, which runs the TypeScript sources directly.
 
 When the server is running, you can obtain peer tokens by going to <http://localhost:3000/peers>, and a
 livestream viewer token from <http://localhost:3000/viewer>.
