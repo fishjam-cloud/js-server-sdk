@@ -6,6 +6,7 @@ import {
   RoomConfig,
   CredentialsApi,
   StreamersApi,
+  TrackForwardingsApi,
   PeerOptionsWebRTC,
   PeerOptionsVapi,
   PeerOptionsAgent,
@@ -16,7 +17,7 @@ import {
 } from '@fishjam-cloud/fishjam-openapi';
 import type { AgentCallbacks, FishjamConfig, PeerId, Recording, RecordingId, Room, RoomId, Peer } from './types';
 import { mapException } from './exceptions/mapper';
-import { getFishjamUrl } from './utils';
+import { getFishjamUrl, getLivestreamWhipUrl } from './utils';
 import { FishjamAgent, TrackId } from './agent';
 import packageJson from '../package.json';
 
@@ -32,6 +33,7 @@ export class FishjamClient {
   private readonly streamerApi: StreamersApi;
   private readonly credentialsApi: CredentialsApi;
   private readonly recordingsApi: RecordingsApi;
+  private readonly trackForwardingsApi: TrackForwardingsApi;
   private readonly fishjamConfig: FishjamConfig;
   private deprecationWarningShown: boolean = false;
 
@@ -73,6 +75,7 @@ export class FishjamClient {
     this.streamerApi = new StreamersApi(apiConfig);
     this.credentialsApi = new CredentialsApi(apiConfig);
     this.recordingsApi = new RecordingsApi(apiConfig);
+    this.trackForwardingsApi = new TrackForwardingsApi(apiConfig);
     this.fishjamConfig = config;
   }
 
@@ -281,6 +284,31 @@ export class FishjamClient {
     } catch (error) {
       throw await mapException(error, 'peer');
     }
+  }
+
+  /**
+   * Forwards every track published in the room into a composition, which composes them into
+   * its outputs. Pass the composition's address, as returned by
+   * {@link CompositionClient.compositionUrl}.
+   */
+  async forwardRoomTracks(roomId: RoomId, compositionUrl: string): Promise<void> {
+    try {
+      await this.trackForwardingsApi.createTrackForwarding({
+        roomId,
+        trackForwarding: { compositionURL: compositionUrl },
+      });
+    } catch (error) {
+      throw await mapException(error, 'room');
+    }
+  }
+
+  /**
+   * Where to publish a livestream, paired with a token from
+   * {@link FishjamClient.createLivestreamStreamerToken}. A composition reaches viewers by
+   * sending a WHIP output here.
+   */
+  livestreamWhipUrl(): string {
+    return getLivestreamWhipUrl(this.fishjamConfig);
   }
 
   /**
