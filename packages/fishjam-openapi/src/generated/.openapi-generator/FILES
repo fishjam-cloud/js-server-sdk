@@ -33,6 +33,7 @@ models/PeerType.ts
 models/Recording.ts
 models/RecordingConfig.ts
 models/RecordingDetailsResponse.ts
+models/RecordingFile.ts
 models/RecordingListResponse.ts
 models/RecordingSource.ts
 models/RecordingStatus.ts
