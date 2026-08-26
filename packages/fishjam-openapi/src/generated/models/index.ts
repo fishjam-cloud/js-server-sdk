@@ -25,6 +25,7 @@ export * from './PeerType';
 export * from './Recording';
 export * from './RecordingConfig';
 export * from './RecordingDetailsResponse';
+export * from './RecordingFile';
 export * from './RecordingListResponse';
 export * from './RecordingSource';
 export * from './RecordingStatus';

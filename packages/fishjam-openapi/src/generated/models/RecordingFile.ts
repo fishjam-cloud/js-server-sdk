@@ -14,53 +14,53 @@
 
 import { mapValues } from '../runtime';
 /**
- * Error message
+ * A single media file of a recording
  * @export
- * @interface ModelError
+ * @interface RecordingFile
  */
-export interface ModelError {
+export interface RecordingFile {
     /**
-     * Error details
+     * Public URL the file is served at
      * @type {string}
-     * @memberof ModelError
+     * @memberof RecordingFile
      */
-    errors: string;
+    url: string;
 }
 
 /**
- * Check if a given object implements the ModelError interface.
+ * Check if a given object implements the RecordingFile interface.
  */
-export function instanceOfModelError(value: object): value is ModelError {
-    if (!('errors' in value) || value['errors'] === undefined) return false;
+export function instanceOfRecordingFile(value: object): value is RecordingFile {
+    if (!('url' in value) || value['url'] === undefined) return false;
     return true;
 }
 
-export function ModelErrorFromJSON(json: any): ModelError {
-    return ModelErrorFromJSONTyped(json, false);
+export function RecordingFileFromJSON(json: any): RecordingFile {
+    return RecordingFileFromJSONTyped(json, false);
 }
 
-export function ModelErrorFromJSONTyped(json: any, ignoreDiscriminator: boolean): ModelError {
+export function RecordingFileFromJSONTyped(json: any, ignoreDiscriminator: boolean): RecordingFile {
     if (json == null) {
         return json;
     }
     return {
         
-        'errors': json['errors'],
+        'url': json['url'],
     };
 }
 
-export function ModelErrorToJSON(json: any): ModelError {
-    return ModelErrorToJSONTyped(json, false);
+export function RecordingFileToJSON(json: any): RecordingFile {
+    return RecordingFileToJSONTyped(json, false);
 }
 
-export function ModelErrorToJSONTyped(value?: ModelError | null, ignoreDiscriminator: boolean = false): any {
+export function RecordingFileToJSONTyped(value?: RecordingFile | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
 
     return {
         
-        'errors': value['errors'],
+        'url': value['url'],
     };
 }
 
