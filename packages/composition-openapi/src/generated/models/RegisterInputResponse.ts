@@ -45,10 +45,10 @@ export interface RegisterInputResponse {
   audioDurationMs?: number | null;
   /**
    *
-   * @type {number}
+   * @type {string}
    * @memberof RegisterInputResponse
    */
-  port?: number | null;
+  publishUrl?: string | null;
 }
 
 /**
@@ -87,7 +87,8 @@ export function RegisterInputResponseFromJSONTyped(json: any, ignoreDiscriminato
         : json['audio_duration_ms'] === null
           ? null
           : json['audio_duration_ms'],
-    port: json['port'] === undefined ? undefined : json['port'] === null ? null : json['port'],
+    publishUrl:
+      json['publish_url'] === undefined ? undefined : json['publish_url'] === null ? null : json['publish_url'],
   };
 }
 
@@ -108,6 +109,6 @@ export function RegisterInputResponseToJSONTyped(
     endpoint_route: value['endpointRoute'],
     video_duration_ms: value['videoDurationMs'],
     audio_duration_ms: value['audioDurationMs'],
-    port: value['port'],
+    publish_url: value['publishUrl'],
   };
 }
