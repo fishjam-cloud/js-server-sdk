@@ -67,13 +67,13 @@ describe('request serialisation', () => {
   });
 
   it('reads a response back into camelCase', async () => {
-    stubFetch({ port: 5004 });
+    stubFetch({ publish_url: 'rtmps://rtmp.example.com:443/key' });
     const response = await client().registerInput(COMPOSITION_ID, INPUT_ID, {
       type: 'rtmp_server',
       streamKey: 'key',
     });
 
-    expect(response).toEqual({ port: 5004 });
+    expect(response).toEqual({ publishUrl: 'rtmps://rtmp.example.com:443/key' });
   });
 });
 
@@ -108,6 +108,22 @@ describe('input variants', () => {
     await expect(client().registerWhipInput(COMPOSITION_ID, INPUT_ID)).rejects.toThrow(UnknownException);
   });
 
+  it('returns the RTMP publishing address the server chose', async () => {
+    stubFetch({ publish_url: 'rtmps://rtmp.example.com:443/k' });
+
+    await expect(client().registerRtmpInput(COMPOSITION_ID, INPUT_ID, { streamKey: 'k' })).resolves.toBe(
+      'rtmps://rtmp.example.com:443/k'
+    );
+  });
+
+  it('throws when the server returns no RTMP publishing address', async () => {
+    stubFetch({});
+
+    await expect(client().registerRtmpInput(COMPOSITION_ID, INPUT_ID, { streamKey: 'k' })).rejects.toThrow(
+      UnknownException
+    );
+  });
+
   it('sends the discriminant for each variant', async () => {
     const cases = [
       [(c: CompositionClient) => c.registerWhipInput(COMPOSITION_ID, INPUT_ID), 'whip_server'],
@@ -120,7 +136,7 @@ describe('input variants', () => {
     ] as const;
 
     for (const [register, type] of cases) {
-      const fetch = stubFetch({ bearer_token: 'tok' });
+      const fetch = stubFetch({ bearer_token: 'tok', publish_url: 'rtmps://rtmp.example.com:443/k' });
       await register(client());
       expect(requestBody(fetch).type).toBe(type);
       vi.unstubAllGlobals();
