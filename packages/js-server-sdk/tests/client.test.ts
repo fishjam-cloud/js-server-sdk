@@ -242,6 +242,20 @@ describe('createMoqAccess', () => {
     expect(typeof result.token).toBe('string');
   });
 
+  it('sets token expiry from ttl', async () => {
+    const client = createClient();
+    const result = await client.createMoqAccess({ publishPath: 'my/path', ttl: 120 });
+
+    const [, payload] = result.token.split('.');
+    const claims = JSON.parse(Buffer.from(payload, 'base64url').toString());
+    expect(claims.exp - claims.iat).toBe(120);
+  });
+
+  it('throws when ttl is out of range', async () => {
+    const client = createClient();
+    await expect(client.createMoqAccess({ publishPath: 'my/path', ttl: 0 })).rejects.toThrow();
+  });
+
   it('throws UnauthorizedException with invalid management token', async () => {
     const client = createClient('invalid');
 
