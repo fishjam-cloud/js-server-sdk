@@ -209,14 +209,23 @@ export class CompositionClient {
 
   /**
    * Register an input that an RTMP publisher pushes media into. The stream key identifies the
-   * input; the address to publish to belongs to the composition, not to this call.
+   * input and is carried in the returned address.
+   * @returns the address to publish the RTMP stream to
    */
   async registerRtmpInput(
     compositionId: CompositionId,
     inputId: InputId,
     options: Omit<RtmpInput, 'type'>
-  ): Promise<void> {
-    await this.registerInput(compositionId, inputId, { ...options, type: 'rtmp_server' });
+  ): Promise<string> {
+    const { publishUrl } = await this.registerInput(compositionId, inputId, { ...options, type: 'rtmp_server' });
+
+    if (!publishUrl) {
+      throw new UnknownException({
+        message: `Could not obtain a publishing address for input "${inputId}", retry or report it`,
+      });
+    }
+
+    return publishUrl;
   }
 
   /**
