@@ -31,6 +31,12 @@ export interface MoqAccessConfig {
      * @memberof MoqAccessConfig
      */
     subscribePath?: string | null;
+    /**
+     * Token time to live in seconds. Defaults to 3600 (1 hour), maximum is 604800 (7 days).
+     * @type {number}
+     * @memberof MoqAccessConfig
+     */
+    ttl?: number | null;
 }
 
 /**
@@ -52,6 +58,7 @@ export function MoqAccessConfigFromJSONTyped(json: any, ignoreDiscriminator: boo
         
         'publishPath': json['publishPath'] == null ? undefined : json['publishPath'],
         'subscribePath': json['subscribePath'] == null ? undefined : json['subscribePath'],
+        'ttl': json['ttl'] == null ? undefined : json['ttl'],
     };
 }
 
@@ -68,6 +75,7 @@ export function MoqAccessConfigToJSONTyped(value?: MoqAccessConfig | null, ignor
         
         'publishPath': value['publishPath'],
         'subscribePath': value['subscribePath'],
+        'ttl': value['ttl'],
     };
 }
 
