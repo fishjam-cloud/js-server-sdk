@@ -32,7 +32,7 @@ export interface MoqAccessConfig {
      */
     subscribePath?: string | null;
     /**
-     * Token time to live in seconds. Defaults to 3600 (1 hour), maximum is 86400 (24 hours).
+     * Token time to live in seconds. Defaults to 3600 (1 hour), maximum is 604800 (7 days).
      * @type {number}
      * @memberof MoqAccessConfig
      */
