@@ -34,6 +34,12 @@ export interface PeerOptionsVapi {
      */
     apiKey: string;
     /**
+     * Ends the VAPI call when the last participant leaves the room
+     * @type {boolean}
+     * @memberof PeerOptionsVapi
+     */
+    autoClose?: boolean;
+    /**
      * VAPI call ID
      * @type {string}
      * @memberof PeerOptionsVapi
@@ -69,6 +75,7 @@ export function PeerOptionsVapiFromJSONTyped(json: any, ignoreDiscriminator: boo
     return {
         
         'apiKey': json['apiKey'],
+        'autoClose': json['autoClose'] == null ? undefined : json['autoClose'],
         'callId': json['callId'],
         'subscribeMode': json['subscribeMode'] == null ? undefined : SubscribeModeFromJSON(json['subscribeMode']),
     };
@@ -86,6 +93,7 @@ export function PeerOptionsVapiToJSONTyped(value?: PeerOptionsVapi | null, ignor
     return {
         
         'apiKey': value['apiKey'],
+        'autoClose': value['autoClose'],
         'callId': value['callId'],
         'subscribeMode': SubscribeModeToJSON(value['subscribeMode']),
     };
