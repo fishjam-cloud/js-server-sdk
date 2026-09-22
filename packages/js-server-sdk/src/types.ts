@@ -78,8 +78,7 @@ export type RecordingStatus = 'active' | 'finished' | 'available' | 'failed';
 export type Recording = Override<OpenApiRecording, { id: RecordingId; status: RecordingStatus }>;
 
 /**
- * Configuration of a recording rendering its own scene from a template bundle,
- * as started with {@link FishjamClient.createTemplateRecording}.
+ * Configuration of a recording that renders its own scene from a template.
  */
 export type TemplateRecordingConfig = Override<RecordingConfig, { source: TemplateSource }>;
 
