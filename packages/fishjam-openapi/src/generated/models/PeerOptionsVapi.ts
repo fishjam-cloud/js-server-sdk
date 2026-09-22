@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Fishjam API
- * API for managing Fishjam real-time media resources.  ## Authentication ## Credentials (Fishjam ID, Fishjam Management Token) can be obtained at https://fishjam.io/app. All requests require HTTP Bearer authorization using the Fishjam Management Token.  ## Fishjam SDKs ## For TypeScript and Python users, we provide SDKs that simplify using this API. We recommend using them instead of manually consuming the API in these languages.  You can learn more about our SDKs in our [SDK Docs](http://fishjam.swmansion.com/docs/how-to/backend/server-setup) 
+ * API for managing Fishjam real-time media resources.  ## Authentication ## Credentials (Fishjam ID, Fishjam Management Token) can be obtained at https://fishjam.io/app. All requests require HTTP Bearer authorization using the Fishjam Management Token.  ## Fishjam SDKs ## For TypeScript and Python users, we provide SDKs that simplify using this API. We recommend using them instead of manually consuming the API in these languages.  You can learn more about our SDKs in our [SDK Docs](http://fishjam.swmansion.com/docs/how-to/backend/server-setup)
  *
  * The version of the OpenAPI document: 0.30.0
  * Contact: contact@fishjam.io
@@ -15,10 +15,10 @@
 import { mapValues } from '../runtime';
 import type { SubscribeMode } from './SubscribeMode';
 import {
-    SubscribeModeFromJSON,
-    SubscribeModeFromJSONTyped,
-    SubscribeModeToJSON,
-    SubscribeModeToJSONTyped,
+  SubscribeModeFromJSON,
+  SubscribeModeFromJSONTyped,
+  SubscribeModeToJSON,
+  SubscribeModeToJSONTyped,
 } from './SubscribeMode';
 
 /**
@@ -53,19 +53,17 @@ export interface PeerOptionsVapi {
     subscribeMode?: SubscribeMode;
 }
 
-
-
 /**
  * Check if a given object implements the PeerOptionsVapi interface.
  */
 export function instanceOfPeerOptionsVapi(value: object): value is PeerOptionsVapi {
-    if (!('apiKey' in value) || value['apiKey'] === undefined) return false;
-    if (!('callId' in value) || value['callId'] === undefined) return false;
-    return true;
+  if (!('apiKey' in value) || value['apiKey'] === undefined) return false;
+  if (!('callId' in value) || value['callId'] === undefined) return false;
+  return true;
 }
 
 export function PeerOptionsVapiFromJSON(json: any): PeerOptionsVapi {
-    return PeerOptionsVapiFromJSONTyped(json, false);
+  return PeerOptionsVapiFromJSONTyped(json, false);
 }
 
 export function PeerOptionsVapiFromJSONTyped(json: any, ignoreDiscriminator: boolean): PeerOptionsVapi {
@@ -82,13 +80,13 @@ export function PeerOptionsVapiFromJSONTyped(json: any, ignoreDiscriminator: boo
 }
 
 export function PeerOptionsVapiToJSON(json: any): PeerOptionsVapi {
-    return PeerOptionsVapiToJSONTyped(json, false);
+  return PeerOptionsVapiToJSONTyped(json, false);
 }
 
 export function PeerOptionsVapiToJSONTyped(value?: PeerOptionsVapi | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+  if (value == null) {
+    return value;
+  }
 
     return {
         
@@ -98,4 +96,3 @@ export function PeerOptionsVapiToJSONTyped(value?: PeerOptionsVapi | null, ignor
         'subscribeMode': SubscribeModeToJSON(value['subscribeMode']),
     };
 }
-

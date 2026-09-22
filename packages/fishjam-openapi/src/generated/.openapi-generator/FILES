@@ -54,6 +54,8 @@ models/StreamsListingResponse.ts
 models/SubscribeMode.ts
 models/SubscribeTracksRequest.ts
 models/Subscriptions.ts
+models/TemplateSource.ts
+models/TemplateSourceResolution.ts
 models/Track.ts
 models/TrackForwarding.ts
 models/TrackForwardingInfo.ts

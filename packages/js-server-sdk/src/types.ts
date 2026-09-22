@@ -3,7 +3,9 @@ import {
   Peer as OpenApiPeer,
   PeerType as OpenApiPeerType,
   Recording as OpenApiRecording,
+  RecordingConfig,
   RoomConfig,
+  TemplateSource,
   TrackType as OpenApiTrackType,
 } from '@fishjam-cloud/fishjam-openapi';
 
@@ -74,6 +76,12 @@ export type RecordingStatus = 'active' | 'finished' | 'available' | 'failed';
  * A recording and its current lifecycle status.
  */
 export type Recording = Override<OpenApiRecording, { id: RecordingId; status: RecordingStatus }>;
+
+/**
+ * Configuration of a recording rendering its own scene from a template bundle,
+ * as started with {@link FishjamClient.createTemplateRecording}.
+ */
+export type TemplateRecordingConfig = Override<RecordingConfig, { source: TemplateSource }>;
 
 /**
  * ID of a composition.

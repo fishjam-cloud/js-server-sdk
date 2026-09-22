@@ -12,12 +12,22 @@ import {
   PeerOptionsAgent,
   MoqAccessConfig,
   type Middleware,
-  RecordingsApi,
   RecordingConfig,
 } from '@fishjam-cloud/fishjam-openapi';
-import type { AgentCallbacks, FishjamConfig, PeerId, Recording, RecordingId, Room, RoomId, Peer } from './types';
+import type {
+  AgentCallbacks,
+  FishjamConfig,
+  PeerId,
+  Recording,
+  RecordingId,
+  Room,
+  RoomId,
+  Peer,
+  TemplateRecordingConfig,
+} from './types';
 import { mapException } from './exceptions/mapper';
-import { getFishjamUrl, getLivestreamWhipUrl } from './utils';
+import { RecordingsApiWithTemplates } from './recordings';
+import { getFishjamUrl, getLivestreamWhipUrl, toBlob } from './utils';
 import { FishjamAgent, TrackId } from './agent';
 import packageJson from '../package.json';
 
@@ -32,7 +42,7 @@ export class FishjamClient {
   private readonly viewerApi: ViewersApi;
   private readonly streamerApi: StreamersApi;
   private readonly credentialsApi: CredentialsApi;
-  private readonly recordingsApi: RecordingsApi;
+  private readonly recordingsApi: RecordingsApiWithTemplates;
   private readonly trackForwardingsApi: TrackForwardingsApi;
   private readonly fishjamConfig: FishjamConfig;
   private deprecationWarningShown: boolean = false;
@@ -74,7 +84,7 @@ export class FishjamClient {
     this.viewerApi = new ViewersApi(apiConfig);
     this.streamerApi = new StreamersApi(apiConfig);
     this.credentialsApi = new CredentialsApi(apiConfig);
-    this.recordingsApi = new RecordingsApi(apiConfig);
+    this.recordingsApi = new RecordingsApiWithTemplates(apiConfig);
     this.trackForwardingsApi = new TrackForwardingsApi(apiConfig);
     this.fishjamConfig = config;
   }
@@ -356,6 +366,22 @@ export class FishjamClient {
       return data as Recording;
     } catch (error) {
       throw await mapException(error);
+    }
+  }
+
+  /**
+   * Start a new recording that renders its own scene from a template.
+   *
+   * The template bundle is either a `Blob` or a path to read it from, and can weigh at most 1 MiB;
+   * Only valid template bundles are accepted.
+   *
+   */
+  async createTemplateRecording(config: TemplateRecordingConfig, template: Blob | string): Promise<Recording> {
+    try {
+      const { data } = await this.recordingsApi.createTemplateRecording(config, await toBlob(template));
+      return data as Recording;
+    } catch (error) {
+      throw await mapException(error, 'recording');
     }
   }
 
