@@ -46,6 +46,8 @@ export * from './StreamsListingResponse';
 export * from './SubscribeMode';
 export * from './SubscribeTracksRequest';
 export * from './Subscriptions';
+export * from './TemplateSource';
+export * from './TemplateSourceResolution';
 export * from './Track';
 export * from './TrackForwarding';
 export * from './TrackForwardingInfo';

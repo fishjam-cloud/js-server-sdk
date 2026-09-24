@@ -34,7 +34,7 @@ import {
     RecordingStatusToJSON,
 } from '../models/RecordingStatus';
 
-export interface CreateRecordingRequest {
+export interface CreateRecordingOperationRequest {
     recordingConfig: RecordingConfig;
 }
 
@@ -63,7 +63,7 @@ export class RecordingsApi extends runtime.BaseAPI {
     /**
      * Creates request options for createRecording without sending the request
      */
-    async createRecordingRequestOpts(requestParameters: CreateRecordingRequest): Promise<runtime.RequestOpts> {
+    async createRecordingRequestOpts(requestParameters: CreateRecordingOperationRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['recordingConfig'] == null) {
             throw new runtime.RequiredError(
                 'recordingConfig',
@@ -98,10 +98,10 @@ export class RecordingsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a recording resource. Capturing starts synchronously, so it is returned with status `active`.
+     * Create a recording resource. Capturing starts synchronously, so it is returned with status `active`. A source naming an `outputId` records an output the composition already has and is sent as JSON. A template source renders its own scene and has to be sent as `multipart/form-data`: the configuration in a `config` part, the React bundle in a `template` part.
      * Create a recording
      */
-    async createRecordingRaw(requestParameters: CreateRecordingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<RecordingDetailsResponse>> {
+    async createRecordingRaw(requestParameters: CreateRecordingOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<RecordingDetailsResponse>> {
         const requestOptions = await this.createRecordingRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
@@ -109,10 +109,10 @@ export class RecordingsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a recording resource. Capturing starts synchronously, so it is returned with status `active`.
+     * Create a recording resource. Capturing starts synchronously, so it is returned with status `active`. A source naming an `outputId` records an output the composition already has and is sent as JSON. A template source renders its own scene and has to be sent as `multipart/form-data`: the configuration in a `config` part, the React bundle in a `template` part.
      * Create a recording
      */
-    async createRecording(requestParameters: CreateRecordingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<RecordingDetailsResponse> {
+    async createRecording(requestParameters: CreateRecordingOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<RecordingDetailsResponse> {
         const response = await this.createRecordingRaw(requestParameters, initOverrides);
         return await response.value();
     }
