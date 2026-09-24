@@ -75,6 +75,15 @@ describe('createTemplateRecording', () => {
   });
 });
 
+describe('createRecording', () => {
+  it('accepts only a composition source', async () => {
+    stubFetch({ data: templateRecording });
+
+    // @ts-expect-error a template source needs its bundle, so it goes through createTemplateRecording
+    await client().createRecording({ source: { compositionURL: COMPOSITION_URL } });
+  });
+});
+
 describe('reading a template recording', () => {
   it('parses the source the server echoes back', async () => {
     stubFetch({ data: templateRecording }, 200);

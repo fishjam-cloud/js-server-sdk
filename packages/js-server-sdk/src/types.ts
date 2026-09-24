@@ -2,6 +2,7 @@ import { CompositionCreatedResponse } from '@fishjam-cloud/composition-openapi';
 import {
   Peer as OpenApiPeer,
   PeerType as OpenApiPeerType,
+  CompositionSource,
   Recording as OpenApiRecording,
   RecordingConfig,
   RoomConfig,
@@ -76,6 +77,11 @@ export type RecordingStatus = 'active' | 'finished' | 'available' | 'failed';
  * A recording and its current lifecycle status.
  */
 export type Recording = Override<OpenApiRecording, { id: RecordingId; status: RecordingStatus }>;
+
+/**
+ * Configuration of a recording that captures an existing composition.
+ */
+export type CompositionRecordingConfig = Override<RecordingConfig, { source: CompositionSource }>;
 
 /**
  * Configuration of a recording that renders its own scene from a template.

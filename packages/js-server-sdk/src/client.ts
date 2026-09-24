@@ -12,10 +12,10 @@ import {
   PeerOptionsAgent,
   MoqAccessConfig,
   type Middleware,
-  RecordingConfig,
 } from '@fishjam-cloud/fishjam-openapi';
 import type {
   AgentCallbacks,
+  CompositionRecordingConfig,
   FishjamConfig,
   PeerId,
   Recording,
@@ -358,9 +358,22 @@ export class FishjamClient {
   }
 
   /**
-   * Create a new recording. Capturing starts synchronously, so the returned recording is `active`.
+   * @deprecated Use {@link createCompositionRecording} instead.
+   * Create a new recording that mirrors existing composition output. Capturing starts synchronously, so the returned recording is `active`.
    */
-  async createRecording(config: RecordingConfig): Promise<Recording> {
+  async createRecording(config: CompositionRecordingConfig): Promise<Recording> {
+    try {
+      const { data } = await this.recordingsApi.createRecording({ recordingConfig: config });
+      return data as Recording;
+    } catch (error) {
+      throw await mapException(error);
+    }
+  }
+
+  /**
+   * Create a new recording that mirrors existing composition output. Capturing starts synchronously, so the returned recording is `active`.
+   */
+  async createCompositionRecording(config: CompositionRecordingConfig): Promise<Recording> {
     try {
       const { data } = await this.recordingsApi.createRecording({ recordingConfig: config });
       return data as Recording;
