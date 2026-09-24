@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Fishjam API
- * API for managing Fishjam real-time media resources.  ## Authentication ## Credentials (Fishjam ID, Fishjam Management Token) can be obtained at https://fishjam.io/app. All requests require HTTP Bearer authorization using the Fishjam Management Token.  ## Fishjam SDKs ## For TypeScript and Python users, we provide SDKs that simplify using this API. We recommend using them instead of manually consuming the API in these languages.  You can learn more about our SDKs in our [SDK Docs](http://fishjam.swmansion.com/docs/how-to/backend/server-setup)
+ * API for managing Fishjam real-time media resources.  ## Authentication ## Credentials (Fishjam ID, Fishjam Management Token) can be obtained at https://fishjam.io/app. All requests require HTTP Bearer authorization using the Fishjam Management Token.  ## Fishjam SDKs ## For TypeScript and Python users, we provide SDKs that simplify using this API. We recommend using them instead of manually consuming the API in these languages.  You can learn more about our SDKs in our [SDK Docs](http://fishjam.swmansion.com/docs/how-to/backend/server-setup) 
  *
  * The version of the OpenAPI document: 0.30.0
  * Contact: contact@fishjam.io
@@ -15,10 +15,10 @@
 import { mapValues } from '../runtime';
 import type { TemplateSourceResolution } from './TemplateSourceResolution';
 import {
-  TemplateSourceResolutionFromJSON,
-  TemplateSourceResolutionFromJSONTyped,
-  TemplateSourceResolutionToJSON,
-  TemplateSourceResolutionToJSONTyped,
+    TemplateSourceResolutionFromJSON,
+    TemplateSourceResolutionFromJSONTyped,
+    TemplateSourceResolutionToJSON,
+    TemplateSourceResolutionToJSONTyped,
 } from './TemplateSourceResolution';
 
 /**
@@ -27,61 +27,64 @@ import {
  * @interface TemplateSource
  */
 export interface TemplateSource {
-  /**
-   * Whether the recording captures audio. Defaults to true.
-   * @type {boolean}
-   * @memberof TemplateSource
-   */
-  audio?: boolean;
-  /**
-   * URL of the composition to record
-   * @type {string}
-   * @memberof TemplateSource
-   */
-  compositionURL: string;
-  /**
-   *
-   * @type {TemplateSourceResolution}
-   * @memberof TemplateSource
-   */
-  resolution?: TemplateSourceResolution;
+    /**
+     * Whether the recording captures audio. Defaults to true.
+     * @type {boolean}
+     * @memberof TemplateSource
+     */
+    audio?: boolean;
+    /**
+     * URL of the composition to record
+     * @type {string}
+     * @memberof TemplateSource
+     */
+    compositionURL: string;
+    /**
+     * 
+     * @type {TemplateSourceResolution}
+     * @memberof TemplateSource
+     */
+    resolution?: TemplateSourceResolution;
 }
 
 /**
  * Check if a given object implements the TemplateSource interface.
  */
 export function instanceOfTemplateSource(value: object): value is TemplateSource {
-  if (!('compositionURL' in value) || value['compositionURL'] === undefined) return false;
-  return true;
+    if (!('compositionURL' in value) || value['compositionURL'] === undefined) return false;
+    return true;
 }
 
 export function TemplateSourceFromJSON(json: any): TemplateSource {
-  return TemplateSourceFromJSONTyped(json, false);
+    return TemplateSourceFromJSONTyped(json, false);
 }
 
 export function TemplateSourceFromJSONTyped(json: any, ignoreDiscriminator: boolean): TemplateSource {
-  if (json == null) {
-    return json;
-  }
-  return {
-    audio: json['audio'] == null ? undefined : json['audio'],
-    compositionURL: json['compositionURL'],
-    resolution: json['resolution'] == null ? undefined : TemplateSourceResolutionFromJSON(json['resolution']),
-  };
+    if (json == null) {
+        return json;
+    }
+    return {
+        
+        'audio': json['audio'] == null ? undefined : json['audio'],
+        'compositionURL': json['compositionURL'],
+        'resolution': json['resolution'] == null ? undefined : TemplateSourceResolutionFromJSON(json['resolution']),
+    };
 }
 
 export function TemplateSourceToJSON(json: any): TemplateSource {
-  return TemplateSourceToJSONTyped(json, false);
+    return TemplateSourceToJSONTyped(json, false);
 }
 
 export function TemplateSourceToJSONTyped(value?: TemplateSource | null, ignoreDiscriminator: boolean = false): any {
-  if (value == null) {
-    return value;
-  }
+    if (value == null) {
+        return value;
+    }
 
-  return {
-    audio: value['audio'],
-    compositionURL: value['compositionURL'],
-    resolution: TemplateSourceResolutionToJSON(value['resolution']),
-  };
+    return {
+        
+        'audio': value['audio'],
+        'compositionURL': value['compositionURL'],
+        'resolution': TemplateSourceResolutionToJSON(value['resolution']),
+    };
 }
+

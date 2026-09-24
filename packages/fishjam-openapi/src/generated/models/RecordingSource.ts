@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Fishjam API
- * API for managing Fishjam real-time media resources.  ## Authentication ## Credentials (Fishjam ID, Fishjam Management Token) can be obtained at https://fishjam.io/app. All requests require HTTP Bearer authorization using the Fishjam Management Token.  ## Fishjam SDKs ## For TypeScript and Python users, we provide SDKs that simplify using this API. We recommend using them instead of manually consuming the API in these languages.  You can learn more about our SDKs in our [SDK Docs](http://fishjam.swmansion.com/docs/how-to/backend/server-setup)
+ * API for managing Fishjam real-time media resources.  ## Authentication ## Credentials (Fishjam ID, Fishjam Management Token) can be obtained at https://fishjam.io/app. All requests require HTTP Bearer authorization using the Fishjam Management Token.  ## Fishjam SDKs ## For TypeScript and Python users, we provide SDKs that simplify using this API. We recommend using them instead of manually consuming the API in these languages.  You can learn more about our SDKs in our [SDK Docs](http://fishjam.swmansion.com/docs/how-to/backend/server-setup) 
  *
  * The version of the OpenAPI document: 0.30.0
  * Contact: contact@fishjam.io
@@ -14,17 +14,17 @@
 
 import type { CompositionSource } from './CompositionSource';
 import {
-  instanceOfCompositionSource,
-  CompositionSourceFromJSON,
-  CompositionSourceFromJSONTyped,
-  CompositionSourceToJSON,
+    instanceOfCompositionSource,
+    CompositionSourceFromJSON,
+    CompositionSourceFromJSONTyped,
+    CompositionSourceToJSON,
 } from './CompositionSource';
 import type { TemplateSource } from './TemplateSource';
 import {
-  instanceOfTemplateSource,
-  TemplateSourceFromJSON,
-  TemplateSourceFromJSONTyped,
-  TemplateSourceToJSON,
+    instanceOfTemplateSource,
+    TemplateSourceFromJSON,
+    TemplateSourceFromJSONTyped,
+    TemplateSourceToJSON,
 } from './TemplateSource';
 
 /**
@@ -35,41 +35,42 @@ import {
 export type RecordingSource = CompositionSource | TemplateSource;
 
 export function RecordingSourceFromJSON(json: any): RecordingSource {
-  return RecordingSourceFromJSONTyped(json, false);
+    return RecordingSourceFromJSONTyped(json, false);
 }
 
 export function RecordingSourceFromJSONTyped(json: any, ignoreDiscriminator: boolean): RecordingSource {
-  if (json == null) {
-    return json;
-  }
-  if (typeof json !== 'object') {
-    return json;
-  }
-  if (instanceOfCompositionSource(json)) {
-    return CompositionSourceFromJSONTyped(json, true);
-  }
-  if (instanceOfTemplateSource(json)) {
-    return TemplateSourceFromJSONTyped(json, true);
-  }
-  return {} as any;
+    if (json == null) {
+        return json;
+    }
+    if (typeof json !== 'object') {
+        return json;
+    }
+    if (instanceOfCompositionSource(json)) {
+        return CompositionSourceFromJSONTyped(json, true);
+    }
+    if (instanceOfTemplateSource(json)) {
+        return TemplateSourceFromJSONTyped(json, true);
+    }
+    return {} as any;
 }
 
 export function RecordingSourceToJSON(json: any): any {
-  return RecordingSourceToJSONTyped(json, false);
+    return RecordingSourceToJSONTyped(json, false);
 }
 
 export function RecordingSourceToJSONTyped(value?: RecordingSource | null, ignoreDiscriminator: boolean = false): any {
-  if (value == null) {
-    return value;
-  }
-  if (typeof value !== 'object') {
-    return value;
-  }
-  if (instanceOfCompositionSource(value)) {
-    return CompositionSourceToJSON(value as CompositionSource);
-  }
-  if (instanceOfTemplateSource(value)) {
-    return TemplateSourceToJSON(value as TemplateSource);
-  }
-  return {};
+    if (value == null) {
+        return value;
+    }
+    if (typeof value !== 'object') {
+        return value;
+    }
+    if (instanceOfCompositionSource(value)) {
+        return CompositionSourceToJSON(value as CompositionSource);
+    }
+    if (instanceOfTemplateSource(value)) {
+        return TemplateSourceToJSON(value as TemplateSource);
+    }
+    return {};
 }
+

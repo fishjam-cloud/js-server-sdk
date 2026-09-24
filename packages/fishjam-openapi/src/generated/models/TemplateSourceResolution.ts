@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Fishjam API
- * API for managing Fishjam real-time media resources.  ## Authentication ## Credentials (Fishjam ID, Fishjam Management Token) can be obtained at https://fishjam.io/app. All requests require HTTP Bearer authorization using the Fishjam Management Token.  ## Fishjam SDKs ## For TypeScript and Python users, we provide SDKs that simplify using this API. We recommend using them instead of manually consuming the API in these languages.  You can learn more about our SDKs in our [SDK Docs](http://fishjam.swmansion.com/docs/how-to/backend/server-setup)
+ * API for managing Fishjam real-time media resources.  ## Authentication ## Credentials (Fishjam ID, Fishjam Management Token) can be obtained at https://fishjam.io/app. All requests require HTTP Bearer authorization using the Fishjam Management Token.  ## Fishjam SDKs ## For TypeScript and Python users, we provide SDKs that simplify using this API. We recommend using them instead of manually consuming the API in these languages.  You can learn more about our SDKs in our [SDK Docs](http://fishjam.swmansion.com/docs/how-to/backend/server-setup) 
  *
  * The version of the OpenAPI document: 0.30.0
  * Contact: contact@fishjam.io
@@ -19,60 +19,57 @@ import { mapValues } from '../runtime';
  * @interface TemplateSourceResolution
  */
 export interface TemplateSourceResolution {
-  /**
-   *
-   * @type {number}
-   * @memberof TemplateSourceResolution
-   */
-  height: number;
-  /**
-   *
-   * @type {number}
-   * @memberof TemplateSourceResolution
-   */
-  width: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TemplateSourceResolution
+     */
+    height: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TemplateSourceResolution
+     */
+    width: number;
 }
 
 /**
  * Check if a given object implements the TemplateSourceResolution interface.
  */
 export function instanceOfTemplateSourceResolution(value: object): value is TemplateSourceResolution {
-  if (!('height' in value) || value['height'] === undefined) return false;
-  if (!('width' in value) || value['width'] === undefined) return false;
-  return true;
+    if (!('height' in value) || value['height'] === undefined) return false;
+    if (!('width' in value) || value['width'] === undefined) return false;
+    return true;
 }
 
 export function TemplateSourceResolutionFromJSON(json: any): TemplateSourceResolution {
-  return TemplateSourceResolutionFromJSONTyped(json, false);
+    return TemplateSourceResolutionFromJSONTyped(json, false);
 }
 
-export function TemplateSourceResolutionFromJSONTyped(
-  json: any,
-  ignoreDiscriminator: boolean
-): TemplateSourceResolution {
-  if (json == null) {
-    return json;
-  }
-  return {
-    height: json['height'],
-    width: json['width'],
-  };
+export function TemplateSourceResolutionFromJSONTyped(json: any, ignoreDiscriminator: boolean): TemplateSourceResolution {
+    if (json == null) {
+        return json;
+    }
+    return {
+        
+        'height': json['height'],
+        'width': json['width'],
+    };
 }
 
 export function TemplateSourceResolutionToJSON(json: any): TemplateSourceResolution {
-  return TemplateSourceResolutionToJSONTyped(json, false);
+    return TemplateSourceResolutionToJSONTyped(json, false);
 }
 
-export function TemplateSourceResolutionToJSONTyped(
-  value?: TemplateSourceResolution | null,
-  ignoreDiscriminator: boolean = false
-): any {
-  if (value == null) {
-    return value;
-  }
+export function TemplateSourceResolutionToJSONTyped(value?: TemplateSourceResolution | null, ignoreDiscriminator: boolean = false): any {
+    if (value == null) {
+        return value;
+    }
 
-  return {
-    height: value['height'],
-    width: value['width'],
-  };
+    return {
+        
+        'height': value['height'],
+        'width': value['width'],
+    };
 }
+
