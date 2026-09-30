@@ -6,3 +6,4 @@ src/openapi/
 README.md
 tsconfig.json
 docker-compose-dev.yaml
+packages/fishjam-openapi/src/generated/

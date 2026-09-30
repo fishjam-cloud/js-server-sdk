@@ -25,6 +25,8 @@ export {
   MoqAccessConfig,
   RecordingConfig,
   RecordingSource,
+  CompositionSource,
+  TemplateSource,
 } from '@fishjam-cloud/fishjam-openapi';
 
 export type {

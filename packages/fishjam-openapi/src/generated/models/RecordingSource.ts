@@ -12,41 +12,27 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
-/**
- * The source for the recording
- * @export
- * @interface RecordingSource
- */
-export interface RecordingSource {
-    /**
-     * URL of the composition to record
-     * @type {string}
-     * @memberof RecordingSource
-     */
-    compositionURL: string;
-    /**
-     * Id of the output being recorded
-     * @type {string}
-     * @memberof RecordingSource
-     */
-    outputId: string;
-    /**
-     * Scale factor for the recording relative to the source output (>0; may upscale or downscale). Defaults to 1.
-     * @type {number}
-     * @memberof RecordingSource
-     */
-    scaleRatio?: number;
-}
+import type { CompositionSource } from './CompositionSource';
+import {
+    instanceOfCompositionSource,
+    CompositionSourceFromJSON,
+    CompositionSourceFromJSONTyped,
+    CompositionSourceToJSON,
+} from './CompositionSource';
+import type { TemplateSource } from './TemplateSource';
+import {
+    instanceOfTemplateSource,
+    TemplateSourceFromJSON,
+    TemplateSourceFromJSONTyped,
+    TemplateSourceToJSON,
+} from './TemplateSource';
 
 /**
- * Check if a given object implements the RecordingSource interface.
+ * @type RecordingSource
+ * The source for the recording
+ * @export
  */
-export function instanceOfRecordingSource(value: object): value is RecordingSource {
-    if (!('compositionURL' in value) || value['compositionURL'] === undefined) return false;
-    if (!('outputId' in value) || value['outputId'] === undefined) return false;
-    return true;
-}
+export type RecordingSource = CompositionSource | TemplateSource;
 
 export function RecordingSourceFromJSON(json: any): RecordingSource {
     return RecordingSourceFromJSONTyped(json, false);
@@ -56,15 +42,19 @@ export function RecordingSourceFromJSONTyped(json: any, ignoreDiscriminator: boo
     if (json == null) {
         return json;
     }
-    return {
-        
-        'compositionURL': json['compositionURL'],
-        'outputId': json['outputId'],
-        'scaleRatio': json['scaleRatio'] == null ? undefined : json['scaleRatio'],
-    };
+    if (typeof json !== 'object') {
+        return json;
+    }
+    if (instanceOfCompositionSource(json)) {
+        return CompositionSourceFromJSONTyped(json, true);
+    }
+    if (instanceOfTemplateSource(json)) {
+        return TemplateSourceFromJSONTyped(json, true);
+    }
+    return {} as any;
 }
 
-export function RecordingSourceToJSON(json: any): RecordingSource {
+export function RecordingSourceToJSON(json: any): any {
     return RecordingSourceToJSONTyped(json, false);
 }
 
@@ -72,12 +62,15 @@ export function RecordingSourceToJSONTyped(value?: RecordingSource | null, ignor
     if (value == null) {
         return value;
     }
-
-    return {
-        
-        'compositionURL': value['compositionURL'],
-        'outputId': value['outputId'],
-        'scaleRatio': value['scaleRatio'],
-    };
+    if (typeof value !== 'object') {
+        return value;
+    }
+    if (instanceOfCompositionSource(value)) {
+        return CompositionSourceToJSON(value as CompositionSource);
+    }
+    if (instanceOfTemplateSource(value)) {
+        return TemplateSourceToJSON(value as TemplateSource);
+    }
+    return {};
 }
 
