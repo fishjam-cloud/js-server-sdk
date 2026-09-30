@@ -40,5 +40,5 @@ cd $ROOTDIR \
   -g typescript-fetch \
   --additional-properties=modelPropertyNaming=original \
   --reserved-words-mappings public=public \
-  --global-property=apiDocs=false,modelDocs=false \
+  --global-property=apiDocs=false,modelDocs=false,skipFormModel=false \
   -o ./src/generated

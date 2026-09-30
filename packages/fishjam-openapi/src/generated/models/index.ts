@@ -5,6 +5,7 @@ export * from './AudioFormat';
 export * from './AudioSampleRate';
 export * from './CompositionInfo';
 export * from './CompositionSource';
+export * from './CreateRecordingRequest';
 export * from './ModelError';
 export * from './MoqAccess';
 export * from './MoqAccessConfig';

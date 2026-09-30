@@ -13,6 +13,7 @@ models/AudioFormat.ts
 models/AudioSampleRate.ts
 models/CompositionInfo.ts
 models/CompositionSource.ts
+models/CreateRecordingRequest.ts
 models/ModelError.ts
 models/MoqAccess.ts
 models/MoqAccessConfig.ts
