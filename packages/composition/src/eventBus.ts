@@ -3,7 +3,6 @@ export interface CompositionEventBus {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
   var eventBus: CompositionEventBus;
 }
 

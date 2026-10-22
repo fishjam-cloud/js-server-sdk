@@ -17,7 +17,7 @@
   "devDependencies": {
     "@types/bun": "^1",
     "bun-types": "latest",
-    "prettier": "^3.6.2",
+    "prettier": "^3.8.1",
     "typescript": "^5.9.3"
   },
   "module": "src/index.js"

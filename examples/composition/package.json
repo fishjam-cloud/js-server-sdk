@@ -21,7 +21,7 @@
     "@swmansion/smelter": "0.3.0",
     "@types/node": "^22.13.16",
     "@types/react": "^18.3.0",
-    "prettier": "^3.6.2",
+    "prettier": "^3.8.1",
     "react": "^18.3.1",
     "typescript": "^5.9.3"
   },
