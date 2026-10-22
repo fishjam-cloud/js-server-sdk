@@ -23,7 +23,7 @@ const envToLogger = {
   test: false,
 };
 
-export const fastify = Fastify({ logger: envToLogger.development, ignoreTrailingSlash: true });
+export const fastify = Fastify({ logger: envToLogger.development, routerOptions: { ignoreTrailingSlash: true } });
 
 async function setupServer() {
   await fastify.register(cors, { origin: '*' });
