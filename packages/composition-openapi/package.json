@@ -1,6 +1,6 @@
 {
   "name": "@fishjam-cloud/composition-openapi",
-  "version": "0.31.0",
+  "version": "0.31.1",
   "private": true,
   "description": "Composition OpenAPI",
   "homepage": "https://github.com/fishjam-cloud/js-server-sdk",
