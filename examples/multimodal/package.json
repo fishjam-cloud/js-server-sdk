@@ -11,6 +11,7 @@
     "@fishjam-cloud/js-server-sdk": "workspace:*",
     "@google/genai": "^1.13.0",
     "@grotto/logysia": "^0.1.6",
+    "@sinclair/typebox": "^0.34.33",
     "bun": "^1.2.20",
     "elysia": "latest"
   },

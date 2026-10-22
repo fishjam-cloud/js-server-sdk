@@ -9,6 +9,7 @@
     "@elysiajs/cors": "^1.4.0",
     "@fishjam-cloud/js-server-sdk": "workspace:*",
     "@grotto/logysia": "^0.1.6",
+    "@sinclair/typebox": "^0.34.33",
     "bun": "^1.2.20",
     "elysia": "latest"
   },

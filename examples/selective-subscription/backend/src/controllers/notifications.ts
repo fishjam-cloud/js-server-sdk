@@ -2,15 +2,8 @@ import { Elysia } from 'elysia';
 import { FishjamService } from '../service/fishjam';
 
 export const notificationsController = (fishjam: FishjamService) =>
-  new Elysia().get('/notifications/stream', ({ set }) => {
-    set.headers = {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      Connection: 'keep-alive',
-      'Access-Control-Allow-Origin': '*',
-    };
-
-    return new ReadableStream({
+  new Elysia().get('/notifications/stream', () => {
+    const stream = new ReadableStream<string>({
       start(controller) {
         let isConnected = true;
 
@@ -41,6 +34,16 @@ export const notificationsController = (fishjam: FishjamService) =>
           clearInterval(heartbeat);
           fishjam.removeEventListener('notification', handleNotification as EventListener);
         };
+      },
+    });
+
+    // Return a plain Response so the SSE headers are sent exactly as set here
+    return new Response(stream.pipeThrough(new TextEncoderStream()), {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+        'Access-Control-Allow-Origin': '*',
       },
     });
   });

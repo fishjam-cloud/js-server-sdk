@@ -2451,6 +2451,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sinclair/typebox@npm:^0.34.33":
+  version: 0.34.52
+  resolution: "@sinclair/typebox@npm:0.34.52"
+  checksum: 10c0/03e9be17ffb536ddd6dc35b6131c88eb113b2ce6cbec4fa60b1d5219de99e59b2649fc40ad70a85db561104395faa3406608971dc7b0abef529b80fb001dc821
+  languageName: node
+  linkType: hard
+
 "@swmansion/smelter@npm:0.3.0":
   version: 0.3.0
   resolution: "@swmansion/smelter@npm:0.3.0"
@@ -6194,6 +6201,7 @@ __metadata:
     "@fishjam-cloud/js-server-sdk": "workspace:*"
     "@google/genai": "npm:^1.13.0"
     "@grotto/logysia": "npm:^0.1.6"
+    "@sinclair/typebox": "npm:^0.34.33"
     "@types/bun": "npm:^1"
     bun: "npm:^1.2.20"
     bun-types: "npm:latest"
@@ -7120,6 +7128,7 @@ __metadata:
     "@elysiajs/cors": "npm:^1.4.0"
     "@fishjam-cloud/js-server-sdk": "workspace:*"
     "@grotto/logysia": "npm:^0.1.6"
+    "@sinclair/typebox": "npm:^0.34.33"
     "@types/bun": "npm:^1"
     bun: "npm:^1.2.20"
     bun-types: "npm:latest"
@@ -7662,6 +7671,7 @@ __metadata:
     "@fishjam-cloud/js-server-sdk": "workspace:*"
     "@google/genai": "npm:^1.13.0"
     "@grotto/logysia": "npm:^0.1.6"
+    "@sinclair/typebox": "npm:^0.34.33"
     "@types/bun": "npm:^1"
     bun: "npm:^1.2.20"
     bun-types: "npm:latest"
