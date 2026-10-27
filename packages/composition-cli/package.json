@@ -48,11 +48,11 @@
     "react-is": "^18.3.1"
   },
   "devDependencies": {
-    "@types/node": "^22",
+    "@types/node": "^26",
     "@types/react-is": "^18.3.0",
     "eslint": "^10.1.0",
     "prettier": "^3.8.1",
-    "tsup": "^8.5.1",
-    "vitest": "^3.0.0"
+    "tsup": "^9.0.0",
+    "vitest": "^5.0.5"
   }
 }
