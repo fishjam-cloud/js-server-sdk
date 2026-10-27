@@ -8,15 +8,15 @@
   "packageManager": "yarn@4.12.0",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "cspell": "^9.7.0",
+    "cspell": "^10.4.0",
     "eslint": "^10.1.0",
     "globals": "^17.4.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.4.0",
+    "lint-staged": "^17.6.0",
     "prettier": "^3.8.1",
     "typedoc": "^0.28.18",
     "typedoc-material-theme": "^1.4.1",
-    "typescript": "^5.9.3",
+    "typescript": "^7.0.2",
     "typescript-eslint": "^8.57.2"
   },
   "scripts": {

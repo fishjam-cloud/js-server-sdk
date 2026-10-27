@@ -13,8 +13,8 @@
     "dev": "concurrently \"yarn dev:frontend\" \"yarn dev:backend\""
   },
   "devDependencies": {
-    "concurrently": "^9.2.1",
+    "concurrently": "^10.0.6",
     "prettier": "^3.8.1",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   }
 }
