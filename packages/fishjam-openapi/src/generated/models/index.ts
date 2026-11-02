@@ -27,6 +27,7 @@ export * from './Recording';
 export * from './RecordingConfig';
 export * from './RecordingDetailsResponse';
 export * from './RecordingFile';
+export * from './RecordingHls';
 export * from './RecordingListResponse';
 export * from './RecordingSource';
 export * from './RecordingStatus';

@@ -97,3 +97,23 @@ describe('reading a template recording', () => {
     });
   });
 });
+
+describe('reading the HLS link', () => {
+  const HLS_URL = 'https://media.fishjam.test/tenant/comp-1/rec-1/index.m3u8';
+
+  it('exposes the playlist url of an active recording', async () => {
+    stubFetch({ data: { ...templateRecording, hls: { url: HLS_URL } } }, 200);
+
+    const recording = await client().getRecording('rec-1' as RecordingId);
+
+    expect(recording.hls?.url).toBe(HLS_URL);
+  });
+
+  it('is null until the playlist is uploaded', async () => {
+    stubFetch({ data: { ...templateRecording, hls: null } }, 200);
+
+    const recording = await client().getRecording('rec-1' as RecordingId);
+
+    expect(recording.hls).toBeNull();
+  });
+});
